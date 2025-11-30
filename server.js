@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const app = express();
 app.use(cors());
 app.use(express.json());
+
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
@@ -14,26 +15,27 @@ const OWNER_WALLET = '0x72683ef02989930042e4C727F26cF4DF110d6b9A';
 const TOKEN_CONTRACT = '0x9627175C472412C5D84d781Abe950A798200316F';
 
 mongoose.connect('mongodb+srv://vrsadmin:vrs123456@asleth.gjolaoq.mongodb.net/aslvrs?retryWrites=true&w=majority')
-  .then(() => console.log('MONGODB CONNECTED'));
+  .then(() => console.log('MONGODB CONNECTED'))
+  .catch(err => console.log('Mongo error:', err.message));
 
+// VRI-ONLY ROOM
 const rooms = {
-  vrs:      { name: "VRS Call",          rate: 10 },
-  vri:      { name: "VRI (Hospital/School)", rate: 20 },
-  practice: { name: "ASL Practice",     rate: 6 },
-  dating:   { name: "Deaf Dating",      rate: 12 },
-  hangout:  { name: "Hangout",          rate: 4 }
+  vri: { name: "VRI (Hospital/School)", rate: 20 }
 };
 
 let activeRooms = {};
 
 io.on('connection', (socket) => {
   socket.on('join-room', ({ room, role, wallet }) => {
+    if (!rooms[room]) return;
     socket.room = room;
     socket.role = role;
     socket.wallet = wallet.toLowerCase();
+
     if (!activeRooms[room]) activeRooms[room] = { users: [], interpreters: [] };
     if (role === 'interpreter') activeRooms[room].interpreters.push(socket);
     else activeRooms[room].users.push(socket);
+
     socket.join(room);
     console.log(`${role.toUpperCase()} → ${rooms[room].name} → ${wallet}`);
     matchInRoom(room);
@@ -45,7 +47,7 @@ io.on('connection', (socket) => {
 
 function matchInRoom(roomKey) {
   const r = activeRooms[roomKey];
-  if (!r || roomKey === 'dating') return;
+  if (!r) return;
   if (r.users.length > 0 && r.interpreters.length > 0) {
     const user = r.users.shift();
     const interpreter = r.interpreters.shift();
@@ -62,7 +64,8 @@ function endSession(socket) {
   if (!socket.callStart) return;
   const minutes = Math.floor((Date.now() - socket.callStart) / 60000);
   if (minutes <= 0) return;
-  const rate = rooms[socket.room].rate;
+
+  const rate = rooms[socket.room]?.rate || 20;
   const total = minutes * rate;
   const interpreter = Math.floor(total * 45 / 100);
   const dev = Math.floor(total * 45 / 100);
@@ -73,17 +76,19 @@ function endSession(socket) {
     interpreterWallet: socket.role === 'interpreter' ? socket.wallet : socket.partner?.wallet,
     userWallet: socket.role !== 'interpreter' ? socket.wallet : socket.partner?.wallet
   });
-  console.log(`${rooms[socket.room].name}: ${minutes} min → ${total} ASL (45/45/10)`);
+
+  console.log(`VRI Session: ${minutes} min → ${total} ASL (45/45/10)`);
   socket.callStart = null;
 }
 
-app.get('/', (req, res) => res.send(`
+app.get('/', (req, res) => {
+  res.send(`
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>World's First Blockchain VRI — AmericanSignLanguage.eth</title>
+  <title>World's First Blockchain Accessibility for the Deaf — AmericanSignLanguage.eth</title>
   <style>
     body{font-family:Arial,sans-serif;margin:0;padding:0;background:#0f172a;color:white}
     nav{background:#1e293b;padding:20px 0;position:fixed;width:100%;top:0;z-index:100}
@@ -116,93 +121,14 @@ app.get('/', (req, res) => res.send(`
         <a href="#">Home</a>
         <a href="#">Get Started</a>
         <a href="#">VRI</a>
-        <a href="#">Interpreters</a>
+        <a href="#">ASL Interpreters Inquire</a>
       </div>
     </div>
   </nav>
 
   <div class="container">
     <h1>World's First<br>Blockchain VRI</h1>
-    <p class="tagline">Changing the way Deaf communicate — forever.<br>
-    One block at a time.</p>
-    <p class="tagline">Deaf people finally get rewarded for our language — American Sign Language.<br>
-    <strong>Own your language. Own your future.</strong></p>
+    <p class="tagline">Changing the way Deaf communicate — forever.<br>One block at a time.</p>
+    <p class="tagline">Deaf people finally get rewarded for our language — American Sign Language.<br><strong>Own your language. Own your future.</strong></p>
 
-    <button class="btn">Get Started</button>
-    <button class="btn">VRI Now</button>
-    <button class="btn">ASL Interpreters — Inquire</button>
-
-    <div class="roadmap">
-      <h2>Road to National ASL Day 2026</h2>
-      <ul>
-        <li>Dec 2025 — Onboarding certified interpreters & Deaf users</li>
-        <li>Jan 2026 — Full two-way WebRTC video + audio</li>
-        <li>Feb 2026 — Native iOS & Android apps</li>
-        <li>Mar 2026 — Emergency SOS priority queue</li>
-        <li><strong>April 15, 2026 — Global launch on National ASL Day</strong></li>
-      </ul>
-    </div>
-
-    <div class="social">
-      <a href="https://instagram.com/americansignlanguage.eth" target="_blank"><i class="fab fa-instagram"></i></a>
-      <a href="https://x.com/asnlfts" target="_blank"><i class="fab fa-x-twitter"></i></a>
-    </div>
-
-    <footer>
-      <a href="https://app.ens.domains/americansignlanguage.eth" target="_blank">americansignlanguage.eth</a> · 
-      <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank">376 NFTs · Launched April 15, 2023</a><br>
-      © 2025–2026 · A Deaf-led movement
-    </footer>
-  </div>
-</body>
-</html>
-`));
-<script>
-  const socket = io();
-  const log = document.getElementById('log');
-  const mintBtn = document.getElementById('mintBtn');
-  const rooms = {
-    vrs: "VRS Call",
-    vri: "VRI (Hospital/School)",
-    practice: "ASL Practice",
-    dating: "Deaf Dating",
-    hangout: "Hangout"
-  };
-  function l(m){log.innerHTML+=m+'\\n';log.scrollTop=log.scrollHeight}
-  async function join(room,role){
-    if(!window.ethereum)return alert('Install MetaMask!');
-    const [acc]=await ethereum.request({method:'eth_requestAccounts'});
-    socket.emit('join-room',{room,role,wallet:acc});
-    l(\`Joined \${rooms[room]} as \${role === 'interpreter' ? 'Interpreter' : 'User'}\`);
-  }
-  socket.on('match-found',()=>l('MATCHED! Earning ASL tokens...'));
-  socket.on('mint-request',d=>{
-    window.mintData=d;
-    mintBtn.style.display='inline-block';
-    l(\`MINT READY – \${d.total} ASL tokens earned!\`);
-  });
-  async function mint(){
-    const {interpreter,dev,user,interpreterWallet,userWallet}=window.mintData;
-    const c='0x9627175C472412C5D84d781Abe950A798200316F';
-    const abi=["function mintRewards(address to,uint256 amount) public"];
-    const p=new ethers.providers.Web3Provider(window.ethereum);
-    const s=p.getSigner();
-    const t=new ethers.Contract(c,abi,s);
-    try{
-      l('Minting...');
-      await (await t.mintRewards(interpreterWallet,ethers.utils.parseUnits(interpreter.toString(),18))).wait();
-      await (await t.mintRewards('${OWNER_WALLET}',ethers.utils.parseUnits(dev.toString(),18))).wait();
-      await (await t.mintRewards(userWallet,ethers.utils.parseUnits(user.toString(),18))).wait();
-      l('ALL TOKENS MINTED ON-CHAIN!');
-      mintBtn.style.display='none';
-    }catch(e){l('Error: '+e.message)}
-  }
-</script>
-</body>
-</html>
-`));
-
-server.listen(3000, () => {
-  console.log('FULL ECOSYSTEM LIVE ON RENDER');
-  console.log('https://vrs-live-final.onrender.com');
-});
+    <button class="
