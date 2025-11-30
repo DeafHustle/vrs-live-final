@@ -95,7 +95,213 @@ function endCall(socket) {
 }
 
 // LANDING PAGE (unchanged — clean, professional)
-app.get('/', (req, res) => res.send(`YOUR EXISTING CLEAN LANDING PAGE CODE HERE`));
+app.get('/', (req, res) => res.send(// COMMON NAV & FOOTER
+const nav = `
+<nav>
+  <div class="logo">AmericanSignLanguage.eth</div>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/get-started">Get Started</a>
+    <a href="/vri">VRI</a>
+    <a href="/interpreters">Interpreters</a>
+  </div>
+</nav>
+`;
+
+const footer = `
+<footer>
+  <div class="social">
+    <a href="https://instagram.com/americansignlanguage.eth" target="_blank"><i class="fab fa-instagram"></i></a>
+    <a href="https://x.com/ASLNFTS" target="_blank"><i class="fab fa-x-twitter"></i></a>
+  </div>
+  <p>
+    <a href="https://app.ens.domains/americansignlanguage.eth" target="_blank">americansignlanguage.eth</a> · 
+    <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank"><strong>MINT NOW — 376 NFTs</strong></a>
+  </p>
+  <p>© 2025–2026 · A Deaf-led movement</p>
+</footer>
+`;
+
+// HOME
+app.get('/', (req, res) => res.send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World's First Blockchain VRI — AmericanSignLanguage.eth</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root{--primary:#00d4ff;--dark:#0a0e1a}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:var(--dark);color:white}
+    nav{position:fixed;top:0;width:100%;background:rgba(10,14,26,0.95);backdrop-filter:blur(10px);z-index:1000;padding:20px 5%;display:flex;justify-content:space-between;align-items:center}
+    .logo{font-size:2em;font-weight:900}
+    .nav-links a{color:white;text-decoration:none;margin:0 25px;font-weight:500}
+    .nav-links a:hover{color:var(--primary)}
+    .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding-top:100px}
+    h1{font-size:5em;font-weight:900;line-height:1.1;background:linear-gradient(90deg,#00d4ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .tagline{font-size:1.8em;margin:40px 0;max-width:900px}
+    .highlight{color:var(--primary);font-weight:700}
+    .btn{background:var(--primary);color:#000;padding:20px 50px;margin:20px;font-size:1.5em;border:none;border-radius:50px;cursor:pointer;font-weight:700}
+    .btn:hover{transform:scale(1.05)}
+    footer{padding:80px 20px;text-align:center;color:#64748b}
+    .social a{color:white;font-size:3em;margin:0 30px}
+    .social a:hover{color:var(--primary)}
+  </style>
+</head>
+<body>
+  ${nav}
+  <div class="hero">
+    <h1>World's First<br>Blockchain VRI</h1>
+    <p class="tagline">Changing the way Deaf communicate — <span class="highlight">forever.</span><br>One block at a time.</p>
+    <p class="tagline">Deaf people finally get rewarded for our language — American Sign Language.<br><strong>Own your language. Own your future.</strong></p>
+    <div style="margin:60px 0">
+      <a href="/get-started"><button class="btn">Get Started</button></a>
+      <a href="/vri"><button class="btn" style="background:transparent;border:2px solid var(--primary);color:white">Request VRI Now</button></a>
+    </div>
+  </div>
+  ${footer}
+</body>
+</html>
+`));
+
+// GET STARTED
+app.get('/get-started', (req, res) => res.send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Started — AmericanSignLanguage.eth</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:'Inter',sans-serif;background:#0a0e1a;color:white;padding-top:100px}
+    .container{max-width:900px;margin:0 auto;padding:40px;text-align:center}
+    h1{font-size:3.5em;margin-bottom:40px}
+    .step{background:#111827;padding:40px;border-radius:20px;margin:40px 0}
+    .btn{background:#00d4ff;color:#000;padding:18px 40px;font-size:1.4em;border:none;border-radius:50px;margin:20px;cursor:pointer;font-weight:700}
+  </style>
+</head>
+<body>
+  ${nav}
+  <div class="container">
+    <h1>Get Started in 60 Seconds</h1>
+    <div class="step">
+      <h2>1. Install MetaMask</h2>
+      <p>The #1 wallet used by millions — works on phone & computer</p>
+      <a href="https://metamask.io/download/" target="_blank"><button class="btn">Download MetaMask</button></a>
+    </div>
+    <div class="step">
+      <h2>2. Connect Wallet</h2>
+      <p>Click below to connect and start earning $ASL tokens</p>
+      <button class="btn" onclick="connect()">Connect Wallet & Start Earning</button>
+    </div>
+  </div>
+  ${footer}
+  <script>
+    function connect(){if(window.ethereum)ethereum.request({method:'eth_requestAccounts'}).then(a=>alert('Connected: '+a[0]));else alert('Install MetaMask!');}
+  </script>
+</body>
+</html>
+`));
+
+// VRI PAGE
+app.get('/vri', (req, res) => res.send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VRI — Anytime, Anywhere</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:'Inter',sans-serif;background:#0a0e1a;color:white;padding-top:100px;text-align:center}
+    .container{max-width:900px;margin:0 auto;padding:40px}
+    h1{font-size:4em;margin-bottom:30px}
+    p{font-size:1.6em;line-height:1.8;margin:30px 0}
+    .btn{background:#00d4ff;color:#000;padding:20px 60px;font-size:1.6em;border:none;border-radius:50px;margin:40px;cursor:pointer;font-weight:700}
+  </style>
+</head>
+<body>
+  ${nav}
+  <div class="container">
+    <h1>VRI — Anytime. Anywhere.</h1>
+    <p>Works on iPhone, Android, Mac, PC — no app needed.</p>
+    <p>Instant connection to certified ASL interpreters 24/7.</p>
+    <p>Earn $ASL tokens for every minute you use it.</p>
+    <button class="btn" onclick="requestVRI()">Request VRI Now</button>
+  </div>
+  ${footer}
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    function requestVRI(){
+      if(!window.ethereum)return alert('Install MetaMask!');
+      ethereum.request({method:'eth_requestAccounts'}).then(a=>{
+        socket.emit('join-room',{room:'vri',role:'deaf',wallet:a[0]});
+        alert('VRI Request Sent! Interpreter connecting...');
+      });
+    }
+    socket.on('match-found',()=>alert('VRI CALL LIVE!'));
+  </script>
+</body>
+</html>
+`));
+
+// INTERPRETERS PAGE
+app.get('/interpreters', (req, res) => res.send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASL Interpreters — Earn $ASL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:'Inter',sans-serif;background:#0a0e1a;color:white;padding-top:100px}
+    .container{max-width:900px;margin:0 auto;padding:40px;text-align:center}
+    h1{font-size:3.5em;margin-bottom:40px}
+    p{font-size:1.5em;line-height:1.8;margin:30px 0}
+    .btn{background:#00d4ff;color:#000;padding:20px 50px;font-size:1.5em;border:none;border-radius:50px;margin:30px;cursor:pointer;font-weight:700}
+    .faq{background:#111827;padding:50px;border-radius:20px;margin:60px auto;max-width:800px;text-align:left}
+    .faq h3{margin:30px 0 15px;color:#00d4ff;font-size:1.6em}
+  </style>
+</head>
+<body>
+  ${nav}
+  <div class="container">
+    <h1>Certified ASL Interpreters</h1>
+    <p>Earn <strong>45% of all platform revenue</strong> in $ASL tokens — the highest pay in the industry.</p>
+    <p>Work when you want, from anywhere. Get paid instantly on-chain.</p>
+    <button class="btn" onclick="goLive()">Go Live as Interpreter</button>
+
+    <div class="faq">
+      <h3>How do I get paid?</h3>
+      <p>You earn $ASL tokens after every session — automatically minted to your wallet.</p>
+      <h3>Do I need special software?</h3>
+      <p>No. Just browser + camera.</p>
+      <h3>How do I prove I'm certified?</h3>
+      <p>Upload RID/NIC certificate during onboarding (coming this week).</p>
+      <h3>Contact the founder:</h3>
+      <p>X: <a href="https://x.com/ASLNFTS">@ASLNFTS</a> · IG: @americansignlanguage.eth</p>
+    </div>
+  </div>
+  ${footer}
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    function goLive(){
+      if(!window.ethereum)return alert('Install MetaMask!');
+      ethereum.request({method:'eth_requestAccounts'}).then(a=>{
+        socket.emit('join-room',{room:'vri',role:'interpreter',wallet:a[0]});
+        alert('You are LIVE for VRI calls!');
+      });
+    }
+  </script>
+</body>
+</html>));
 
 server.listen(3000, () => {
   console.log('────────────────────────────────────────');
