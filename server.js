@@ -79,42 +79,84 @@ function endSession(socket) {
 
 app.get('/', (req, res) => res.send(`
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>americansignlanguage.eth – FULL ECOSYSTEM</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World's First Blockchain VRI — AmericanSignLanguage.eth</title>
   <style>
-    body{font-family:Arial;text-align:center;background:#f8f9fa;padding:20px}
-    button{padding:18px 24px;margin:10px;font-size:18px;border:none;border-radius:12px;cursor:pointer}
-    .deaf{background:#4CAF50;color:white}
-    .interp{background:#2196F3;color:white}
-    .end{background:#f44336;color:white}
-    .mint{background:#FF9800;color:white;display:none}
+    body{font-family:Arial,sans-serif;margin:0;padding:0;background:#0f172a;color:white}
+    nav{background:#1e293b;padding:20px 0;position:fixed;width:100%;top:0;z-index:100}
+    nav .container{display:flex;justify-content:space-between;align-items:center;max-width:1100px;margin:0 auto;padding:0 20px}
+    nav a{color:white;text-decoration:none;font-size:1.1em;margin:0 20px;font-weight:bold}
+    nav a:hover{color:#60a5fa}
+    .logo{font-size:1.6em;font-weight:900}
+    .container{max-width:900px;margin:120px auto 0;padding:40px 20px;text-align:center}
+    h1{font-size:3.8em;margin:0.3em 0;line-height:1.1}
+    .tagline{font-size:1.6em;color:#60a5fa;margin:30px 0;font-weight:bold}
+    p{font-size:1.4em;line-height:1.7;margin:1.2em 0}
+    .btn{background:#60a5fa;color:white;padding:16px 32px;margin:15px;font-size:1.3em;border:none;border-radius:50px;cursor:pointer;font-weight:bold}
+    .btn:hover{background:#3b82f6}
+    .roadmap{margin:80px auto;background:#1e293b;padding:40px;border-radius:16px;max-width:800px}
+    ul{text-align:left;display:inline-block;margin:30px 0}
+    li{margin:18px 0;font-size:1.3em}
+    .social{margin:60px 0}
+    .social a{color:white;margin:0 20px;font-size:3em;text-decoration:none}
+    footer{margin-top:120px;color:#94a3b8;padding:30px 0;font-size:0.95em}
+    a{color:#60a5fa;text-decoration:none}
+    a:hover{text-decoration:underline}
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <h1>americansignlanguage.eth</h1>
-  <h2>The #1 Platform for the Deaf Community</h2>
-  <div>
-    <button class="deaf" onclick="join('vrs','deaf')">VRS Call</button>
-    <button class="deaf" onclick="join('vri','deaf')">VRI (Hospital/School)</button>
-    <button class="deaf" onclick="join('practice','learner')">ASL Practice</button>
-    <button class="deaf" onclick="join('dating','deaf')">Deaf Dating</button>
-    <button class="deaf" onclick="join('hangout','deaf')">Hangout</button>
-  </div>
-  <hr>
-  <div>
-    <button class="interp" onclick="join('vrs','interpreter')">VRS Interpreter</button>
-    <button class="interp" onclick="join('vri','interpreter')">VRI Interpreter</button>
-    <button class="interp" onclick="join('practice','interpreter')">Teach ASL</button>
-  </div>
-  <hr>
-  <button class="end" onclick="socket.emit('end-session')">END SESSION</button>
-  <button class="mint" id="mintBtn" onclick="mint()">MINT TOKENS NOW</button>
-  <pre id="log" style="text-align:left;margin:30px auto;max-width:800px;padding:20px;background:#222;color:#0f0;border-radius:12px;max-height:500px;overflow:auto"></pre>
+  <nav>
+    <div class="container">
+      <div class="logo">AmericanSignLanguage.eth</div>
+      <div>
+        <a href="#">Home</a>
+        <a href="#">Get Started</a>
+        <a href="#">VRI</a>
+        <a href="#">Interpreters</a>
+      </div>
+    </div>
+  </nav>
 
+  <div class="container">
+    <h1>World's First<br>Blockchain VRI</h1>
+    <p class="tagline">Changing the way Deaf communicate — forever.<br>
+    One block at a time.</p>
+    <p class="tagline">Deaf people finally get rewarded for our language — American Sign Language.<br>
+    <strong>Own your language. Own your future.</strong></p>
+
+    <button class="btn">Get Started</button>
+    <button class="btn">VRI Now</button>
+    <button class="btn">ASL Interpreters — Inquire</button>
+
+    <div class="roadmap">
+      <h2>Road to National ASL Day 2026</h2>
+      <ul>
+        <li>Dec 2025 — Onboarding certified interpreters & Deaf users</li>
+        <li>Jan 2026 — Full two-way WebRTC video + audio</li>
+        <li>Feb 2026 — Native iOS & Android apps</li>
+        <li>Mar 2026 — Emergency SOS priority queue</li>
+        <li><strong>April 15, 2026 — Global launch on National ASL Day</strong></li>
+      </ul>
+    </div>
+
+    <div class="social">
+      <a href="https://instagram.com/americansignlanguage.eth" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://x.com/asnlfts" target="_blank"><i class="fab fa-x-twitter"></i></a>
+    </div>
+
+    <footer>
+      <a href="https://app.ens.domains/americansignlanguage.eth" target="_blank">americansignlanguage.eth</a> · 
+      <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank">376 NFTs · Launched April 15, 2023</a><br>
+      © 2025–2026 · A Deaf-led movement
+    </footer>
+  </div>
+</body>
+</html>
+`));
 <script>
   const socket = io();
   const log = document.getElementById('log');
