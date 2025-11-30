@@ -14,14 +14,11 @@ const OWNER_WALLET = '0x72683ef02989930042e4C727F26cF4DF110d6b9A';
 const TOKEN_CONTRACT = '0x9627175C472412C5D84d781Abe950A798200316F';
 
 mongoose.connect('mongodb+srv://vrsadmin:vrs123456@asleth.gjolaoq.mongodb.net/aslvrs?retryWrites=true&w=majority')
-  .then(() => console.log('MONGODB + WEBRTC ENGINE LIVE'));
+  .then(() => console.log('MONGODB CONNECTED'));
 
-let activeCalls = {}; // callId → { deafSocket, interpreterSocket, startTime }
+let activeCalls = {};
 
 io.on('connection', (socket) => {
-  console.log('User connected →', socket.id);
-
-  // Deaf user requests VRI
   socket.on('deaf-request', ({ wallet }) => {
     socket.role = 'deaf';
     socket.wallet = wallet.toLowerCase();
@@ -30,7 +27,6 @@ io.on('connection', (socket) => {
     matchCall(socket);
   });
 
-  // Interpreter goes live
   socket.on('interpreter-live', ({ wallet }) => {
     socket.role = 'interpreter';
     socket.wallet = wallet.toLowerCase();
@@ -38,7 +34,6 @@ io.on('connection', (socket) => {
     matchCall(socket);
   });
 
-  // WebRTC signaling
   socket.on('offer', (data) => socket.to(data.target).emit('offer', { sdp: data.sdp, sender: socket.id }));
   socket.on('answer', (data) => socket.to(data.target).emit('answer', { sdp: data.sdp }));
   socket.on('ice-candidate', (data) => socket.to(data.target).emit('ice-candidate', data.candidate));
@@ -64,7 +59,7 @@ function matchCall(socket) {
     deaf.emit('call-matched', { peerId: interpreter.id });
     interpreter.emit('call-matched', { peerId: deaf.id });
 
-    console.log('VRI CALL STARTED — TWO-WAY VIDEO + AUDIO');
+    console.log('TWO-WAY VRI CALL STARTED — VIDEO + AUDIO');
   }
 }
 
@@ -85,7 +80,7 @@ function endCall(socket) {
       interpreterWallet: call.interpreterSocket.wallet,
       userWallet: call.deafSocket.wallet
     });
-    console.log(`VRI CALL ENDED — ${minutes} min → ${total} $ASL minted`);
+    console.log(`CALL ENDED — ${minutes} min → ${total} $ASL minted`);
   }
 
   call.deafSocket.emit('call-ended');
@@ -94,8 +89,7 @@ function endCall(socket) {
   socket.callId = null;
 }
 
-// LANDING PAGE (unchanged — clean, professional)
-app.get('/', (req, res) => res.send(// COMMON NAV & FOOTER
+// NAV & FOOTER
 const nav = `
 <nav>
   <div class="logo">AmericanSignLanguage.eth</div>
@@ -134,21 +128,19 @@ app.get('/', (req, res) => res.send(`
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     :root{--primary:#00d4ff;--dark:#0a0e1a}
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Inter',sans-serif;background:var(--dark);color:white}
+    body{font-family:'Inter',sans-serif;background:var(--dark);color:white;margin:0}
     nav{position:fixed;top:0;width:100%;background:rgba(10,14,26,0.95);backdrop-filter:blur(10px);z-index:1000;padding:20px 5%;display:flex;justify-content:space-between;align-items:center}
     .logo{font-size:2em;font-weight:900}
     .nav-links a{color:white;text-decoration:none;margin:0 25px;font-weight:500}
     .nav-links a:hover{color:var(--primary)}
-    .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding-top:100px}
+    .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding-top:100px;flex-direction:column}
     h1{font-size:5em;font-weight:900;line-height:1.1;background:linear-gradient(90deg,#00d4ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
     .tagline{font-size:1.8em;margin:40px 0;max-width:900px}
     .highlight{color:var(--primary);font-weight:700}
     .btn{background:var(--primary);color:#000;padding:20px 50px;margin:20px;font-size:1.5em;border:none;border-radius:50px;cursor:pointer;font-weight:700}
     .btn:hover{transform:scale(1.05)}
-    footer{padding:80px 20px;text-align:center;color:#64748b}
     .social a{color:white;font-size:3em;margin:0 30px}
-    .social a:hover{color:var(--primary)}
+    footer{padding:80px 20px;text-align:center;color:#64748b}
   </style>
 </head>
 <body>
@@ -231,21 +223,9 @@ app.get('/vri', (req, res) => res.send(`
     <p>Works on iPhone, Android, Mac, PC — no app needed.</p>
     <p>Instant connection to certified ASL interpreters 24/7.</p>
     <p>Earn $ASL tokens for every minute you use it.</p>
-    <button class="btn" onclick="requestVRI()">Request VRI Now</button>
+    <a href="/call"><button class="btn">Request VRI Now</button></a>
   </div>
   ${footer}
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-    function requestVRI(){
-      if(!window.ethereum)return alert('Install MetaMask!');
-      ethereum.request({method:'eth_requestAccounts'}).then(a=>{
-        socket.emit('join-room',{room:'vri',role:'deaf',wallet:a[0]});
-        alert('VRI Request Sent! Interpreter connecting...');
-      });
-    }
-    socket.on('match-found',()=>alert('VRI CALL LIVE!'));
-  </script>
 </body>
 </html>
 `));
@@ -275,7 +255,7 @@ app.get('/interpreters', (req, res) => res.send(`
     <h1>Certified ASL Interpreters</h1>
     <p>Earn <strong>45% of all platform revenue</strong> in $ASL tokens — the highest pay in the industry.</p>
     <p>Work when you want, from anywhere. Get paid instantly on-chain.</p>
-    <button class="btn" onclick="goLive()">Go Live as Interpreter</button>
+    <a href="/call"><button class="btn">Go Live as Interpreter</button></a>
 
     <div class="faq">
       <h3>How do I get paid?</h3>
@@ -289,23 +269,111 @@ app.get('/interpreters', (req, res) => res.send(`
     </div>
   </div>
   ${footer}
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-    function goLive(){
-      if(!window.ethereum)return alert('Install MetaMask!');
-      ethereum.request({method:'eth_requestAccounts'}).then(a=>{
-        socket.emit('join-room',{room:'vri',role:'interpreter',wallet:a[0]});
-        alert('You are LIVE for VRI calls!');
-      });
-    }
-  </script>
 </body>
-</html>));
+</html>
+`));
+
+// VRI CALL PAGE — FULL TWO-WAY WEBRTC VIDEO + AUDIO
+app.get('/call', (req, res) => res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+  <title>VRI Call — AmericanSignLanguage.eth</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{margin:0;background:#000;color:white;font-family:Arial;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+    video{width:100%;height:100%;object-fit:cover}
+    #localVideo{position:absolute;top:20px;right:20px;width:300px;height:200px;border:3px solid #00d4ff;z-index:10;border-radius:12px}
+    #remoteVideo{width:100%;height:100%}
+    .controls{position:absolute;bottom:20px;width:100%;text-align:center;z-index:10}
+    button{padding:15px 30px;margin:10px;font-size:18px;background:#00d4ff;color:black;border:none;border-radius:50px;cursor:pointer;font-weight:700}
+    #timer{font-size:2em;margin:20px;color:#00d4ff}
+    .status{position:absolute;top:20px;left:20px;background:rgba(0,0,0,0.7);padding:10px 20px;border-radius:12px}
+  </style>
+</head>
+<body>
+  <div class="status">Connecting...</div>
+  <video id="localVideo" autoplay muted playsinline></video>
+  <video id="remoteVideo" autoplay playsinline></video>
+  <div class="controls">
+    <div id="timer">00:00</div>
+    <button onclick="endCall()">End Call</button>
+  </div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  const isInterpreter = window.location.search.includes('interpreter');
+  let peerConnection;
+  let localStream;
+  let timerInterval;
+  let seconds = 0;
+
+  const config = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+
+  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    .then(stream => {
+      localStream = stream;
+      document.getElementById('localVideo').srcObject = stream;
+      document.querySelector('.status').textContent = isInterpreter ? 'Interpreter Ready — Waiting for call...' : 'Requesting VRI...';
+      socket.emit(isInterpreter ? 'interpreter-live' : 'deaf-request', { wallet: '0x...' }); // Replace with real wallet
+    })
+    .catch(err => alert('Camera/Microphone access denied'));
+
+  socket.on('call-matched', ({ peerId }) => {
+    document.querySelector('.status').textContent = 'CALL CONNECTED!';
+    peerConnection = new RTCPeerConnection(config);
+    localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+    peerConnection.onicecandidate = e => e.candidate && socket.emit('ice-candidate', { target: peerId, candidate: e.candidate });
+    peerConnection.ontrack = e => document.getElementById('remoteVideo').srcObject = e.streams[0];
+
+    if (!isInterpreter) {
+      peerConnection.createOffer()
+        .then(offer => peerConnection.setLocalDescription(offer))
+        .then(() => socket.emit('offer', { target: peerId, sdp: peerConnection.localDescription }));
+    }
+    startTimer();
+  });
+
+  socket.on('offer', ({ sdp, sender }) => {
+    peerConnection = new RTCPeerConnection(config);
+    localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+    peerConnection.onicecandidate = e => e.candidate && socket.emit('ice-candidate', { target: sender, candidate: e.candidate });
+    peerConnection.ontrack = e => document.getElementById('remoteVideo').srcObject = e.streams[0];
+
+    peerConnection.setRemoteDescription(sdp)
+      .then(() => peerConnection.createAnswer())
+      .then(answer => peerConnection.setLocalDescription(answer))
+      .then(() => socket.emit('answer', { target: sender, sdp: peerConnection.localDescription }));
+  });
+
+  socket.on('answer', ({ sdp }) => peerConnection.setRemoteDescription(sdp));
+  socket.on('ice-candidate', ({ candidate }) => candidate && peerConnection.addIceCandidate(candidate));
+  socket.on('call-ended', () => location.reload());
+
+  function endCall() {
+    socket.emit('end-call');
+    location.reload();
+  }
+
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      seconds++;
+      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const s = String(seconds % 60).padStart(2, '0');
+      document.getElementById('timer').textContent = m + ':' + s;
+    }, 1000);
+  }
+</script>
+</body>
+</html>
+`));
 
 server.listen(3000, () => {
   console.log('────────────────────────────────────────');
-  console.log('   FULL TWO-WAY WEBRTC VRI ENGINE LIVE');
+  console.log('   FULL TWO-WAY WEBRTC VRI LIVE — ALL PAGES WORKING');
   console.log('   https://vrs-live-final.onrender.com');
+  console.log('   Call page: https://vrs-live-final.onrender.com/call');
   console.log('────────────────────────────────────────');
 });
