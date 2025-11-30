@@ -119,12 +119,19 @@ app.get('/', (req, res) => res.send(`
   const socket = io();
   const log = document.getElementById('log');
   const mintBtn = document.getElementById('mintBtn');
+  const rooms = {
+    vrs: "VRS Call",
+    vri: "VRI (Hospital/School)",
+    practice: "ASL Practice",
+    dating: "Deaf Dating",
+    hangout: "Hangout"
+  };
   function l(m){log.innerHTML+=m+'\\n';log.scrollTop=log.scrollHeight}
   async function join(room,role){
     if(!window.ethereum)return alert('Install MetaMask!');
     const [acc]=await ethereum.request({method:'eth_requestAccounts'});
     socket.emit('join-room',{room,role,wallet:acc});
-    l(\`Joined ${room} as ${role === 'interpreter' ? 'Interpreter' : 'User'}\`);
+    l(\`Joined \${rooms[room]} as \${role === 'interpreter' ? 'Interpreter' : 'User'}\`);
   }
   socket.on('match-found',()=>l('MATCHED! Earning ASL tokens...'));
   socket.on('mint-request',d=>{
