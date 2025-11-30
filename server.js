@@ -18,7 +18,6 @@ mongoose.connect('mongodb+srv://vrsadmin:vrs123456@asleth.gjolaoq.mongodb.net/as
   .then(() => console.log('MONGODB CONNECTED'))
   .catch(err => console.log('Mongo error:', err.message));
 
-// VRI-ONLY ROOM
 const rooms = {
   vri: { name: "VRI (Hospital/School)", rate: 20 }
 };
@@ -131,4 +130,38 @@ app.get('/', (req, res) => {
     <p class="tagline">Changing the way Deaf communicate — forever.<br>One block at a time.</p>
     <p class="tagline">Deaf people finally get rewarded for our language — American Sign Language.<br><strong>Own your language. Own your future.</strong></p>
 
-    <button class="
+    <button class="btn">Get Started</button>
+    <button class="btn">VRI Now</button>
+    <button class="btn">ASL Interpreters — Inquire</button>
+
+    <div class="roadmap">
+      <h2>Road to National ASL Day 2026</h2>
+      <ul>
+        <li>Dec 2025 — Onboarding certified interpreters & Deaf users</li>
+        <li>Jan 2026 — Full two-way WebRTC video + audio</li>
+        <li>Feb 2026 — Native iOS & Android apps</li>
+        <li>Mar 2026 — Emergency SOS priority queue</li>
+        <li><strong>April 15, 2026 — Global launch on National ASL Day</strong></li>
+      </ul>
+    </div>
+
+    <div class="social">
+      <a href="https://instagram.com/americansignlanguage.eth" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://x.com/asnlfts" target="_blank"><i class="fab fa-x-twitter"></i></a>
+    </div>
+
+    <footer>
+      <a href="https://app.ens.domains/americansignlanguage.eth" target="_blank">americansignlanguage.eth</a> · 
+      <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank">376 NFTs · Launched April 15, 2023</a><br>
+      © 2025–2026 · A Deaf-led movement
+    </footer>
+  </div>
+</body>
+</html>
+  `);
+});
+
+server.listen(3000, () => {
+  console.log('VRI by AmericanSignLanguage.eth — LIVE');
+  console.log('https://vrs-live-final.onrender.com');
+});
