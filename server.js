@@ -92,27 +92,31 @@ function endCall(socket) {
 // NAV & FOOTER
 const nav = `
 <nav>
-  <div class="logo">AmericanSignLanguage.eth</div>
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/get-started">Get Started</a>
-    <a href="/vri">VRI</a>
-    <a href="/interpreters">Interpreters</a>
+  <div class="container">
+    <div class="logo">AmericanSignLanguage.eth</div>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/get-started">Get Started</a>
+      <a href="/vri">VRI</a>
+      <a href="/interpreters">Interpreters</a>
+    </div>
   </div>
 </nav>
 `;
 
 const footer = `
 <footer>
-  <div class="social">
-    <a href="https://instagram.com/americansignlanguage.eth" target="_blank"><i class="fab fa-instagram"></i></a>
-    <a href="https://x.com/ASLNFTS" target="_blank"><i class="fab fa-x-twitter"></i></a>
+  <div class="container">
+    <div class="social">
+      <a href="https://instagram.com/americansignlanguage.eth" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://x.com/ASLNFTS" target="_blank"><i class="fab fa-x-twitter"></i></a>
+    </div>
+    <p>
+      <a href="https://app.ens.domains/americansignlanguage.eth" target="_blank">americansignlanguage.eth</a> · 
+      <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank"><strong>MINT NOW — 376 NFTs</strong></a>
+    </p>
+    <p>© 2025–2026 · A Deaf-led movement</p>
   </div>
-  <p>
-    <a href="https://app.ens.domains/americansignlanguage.eth" target="_blank">americansignlanguage.eth</a> · 
-    <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank"><strong>MINT NOW — 376 NFTs</strong></a>
-  </p>
-  <p>© 2025–2026 · A Deaf-led movement</p>
 </footer>
 `;
 
@@ -130,6 +134,7 @@ app.get('/', (req, res) => res.send(`
     :root{--primary:#00d4ff;--dark:#0a0e1a}
     body{font-family:'Inter',sans-serif;background:var(--dark);color:white;margin:0}
     nav{position:fixed;top:0;width:100%;background:rgba(10,14,26,0.95);backdrop-filter:blur(10px);z-index:1000;padding:20px 5%;display:flex;justify-content:space-between;align-items:center}
+    .container{max-width:1100px;margin:0 auto}
     .logo{font-size:2em;font-weight:900}
     .nav-links a{color:white;text-decoration:none;margin:0 25px;font-weight:500}
     .nav-links a:hover{color:var(--primary)}
@@ -139,8 +144,8 @@ app.get('/', (req, res) => res.send(`
     .highlight{color:var(--primary);font-weight:700}
     .btn{background:var(--primary);color:#000;padding:20px 50px;margin:20px;font-size:1.5em;border:none;border-radius:50px;cursor:pointer;font-weight:700}
     .btn:hover{transform:scale(1.05)}
-    .social a{color:white;font-size:3em;margin:0 30px}
     footer{padding:80px 20px;text-align:center;color:#64748b}
+    .social a{color:white;font-size:3em;margin:0 30px}
   </style>
 </head>
 <body>
@@ -172,7 +177,7 @@ app.get('/get-started', (req, res) => res.send(`
     body{font-family:'Inter',sans-serif;background:#0a0e1a;color:white;padding-top:100px}
     .container{max-width:900px;margin:0 auto;padding:40px;text-align:center}
     h1{font-size:3.5em;margin-bottom:40px}
-    .step{background:#111827;padding:40px;border-radius:20px;margin:40px 0}
+    .step{background:#111827;padding:40px;border-radius:20px;margin:40px auto;max-width:700px}
     .btn{background:#00d4ff;color:#000;padding:18px 40px;font-size:1.4em;border:none;border-radius:50px;margin:20px;cursor:pointer;font-weight:700}
   </style>
 </head>
@@ -211,7 +216,7 @@ app.get('/vri', (req, res) => res.send(`
   <style>
     body{font-family:'Inter',sans-serif;background:#0a0e1a;color:white;padding-top:100px;text-align:center}
     .container{max-width:900px;margin:0 auto;padding:40px}
-    h1{font-size:4em;margin-bottom:30px}
+    h1{font-size:4.5em;margin-bottom:30px}
     p{font-size:1.6em;line-height:1.8;margin:30px 0}
     .btn{background:#00d4ff;color:#000;padding:20px 60px;font-size:1.6em;border:none;border-radius:50px;margin:40px;cursor:pointer;font-weight:700}
   </style>
@@ -242,7 +247,7 @@ app.get('/interpreters', (req, res) => res.send(`
   <style>
     body{font-family:'Inter',sans-serif;background:#0a0e1a;color:white;padding-top:100px}
     .container{max-width:900px;margin:0 auto;padding:40px;text-align:center}
-    h1{font-size:3.5em;margin-bottom:40px}
+    h1{font-size:4em;margin-bottom:40px}
     p{font-size:1.5em;line-height:1.8;margin:30px 0}
     .btn{background:#00d4ff;color:#000;padding:20px 50px;font-size:1.5em;border:none;border-radius:50px;margin:30px;cursor:pointer;font-weight:700}
     .faq{background:#111827;padding:50px;border-radius:20px;margin:60px auto;max-width:800px;text-align:left}
@@ -273,7 +278,7 @@ app.get('/interpreters', (req, res) => res.send(`
 </html>
 `));
 
-// VRI CALL PAGE — FULL TWO-WAY WEBRTC VIDEO + AUDIO
+// VRI CALL PAGE — FULL TWO-WAY WEBRTC VIDEO + AUDIO (WITH TURN SERVERS)
 app.get('/call', (req, res) => res.send(`
 <!DOCTYPE html>
 <html>
@@ -309,16 +314,29 @@ app.get('/call', (req, res) => res.send(`
   let timerInterval;
   let seconds = 0;
 
-  const config = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+  // FREE TURN SERVERS — FIXES RENDER CONNECTIONS
+  const config = {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+      { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
+      { urls: 'turn:openrelay.metered.ca:80?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' },
+      { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }
+    ]
+  };
 
   navigator.mediaDevices.getUserMedia({ video: true, audio: true })
     .then(stream => {
       localStream = stream;
       document.getElementById('localVideo').srcObject = stream;
-      document.querySelector('.status').textContent = isInterpreter ? 'Interpreter Ready — Waiting for call...' : 'Requesting VRI...';
-      socket.emit(isInterpreter ? 'interpreter-live' : 'deaf-request', { wallet: '0x...' }); // Replace with real wallet
+      document.querySelector('.status').textContent = isInterpreter ? 'Interpreter Ready — Waiting...' : 'Requesting VRI...';
+      socket.emit(isInterpreter ? 'interpreter-live' : 'deaf-request', { wallet: '0x...' });
     })
-    .catch(err => alert('Camera/Microphone access denied'));
+    .catch(err => {
+      alert('Camera/Microphone blocked. Allow access and refresh.');
+      console.error(err);
+    });
 
   socket.on('call-matched', ({ peerId }) => {
     document.querySelector('.status').textContent = 'CALL CONNECTED!';
@@ -372,8 +390,7 @@ app.get('/call', (req, res) => res.send(`
 
 server.listen(3000, () => {
   console.log('────────────────────────────────────────');
-  console.log('   FULL TWO-WAY WEBRTC VRI LIVE — ALL PAGES WORKING');
-  console.log('   https://vrs-live-final.onrender.com');
-  console.log('   Call page: https://vrs-live-final.onrender.com/call');
+  console.log('   FULL TWO-WAY WEBRTC VRI LIVE — WITH TURN SERVERS');
+  console.log('   https://vrs-live-final.onrender.com/call');
   console.log('────────────────────────────────────────');
 });
