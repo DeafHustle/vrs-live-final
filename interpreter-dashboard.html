@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interpreter Dashboard | americansignlanguage.eth</title>
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    
+    .header h1 {
+      color: #11998e;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      color: #666;
+      font-size: 1.2rem;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    
+    .stat-card h3 {
+      color: #666;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    
+    .stat-card .value {
+      color: #11998e;
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .stat-card .label {
+      color: #999;
+      font-size: 0.9rem;
+    }
+    
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+    }
+    
+    .sidebar {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .video-section {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    
+    .status-indicator.online {
+      background: #4CAF50;
+      box-shadow: 0 0 10px #4CAF50;
+    }
+    
+    .status-indicator.offline {
+      background: #f44336;
+    }
+    
+    .status-indicator.busy {
+      background: #ff9800;
+      box-shadow: 0 0 10px #ff9800;
+    }
+    
+    button {
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .btn-success {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    .btn-danger {
+      background: #f44336;
+      color: white;
+    }
+    
+    .btn-primary {
+      background: #2196F3;
+      color: white;
+    }
+    
+    .btn-warning {
+      background: #ff9800;
+      color: white;
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .video-container {
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin: 20px 0;
+    }
+    
+    .video-container.active {
+      display: grid;
+    }
+    
+    .video-box {
+      background: #000;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 16/9;
+    }
+    
+    .video-box video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .video-label {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+    
+    .waiting-users {
+      background: #fff3cd;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      text-align: center;
+      font-weight: bold;
+      color: #856404;
+    }
+    
+    .session-info {
+      background: #e3f2fd;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 15px 0;
+    }
+    
+    .session-info h4 {
+      color: #1976d2;
+      margin-bottom: 10px;
+    }
+    
+    .session-info p {
+      margin: 5px 0;
+      color: #333;
+    }
+    
+    .earnings-highlight {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 15px 0;
+      text-align: center;
+    }
+    
+    .earnings-highlight .amount {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    
+    .wallet-info {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-family: monospace;
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+    
+    .chat-container {
+      margin-top: 20px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      display: none;
+    }
+    
+    .chat-container.active {
+      display: block;
+    }
+    
+    .chat-messages {
+      height: 150px;
+      overflow-y: auto;
+      padding: 15px;
+      background: #f8f9fa;
+    }
+    
+    .chat-message {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .chat-message strong {
+      color: #11998e;
+    }
+    
+    .chat-input-container {
+      display: flex;
+      padding: 10px;
+      background: white;
+      border-top: 2px solid #ddd;
+    }
+    
+    .chat-input-container input {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    
+    .chat-input-container button {
+      margin: 0 0 0 10px;
+      padding: 10px 20px;
+      width: auto;
+    }
+    
+    @media (max-width: 1024px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .video-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="header">
+      <h1>🎤 Interpreter Dashboard</h1>
+      <p>americansignlanguage.eth — Earn $ASL Tokens</p>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Earned</h3>
+        <div class="value" id="totalEarned">0</div>
+        <div class="label">$ASL Tokens</div>
+      </div>
+      <div class="stat-card">
+        <h3>Sessions Today</h3>
+        <div class="value" id="sessionsToday">0</div>
+        <div class="label">Calls Completed</div>
+      </div>
+      <div class="stat-card">
+        <h3>Minutes Interpreted</h3>
+        <div class="value" id="totalMinutes">0</div>
+        <div class="label">Total Time</div>
+      </div>
+      <div class="stat-card">
+        <h3>Current Rate</h3>
+        <div class="value">9</div>
+        <div class="label">$ASL per minute</div>
+      </div>
+    </div>
+    
+    <div class="main-content">
+      <div class="sidebar">
+        <h2 style="margin-bottom: 20px;">
+          <span class="status-indicator offline" id="statusIndicator"></span>
+          <span id="statusText">Offline</span>
+        </h2>
+        
+        <button id="connectBtn" class="btn-success" onclick="connectWallet()">
+          Connect MetaMask
+        </button>
+        
+        <button id="goOnlineBtn" class="btn-primary" onclick="goOnline()" disabled>
+          Go Online (Available)
+        </button>
+        
+        <button id="goOfflineBtn" class="btn-danger" onclick="goOffline()" style="display:none;">
+          Go Offline
+        </button>
+        
+        <div id="waitingUsers" class="waiting-users" style="display:none;">
+          ⏳ <span id="waitingCount">0</span> users waiting
+        </div>
+        
+        <div id="sessionInfo" class="session-info" style="display:none;">
+          <h4>Current Session</h4>
+          <p><strong>Client:</strong> <span id="clientName">-</span></p>
+          <p><strong>Duration:</strong> <span id="sessionDuration">0:00</span></p>
+          <p><strong>Earning:</strong> <span id="currentEarning">0</span> $ASL</p>
+        </div>
+        
+        <button id="endSessionBtn" class="btn-danger" onclick="endSession()" style="display:none;">
+          End Session
+        </button>
+        
+        <div id="earningsHighlight" class="earnings-highlight" style="display:none;">
+          <h4>Session Complete! 🎉</h4>
+          <div class="amount" id="sessionEarned">0 $ASL</div>
+          <button class="btn-warning" onclick="mintTokens()">Mint Tokens</button>
+        </div>
+        
+        <div id="walletInfo" class="wallet-info" style="display:none;"></div>
+      </div>
+      
+      <div class="video-section">
+        <h2 style="margin-bottom: 20px;">Video Call</h2>
+        
+        <div id="videoContainer" class="video-container">
+          <div class="video-box">
+            <video id="localVideo" autoplay muted></video>
+            <div class="video-label">You (Interpreter)</div>
+          </div>
+          <div class="video-box">
+            <video id="remoteVideo" autoplay></video>
+            <div class="video-label">Client (Deaf User)</div>
+          </div>
+        </div>
+        
+        <div id="noCallMessage" style="text-align:center; padding:60px; color:#999;">
+          <h3>📹 No Active Call</h3>
+          <p>Go online to accept VRI requests</p>
+        </div>
+        
+        <div id="chatContainer" class="chat-container">
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input-container">
+            <input type="text" id="chatInput" placeholder="Type a message...">
+            <button class="btn-primary" onclick="sendMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const socket = io();
+    let localStream = null;
+    let remoteStream = null;
+    let peerConnection = null;
+    let userWallet = null;
+    let partnerId = null;
+    let sessionStartTime = null;
+    let sessionTimer = null;
+    let mintData = null;
+    
+    const TOKEN_CONTRACT = '0x9627175C472412C5D84d781Abe950A798200316F';
+    const OWNER_WALLET = '0x72683ef02989930042e4C727F26cF4DF110d6b9A';
+    
+    const iceServers = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    };
+    
+    function updateStatus(text, status) {
+      document.getElementById('statusText').textContent = text;
+      const indicator = document.getElementById('statusIndicator');
+      indicator.className = `status-indicator ${status}`;
+    }
+    
+    async function connectWallet() {
+      if (!window.ethereum) {
+        alert('Please install MetaMask!');
+        return;
+      }
+      
+      try {
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        userWallet = accounts[0];
+        
+        document.getElementById('connectBtn').style.display = 'none';
+        document.getElementById('goOnlineBtn').disabled = false;
+        
+        document.getElementById('walletInfo').style.display = 'block';
+        document.getElementById('walletInfo').innerHTML = `
+          <strong>Your Wallet:</strong><br>${userWallet}
+        `;
+        
+        // Load earnings
+        loadEarnings();
+        
+        updateStatus('Connected - Ready to work', 'offline');
+      } catch (error) {
+        alert('Failed to connect wallet');
+        console.error(error);
+      }
+    }
+    
+    async function loadEarnings() {
+      try {
+        const response = await fetch(`/api/interpreter-earnings/${userWallet}`);
+        const data = await response.json();
+        
+        document.getElementById('totalEarned').textContent = Math.floor(data.totalTokens * 0.45) || 0;
+        document.getElementById('sessionsToday').textContent = data.sessionCount || 0;
+        document.getElementById('totalMinutes').textContent = data.totalMinutes || 0;
+      } catch (error) {
+        console.error('Failed to load earnings:', error);
+      }
+    }
+    
+    async function goOnline() {
+      try {
+        // Get camera/mic
+        localStream = await navigator.mediaDevices.getUserMedia({ 
+          video: true, 
+          audio: true 
+        });
+        
+        document.getElementById('localVideo').srcObject = localStream;
+        
+        // Join as interpreter
+        socket.emit('join-room', {
+          room: 'vri',
+          role: 'interpreter',
+          wallet: userWallet,
+          userName: 'ASL Interpreter'
+        });
+        
+        document.getElementById('goOnlineBtn').style.display = 'none';
+        document.getElementById('goOfflineBtn').style.display = 'block';
+        document.getElementById('waitingUsers').style.display = 'block';
+        
+        updateStatus('Online - Waiting for calls', 'online');
+        
+      } catch (error) {
+        alert('Camera/mic access denied');
+        console.error(error);
+      }
+    }
+    
+    function goOffline() {
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+      }
+      
+      document.getElementById('goOnlineBtn').style.display = 'block';
+      document.getElementById('goOfflineBtn').style.display = 'none';
+      document.getElementById('waitingUsers').style.display = 'none';
+      
+      updateStatus('Offline', 'offline');
+      
+      socket.disconnect();
+      setTimeout(() => socket.connect(), 100);
+    }
+    
+    async function createPeerConnection() {
+      peerConnection = new RTCPeerConnection(iceServers);
+      
+      localStream.getTracks().forEach(track => {
+        peerConnection.addTrack(track, localStream);
+      });
+      
+      peerConnection.ontrack = (event) => {
+        if (!remoteStream) {
+          remoteStream = new MediaStream();
+          document.getElementById('remoteVideo').srcObject = remoteStream;
+        }
+        remoteStream.addTrack(event.track);
+      };
+      
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate && partnerId) {
+          socket.emit('webrtc-ice-candidate', {
+            candidate: event.candidate,
+            to: partnerId
+          });
+        }
+      };
+      
+      peerConnection.onconnectionstatechange = () => {
+        console.log('Connection state:', peerConnection.connectionState);
+        if (peerConnection.connectionState === 'connected') {
+          document.getElementById('videoContainer').classList.add('active');
+          document.getElementById('noCallMessage').style.display = 'none';
+          document.getElementById('chatContainer').classList.add('active');
+          startSessionTimer();
+        }
+      };
+    }
+    
+    function startSessionTimer() {
+      sessionStartTime = Date.now();
+      document.getElementById('sessionInfo').style.display = 'block';
+      document.getElementById('endSessionBtn').style.display = 'block';
+      updateStatus('In Call - Earning', 'busy');
+      
+      sessionTimer = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
+        const minutes = Math.floor(elapsed / 60);
+        const seconds = elapsed % 60;
+        
+        document.getElementById('sessionDuration').textContent = 
+          `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        document.getElementById('currentEarning').textContent = 
+          Math.floor(minutes * 9); // 9 $ASL per minute (45% of 20)
+      }, 1000);
+    }
+    
+    socket.on('waiting-users', ({ count }) => {
+      document.getElementById('waitingCount').textContent = count;
+    });
+    
+    socket.on('match-found', async (data) => {
+      partnerId = data.partnerId;
+      document.getElementById('clientName').textContent = data.partnerName;
+      updateStatus('Call incoming...', 'busy');
+      
+      await createPeerConnection();
+    });
+    
+    socket.on('webrtc-offer', async ({ offer, from }) => {
+      partnerId = from;
+      await createPeerConnection();
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+      
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+      
+      socket.emit('webrtc-answer', {
+        answer: answer,
+        to: partnerId
+      });
+    });
+    
+    socket.on('webrtc-answer', async ({ answer }) => {
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+    });
+    
+    socket.on('webrtc-ice-candidate', async ({ candidate }) => {
+      try {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+      } catch (error) {
+        console.error('Error adding ICE candidate:', error);
+      }
+    });
+    
+    socket.on('chat-message', ({ message, from, timestamp }) => {
+      const chatMessages = document.getElementById('chatMessages');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'chat-message';
+      messageDiv.innerHTML = `<strong>${from}:</strong> ${message}`;
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+    
+    socket.on('mint-request', (data) => {
+      mintData = data;
+      
+      clearInterval(sessionTimer);
+      document.getElementById('sessionInfo').style.display = 'none';
+      document.getElementById('endSessionBtn').style.display = 'none';
+      
+      const interpreterEarning = Math.floor(data.interpreter);
+      document.getElementById('sessionEarned').textContent = `${interpreterEarning} $ASL`;
+      document.getElementById('earningsHighlight').style.display = 'block';
+      
+      // Update stats
+      loadEarnings();
+    });
+    
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      if (message && partnerId) {
+        socket.emit('chat-message', { message, to: partnerId });
+        
+        const chatMessages = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-message';
+        messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        input.value = '';
+      }
+    }
+    
+    document.getElementById('chatInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+    
+    function endSession() {
+      socket.emit('end-session');
+      
+      if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+      }
+      
+      document.getElementById('videoContainer').classList.remove('active');
+      document.getElementById('noCallMessage').style.display = 'block';
+      document.getElementById('chatContainer').classList.remove('active');
+      
+      partnerId = null;
+      clearInterval(sessionTimer);
+      
+      updateStatus('Online - Waiting for calls', 'online');
+    }
+    
+    async function mintTokens() {
+      if (!mintData) return;
+      
+      try {
+        const { interpreter, dev, user, interpreterWallet, userWallet } = mintData;
+        const abi = ["function mintRewards(address to, uint256 amount) public"];
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contract = new ethers.Contract(TOKEN_CONTRACT, abi, signer);
+        
+        updateStatus('Minting tokens...', 'busy');
+        
+        let tx = await contract.mintRewards(
+          interpreterWallet, 
+          ethers.utils.parseUnits(interpreter.toString(), 18)
+        );
+        await tx.wait();
+        
+        tx = await contract.mintRewards(
+          OWNER_WALLET, 
+          ethers.utils.parseUnits(dev.toString(), 18)
+        );
+        await tx.wait();
+        
+        tx = await contract.mintRewards(
+          userWallet, 
+          ethers.utils.parseUnits(user.toString(), 18)
+        );
+        await tx.wait();
+        
+        document.getElementById('earningsHighlight').style.display = 'none';
+        alert('✅ Tokens minted successfully!');
+        
+        updateStatus('Online - Waiting for calls', 'online');
+        loadEarnings();
+        
+      } catch (error) {
+        alert('❌ Minting failed: ' + error.message);
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
