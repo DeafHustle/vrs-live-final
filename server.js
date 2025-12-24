@@ -199,11 +199,19 @@ async function endSession(socket) {
   io.to(socket.id).emit('mint-request', mintData);
   if (socket.partner) {
     io.to(socket.partner).emit('mint-request', mintData);
+    io.to(socket.partner).emit('partner-ended-call'); // Notify partner
   }
+
+  // Notify both to end call UI
+  io.to(socket.id).emit('call-ended');
 
   console.log(`💰 ${rooms[socket.room].name}: ${minutes} min → ${total} $ASL (I:${interpreter} D:${dev} U:${user})`);
   
   socket.callStart = null;
+  if (partnerSocket) {
+    partnerSocket.callStart = null;
+    partnerSocket.partner = null;
+  }
   socket.partner = null;
 }
 
@@ -252,9 +260,64 @@ app.get('/api/interpreter-earnings/:wallet', async (req, res) => {
 });
 
 // Serve static HTML pages
-app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
+app.get('/', (req, res) => res.sendFile(__dirname + '/under-construction.html'));
+app.get('/request-service', (req, res) => res.sendFile(__dirname + '/request-service.html'));
 app.get('/vri', (req, res) => res.sendFile(__dirname + '/vri-business.html'));
 app.get('/interpreter', (req, res) => res.sendFile(__dirname + '/interpreter-dashboard.html'));
+
+// API endpoint for service requests
+app.post('/api/request-service', async (req, res) => {
+  try {
+    const requestData = req.body;
+    
+    // Save to database
+    const ServiceRequest = mongoose.model('ServiceRequest', new mongoose.Schema({
+      name: String,
+      business: String,
+      email: String,
+      phone: String,
+      serviceType: String,
+      datetime: Date,
+      duration: String,
+      description: String,
+      requirements: String,
+      referral: String,
+      createdAt: { type: Date, default: Date.now }
+    }));
+    
+    await ServiceRequest.create(requestData);
+    
+    console.log('📨 New service request:', requestData.email);
+    
+    // TODO: Send email notification
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Service request error:', error);
+    res.status(500).json({ error: 'Failed to submit request' });
+  }
+});
+
+// API endpoint for newsletter
+app.post('/api/newsletter', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    const Newsletter = mongoose.model('Newsletter', new mongoose.Schema({
+      email: String,
+      subscribedAt: { type: Date, default: Date.now }
+    }));
+    
+    await Newsletter.create({ email });
+    
+    console.log('📧 Newsletter signup:', email);
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Newsletter error:', error);
+    res.status(500).json({ error: 'Failed to subscribe' });
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
