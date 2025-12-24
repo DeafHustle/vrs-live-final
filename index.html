@@ -277,14 +277,18 @@
         Own your language. Own your future.
         AmericanSignLanguage.eth — by us, for us, forever.
         </p>
-      </div>
-      
-      <div class="cta-section">
-        <h2>Ready to Transform VRI?</h2>
-        <div class="button-group">
-          <a href="/vri" class="btn btn-primary">Get Started Now</a>
-        </div>
-      </div>
+     <div class="cta-section">
+      <h3>Need VRI Services Now?</h3>
+      <a href="/request-service.html" class="btn">Request Service Today →</a>
+    </div>
+    
+    <div class="newsletter">
+      <h3>Get Launch Updates</h3>
+      <p>Be the first to know when we launch. Join our community.</p>
+      <form class="newsletter-form" id="newsletterForm">
+        <input type="email" placeholder="your@email.com" required>
+        <button type="submit">Notify Me</button>
+      </form>
     </div>
     
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center;">
@@ -305,7 +309,25 @@
         <p style="margin: 10px 0;"> Empowering the Deaf Community Since 2014</p>
         <p style="margin: 10px 0;">© 2025 All Rights Reserved</p>
       </div>
-    </div>
-  </div>
+  <script>
+    document.getElementById('newsletterForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = e.target.querySelector('input').value;
+      
+      try {
+        await fetch('/api/newsletter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        alert('✅ Thanks! You\'ll be notified when we launch on April 15, 2026!');
+        e.target.reset();
+      } catch (error) {
+        alert('⚠️ Please try again or follow us on social media for updates.');
+      }
+    });
+  </script>
+</body>
+</html>
 </body>
 </html>
