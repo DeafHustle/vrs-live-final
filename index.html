@@ -47,7 +47,8 @@
       opacity: 0.9;
     }
     
-    .construction-box {
+    /* Consistent glass-effect box style */
+    .glass-box {
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(10px);
       border: 2px solid rgba(255, 255, 255, 0.3);
@@ -56,15 +57,17 @@
       margin: 40px 0;
     }
     
-    .construction-box h2 {
+    .glass-box h2, .glass-box h3 {
       font-size: 2rem;
       margin-bottom: 20px;
+      color: white;
     }
     
-    .construction-box p {
+    .glass-box p {
       font-size: 1.2rem;
       line-height: 1.8;
       margin-bottom: 15px;
+      color: white;
     }
     
     .launch-date {
@@ -74,15 +77,6 @@
       padding: 20px;
       background: rgba(255, 255, 255, 0.2);
       border-radius: 15px;
-    }
-    
-    .cta-section {
-      margin: 40px 0;
-    }
-    
-    .cta-section h3 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
     }
     
     .btn {
@@ -127,37 +121,6 @@
       margin-bottom: 10px;
     }
     
-    .social-links {
-      margin: 40px 0;
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      flex-wrap: wrap;
-    }
-    
-    .social-links a {
-      color: white;
-      text-decoration: none;
-      font-size: 1.1rem;
-      transition: opacity 0.3s;
-    }
-    
-    .social-links a:hover {
-      opacity: 0.7;
-    }
-    
-    .newsletter {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 40px;
-      border-radius: 15px;
-      margin: 40px 0;
-    }
-    
-    .newsletter h3 {
-      font-size: 1.8rem;
-      margin-bottom: 15px;
-    }
-    
     .newsletter-form {
       display: flex;
       gap: 10px;
@@ -189,6 +152,12 @@
       background: #5568d3;
     }
     
+    .mission-text {
+      text-align: left;
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+    
     @media (max-width: 768px) {
       h1 {
         font-size: 2rem;
@@ -198,7 +167,7 @@
         font-size: 1.2rem;
       }
       
-      .construction-box {
+      .glass-box {
         padding: 30px 20px;
       }
       
@@ -218,7 +187,8 @@
     <h1>americansignlanguage.eth</h1>
     <p class="tagline">Building the Future of Deaf-Led VRI</p>
     
-    <div class="construction-box">
+    <!-- Construction Box -->
+    <div class="glass-box">
       <h2>Platform Under Construction</h2>
       <p>We're building something revolutionary for the Deaf community.</p>
       <p>The first blockchain-powered VRI platform where interpreters earn 45%, users earn rewards, and everyone wins.</p>
@@ -229,6 +199,7 @@
       </div>
     </div>
     
+    <!-- Features Grid -->
     <div class="features">
       <div class="feature">
         <div class="feature-icon">📹</div>
@@ -255,34 +226,35 @@
       </div>
     </div>
     
-    <div class="cta-section">
-      <h3>Need VRI Services Now?</h3>
-      
-      <div class="info-box" style="background: #d4edda;">
-        <h3 style="color: #155724;">🎯 Our Mission</h3>
-        <p style="color: #155724; font-size: 1.1rem; line-height: 1.8;">
-        We are a Deaf-founded, Deaf-led, Deaf-owned movement.
-        For too long, the Deaf community has been forced to pay corporations for basic access to our own language.
-        No more.
-        AmericanSignLanguage.eth exists to:
-
-        Deliver the fastest, highest-quality VRI on Earth — instantly, anywhere, on any device
-        Pay interpreters the highest rates in the industry — 45% of every dollar, forever
-        Reward every Deaf user with real $ASL tokens for using their own language
-        Return 100% of the value created by American Sign Language back to the people who created it: us
-
-        We’re not building another app.
-        We’re building the empire that finally puts Deaf people in control of Deaf technology.
-        One call, one token, one block at a time — we’re taking back what was always ours.
-        Own your language. Own your future.
-        AmericanSignLanguage.eth — by us, for us, forever.
-        </p>
-     <div class="cta-section">
-      <h3>Need VRI Services Now?</h3>
-      <a href="/request-service.html" class="btn">Request Service Today →</a>
+    <!-- Mission Box -->
+    <div class="glass-box">
+      <h3>🎯 Our Mission</h3>
+      <div class="mission-text">
+        <p>We are a Deaf-founded, Deaf-led, Deaf-owned movement.</p>
+        <p>For too long, the Deaf community has been forced to pay corporations for basic access to our own language. No more.</p>
+        <p>AmericanSignLanguage.eth exists to:</p>
+        <ul style="margin: 20px 0; padding-left: 20px;">
+          <li>Deliver the fastest, highest-quality VRI on Earth — instantly, anywhere, on any device</li>
+          <li>Pay interpreters the highest rates in the industry — 45% of every dollar, forever</li>
+          <li>Reward every Deaf user with real $ASL tokens for using their own language</li>
+          <li>Return 100% of the value created by American Sign Language back to the people who created it: us</li>
+        </ul>
+        <p>We're not building another app. We're building the empire that finally puts Deaf people in control of Deaf technology.</p>
+        <p>One call, one token, one block at a time — we're taking back what was always ours.</p>
+        <p style="margin-top: 20px; font-weight: bold;">Own your language. Own your future.</p>
+        <p style="font-weight: bold;">AmericanSignLanguage.eth — by us, for us, forever.</p>
+      </div>
     </div>
     
-    <div class="newsletter">
+    <!-- CTA Section -->
+    <div class="glass-box">
+      <h3>Need VRI Services Now?</h3>
+      <p>Professional ASL interpreting available today while we build the platform.</p>
+      <a href="/request-service" class="btn">Request Service Today →</a>
+    </div>
+    
+    <!-- Newsletter Box -->
+    <div class="glass-box">
       <h3>Get Launch Updates</h3>
       <p>Be the first to know when we launch. Join our community.</p>
       <form class="newsletter-form" id="newsletterForm">
@@ -291,24 +263,28 @@
       </form>
     </div>
     
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; text-align: center;">
-      <h3 style="margin-bottom: 20px; font-size: 1.5rem;">Connect With Us</h3>
+    <!-- Footer -->
+    <div style="background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 15px; margin-top: 40px;">
+      <h3 style="margin-bottom: 20px; font-size: 1.3rem;">Connect With Us</h3>
       <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 20px;">
-        <a href="https://www.instagram.com/americansignlanguage.eth/" target="_blank" style="color: white; text-decoration: none; font-size: 1.1rem; transition: opacity 0.3s;">
+        <a href="https://www.instagram.com/americansignlanguage.eth/" target="_blank" style="color: white; text-decoration: none; font-size: 1.1rem; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
           📸 Instagram
         </a>
-        <a href="https://x.com/aslnfts" target="_blank" style="color: white; text-decoration: none; font-size: 1.1rem; transition: opacity 0.3s;">
+        <a href="https://x.com/aslnfts" target="_blank" style="color: white; text-decoration: none; font-size: 1.1rem; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
           🐦 X (Twitter)
         </a>
-        <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank" style="color: white; text-decoration: none; font-size: 1.1rem; transition: opacity 0.3s;">
+        <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank" style="color: white; text-decoration: none; font-size: 1.1rem; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
           🎨 Mint NFTs
         </a>
       </div>
       <div style="opacity: 0.8; font-size: 0.9rem;">
-        <p style="margin: 10px 0;">americansignlanguage.eth | Built by the Deaf for the Deaf </p>
-        <p style="margin: 10px 0;"> Empowering the Deaf Community Since 2014</p>
+        <p style="margin: 10px 0;">americansignlanguage.eth | Built by the Deaf for the Deaf</p>
+        <p style="margin: 10px 0;">Empowering the Deaf Community Since 2014</p>
         <p style="margin: 10px 0;">© 2025 All Rights Reserved</p>
       </div>
+    </div>
+  </div>
+
   <script>
     document.getElementById('newsletterForm').addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -327,7 +303,5 @@
       }
     });
   </script>
-</body>
-</html>
 </body>
 </html>
