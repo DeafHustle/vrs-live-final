@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>On-Demand ASL Video Remote Interpreting (VRI) Services</title>
+  <meta name="description" content="Deaf-led ASL VRI services. Certified interpreters on-demand or scheduled. Lower rates than major providers. Request service today.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      color: #333;
+    }
+    
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 80px 20px;
+      text-align: center;
+    }
+    
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    
+    .hero p {
+      font-size: 1.3rem;
+      margin-bottom: 40px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      opacity: 0.95;
+    }
+    
+    .hero-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 18px 40px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background: white;
+      color: #667eea;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+    
+    .btn-secondary:hover {
+      background: white;
+      color: #667eea;
+    }
+    
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Sections */
+    section {
+      padding: 80px 20px;
+    }
+    
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #2d3748;
+    }
+    
+    .section-subtitle {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #718096;
+      margin-bottom: 60px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    /* Benefits Grid */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 40px;
+      margin-top: 60px;
+    }
+    
+    .benefit-card {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+    }
+    
+    .benefit-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+    }
+    
+    .benefit-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+    
+    .benefit-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: #2d3748;
+    }
+    
+    .benefit-card p {
+      color: #718096;
+      line-height: 1.8;
+    }
+    
+    /* How It Works */
+    .how-it-works {
+      background: #f7fafc;
+    }
+    
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      margin-top: 60px;
+    }
+    
+    .step {
+      text-align: center;
+      padding: 30px 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .step-number {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin: 0 auto 20px;
+    }
+    
+    .step h4 {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      color: #2d3748;
+    }
+    
+    .step p {
+      color: #718096;
+      line-height: 1.6;
+    }
+    
+    /* Form Section */
+    .form-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .form-container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      padding: 50px 40px;
+      border-radius: 15px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .form-container h2 {
+      color: #2d3748;
+      margin-bottom: 10px;
+      font-size: 2rem;
+    }
+    
+    .form-container p {
+      color: #718096;
+      margin-bottom: 30px;
+      font-size: 1.1rem;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #2d3748;
+      font-weight: 500;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+    
+    .form-note {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #718096;
+      text-align: center;
+    }
+    
+    /* Pricing Section */
+    .pricing {
+      background: #f7fafc;
+    }
+    
+    .pricing-card {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    
+    .price {
+      font-size: 3rem;
+      color: #667eea;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+    
+    .price-note {
+      color: #718096;
+      margin-bottom: 30px;
+    }
+    
+    .pricing-features {
+      text-align: left;
+      margin: 30px 0;
+    }
+    
+    .pricing-features li {
+      padding: 12px 0;
+      border-bottom: 1px solid #e2e8f0;
+      color: #4a5568;
+    }
+    
+    /* Footer */
+    footer {
+      background: #2d3748;
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    
+    .footer-links a {
+      color: white;
+      text-decoration: none;
+      transition: opacity 0.3s;
+    }
+    
+    .footer-links a:hover {
+      opacity: 0.7;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 1.1rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-container {
+        padding: 30px 20px;
+      }
+      
+      .benefits-grid {
+        gap: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <div class="hero">
+    <h1>Universal Access for Every Deaf Customer</h1>
+    <p>
+      Provide clear, certified American Sign Language (ASL) interpreting for your business appointments, 
+      meetings, or customer interactions. On-demand or scheduled VRI — fast, reliable, and Deaf-led.
+    </p>
+    <div class="hero-buttons">
+      <a href="#request-form" class="btn btn-primary">Request Service Now</a>
+      <a href="#pricing" class="btn btn-secondary">View Pricing</a>
+    </div>
+  </div>
+
+  <!-- Benefits Section -->
+  <section>
+    <div class="container">
+      <h2 class="section-title">Why Choose Our VRI Services?</h2>
+      
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">⚡</div>
+          <h3>Immediate On-Demand Access</h3>
+          <p>Perfect for unplanned needs — connect to a certified ASL interpreter in minutes, no advance scheduling required.</p>
+        </div>
+        
+        <div class="benefit-card">
+          <div class="benefit-icon">📅</div>
+          <h3>Scheduled Appointments</h3>
+          <p>Book ahead for structured meetings, healthcare visits, or events. High-quality video ensures effective communication every time.</p>
+        </div>
+        
+        <div class="benefit-card">
+          <div class="benefit-icon">✅</div>
+          <h3>Certified Interpreters You Can Trust</h3>
+          <p>All interpreters are RID/NAD-certified with specialized training. We prioritize quality, accuracy, and cultural competence.</p>
+        </div>
+        
+        <div class="benefit-card">
+          <div class="benefit-icon">💼</div>
+          <h3>Benefits for Your Business</h3>
+          <p>Improve customer satisfaction, reduce communication barriers, and meet accessibility needs efficiently. Lower rates than big providers.</p>
+        </div>
+        
+        <div class="benefit-card">
+          <div class="benefit-icon">🤝</div>
+          <h3>Deaf-Led and Community-Focused</h3>
+          <p>Founded and operated by a Deaf professional with years of industry experience — we understand your needs inside out.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works">
+    <div class="container">
+      <h2 class="section-title">Simple and Efficient Process</h2>
+      
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h4>Submit Your Request</h4>
+          <p>Fill out the quick form below with your details and preferred time.</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">2</div>
+          <h4>We Match the Perfect Interpreter</h4>
+          <p>Our team selects a certified ASL expert based on your needs.</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">3</div>
+          <h4>Connect Securely</h4>
+          <p>Join via browser-based video (no app download needed) for crystal-clear interpreting.</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">4</div>
+          <h4>Get Invoiced Fairly</h4>
+          <p>Pay only for minutes used — transparent billing, twice monthly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section id="pricing" class="pricing">
+    <div class="container">
+      <h2 class="section-title">Competitive Pricing</h2>
+      
+      <div class="pricing-card">
+        <h3>Professional VRI Services</h3>
+        <div class="price">$2.25<span style="font-size: 1.5rem;">/min</span></div>
+        <p class="price-note">Weekday rates starting at $2.25/minute</p>
+        
+        <ul class="pricing-features">
+          <li>✓ RID/NAD Certified Interpreters</li>
+          <li>✓ Medical, Legal, Business Expertise</li>
+          <li>✓ On-Demand or Scheduled</li>
+          <li>✓ Browser-Based (No App Required)</li>
+          <li>✓ Pay Only for Minutes Used</li>
+          <li>✓ Volume Discounts Available</li>
+          <li>✓ Personal Account Support</li>
+          <li>✓ Deaf-Led & Community-Focused</li>
+        </ul>
+        
+        <a href="#request-form" class="btn btn-primary" style="margin-top: 20px;">Get Started</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Request Form Section -->
+  <section id="request-form" class="form-section">
+    <div class="container">
+      <div class="form-container">
+        <h2>Request VRI Service Today</h2>
+        <p>Ready to get started? Complete the form below to schedule on-demand or booked interpreting. We'll respond within hours (or minutes for urgent needs).</p>
+        
+        <form id="serviceForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Your Name *</label>
+              <input type="text" name="name" required placeholder="John Smith">
+            </div>
+            
+            <div class="form-group">
+              <label>Business/Organization Name *</label>
+              <input type="text" name="business" required placeholder="ABC Medical Center">
+            </div>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Email Address *</label>
+              <input type="email" name="email" required placeholder="john@business.com">
+            </div>
+            
+            <div class="form-group">
+              <label>Phone Number *</label>
+              <input type="tel" name="phone" required placeholder="(555) 123-4567">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Service Type *</label>
+            <select name="serviceType" required>
+              <option value="">Select Service Type</option>
+              <option value="on-demand">On-Demand VRI</option>
+              <option value="scheduled">Scheduled VRI</option>
+              <option value="consultation">Consultation</option>
+            </select>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Date & Time Needed</label>
+              <input type="datetime-local" name="datetime">
+            </div>
+            
+            <div class="form-group">
+              <label>Estimated Duration</label>
+              <select name="duration">
+                <option value="">Select Duration</option>
+                <option value="15">15 minutes</option>
+                <option value="30">30 minutes</option>
+                <option value="60">1 hour</option>
+                <option value="90">1.5 hours</option>
+                <option value="120">2 hours</option>
+                <option value="custom">Custom (specify in notes)</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Description of Appointment/Needs *</label>
+            <textarea name="description" required placeholder="E.g., Medical appointment, business meeting, customer service call..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>Any Special Requirements</label>
+            <textarea name="requirements" placeholder="E.g., medical terminology, CDI needed, legal expertise..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>How Did You Hear About Us?</label>
+            <select name="referral">
+              <option value="">Select One</option>
+              <option value="google">Google Search</option>
+              <option value="social">Social Media</option>
+              <option value="referral">Referral</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          
+          <button type="submit" class="submit-btn">Submit Request</button>
+          
+          <p class="form-note">
+            All services comply with effective communication standards. 
+            Questions? Contact us directly.
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <h3>americansignlanguage.eth</h3>
+      <p>Deaf-Led Accessibility Services</p>
+      
+      <div class="footer-links">
+        <a href="https://www.instagram.com/americansignlanguage.eth/" target="_blank">📸 Instagram</a>
+        <a href="https://x.com/aslnfts" target="_blank">🐦 X (Twitter)</a>
+        <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank">🎨 Mint NFTs</a>
+        <a href="/">🏠 Platform</a>
+      </div>
+      
+      <p style="margin-top: 30px; opacity: 0.7;">© 2025 American Sign Language Services | All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <script>
+    // Form submission handler
+    document.getElementById('serviceForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+      
+      // Show loading state
+      const submitBtn = e.target.querySelector('.submit-btn');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Submitting...';
+      submitBtn.disabled = true;
+      
+      try {
+        // Send to your backend or email service
+        const response = await fetch('/api/request-service', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+          alert('✅ Request submitted successfully! We\'ll contact you shortly.');
+          e.target.reset();
+        } else {
+          throw new Error('Submission failed');
+        }
+      } catch (error) {
+        alert('⚠️ There was an issue submitting your request. Please email us directly or try again.');
+        console.error(error);
+      } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+    
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
