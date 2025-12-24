@@ -1,26 +1,14 @@
 {
   "name": "americansignlanguage-vri",
   "version": "2.0.0",
-  "description": "Video Remote Interpreting platform with WebRTC and blockchain rewards",
-  "main": "server-webrtc.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node server-webrtc.js",
-    "dev": "nodemon server-webrtc.js"
+    "start": "node server.js"
   },
-  "keywords": ["vri", "vrs", "asl", "deaf", "webrtc", "blockchain"],
-  "author": "Deaf Developer",
-  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "socket.io": "^4.7.2",
     "mongoose": "^7.5.0",
-    "cors": "^2.8.5",
-    "ethers": "^5.7.2"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
-  },
-  "engines": {
-    "node": ">=16.0.0"
+    "cors": "^2.8.5"
   }
 }
