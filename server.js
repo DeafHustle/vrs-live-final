@@ -3,6 +3,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const path = require('path');
 
 const app = express();
 app.use(cors());
@@ -260,10 +261,21 @@ app.get('/api/interpreter-earnings/:wallet', async (req, res) => {
 });
 
 // Serve static HTML pages
-app.get('/', (req, res) => res.sendFile(__dirname + '/under-construction.html'));
-app.get('/request-service', (req, res) => res.sendFile(__dirname + '/request-service.html'));
-app.get('/vri', (req, res) => res.sendFile(__dirname + '/vri-business.html'));
-app.get('/interpreter', (req, res) => res.sendFile(__dirname + '/interpreter-dashboard.html'));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'under-construction.html'));
+});
+
+app.get('/request-service', (req, res) => {
+  res.sendFile(path.join(__dirname, 'request-service.html'));
+});
+
+app.get('/vri', (req, res) => {
+  res.sendFile(path.join(__dirname, 'vri-business.html'));
+});
+
+app.get('/interpreter', (req, res) => {
+  res.sendFile(path.join(__dirname, 'interpreter-dashboard.html'));
+});
 
 // API endpoint for service requests
 app.post('/api/request-service', async (req, res) => {
