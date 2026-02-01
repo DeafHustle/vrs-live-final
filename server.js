@@ -1,5 +1,5 @@
 // Start API server on different port
-const apiServer = require('./apiserver');
+const apiServer = require('./api/api-server');
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
