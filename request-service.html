@@ -633,7 +633,7 @@ Referral Source: ${formObject.referral || 'Not specified'}`
       
       try {
         // Send to your backend or email service
-        const response = await fetch('/api/sumbit-request', {
+        const response = await fetch('/api/submit-request', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
