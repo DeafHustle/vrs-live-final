@@ -1,3 +1,4 @@
+const nodemailer = require('nodemailer');
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
@@ -8,6 +9,14 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 4000;
+// Email transporter configuration
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'asltranscribe@gmail.com',
+    pass: 'khky qxwn dsiu vrny'
+  }
+});
 
 // In-memory storage (replace with database later)
 const sessions = new Map();
@@ -396,7 +405,77 @@ app.get('/api', (req, res) => {
     note: 'Using mock data while recruiting interpreters. Full production: April 15, 2026'
   });
 });
-
+// Contact form submission endpoint
+app.post('/api/submit-request', async (req, res) => {
+  try {
+    const { name, email, company, phone, service, message } = req.body;
+    
+    // Validate required fields
+    if (!name || !email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name and email are required'
+      });
+    }
+    
+    // Email content
+    const mailOptions = {
+      from: 'asltranscribe@gmail.com',
+      to: 'asltranscribe@gmail.com',
+      subject: `🔔 New VRI Service Request from ${name}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #2196F3;">New Service Request</h2>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Name:</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;">${name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Email:</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;"><a href="mailto:${email}">${email}</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Company:</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;">${company || 'Not provided'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Phone:</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;">${phone || 'Not provided'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;"><strong>Service Type:</strong></td>
+              <td style="padding: 10px; border-bottom: 1px solid #eee;">${service || 'Not specified'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; vertical-align: top;"><strong>Message:</strong></td>
+              <td style="padding: 10px;">${message || 'No message provided'}</td>
+            </tr>
+          </table>
+          <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+          <p style="color: #666; font-size: 12px;"><em>Submitted: ${new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })}</em></p>
+        </div>
+      `
+    };
+    
+    // Send email
+    await transporter.sendMail(mailOptions);
+    
+    console.log(`📧 Email sent for request from ${name} (${email})`);
+    
+    res.status(200).json({
+      success: true,
+      message: 'Thank you! Your request has been submitted. We will contact you within 24 hours.'
+    });
+    
+  } catch (error) {
+    console.error('❌ Email error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'There was an issue submitting your request. Please email us directly at asltranscribe@gmail.com'
+    });
+  }
+});
 app.listen(PORT, () => {
   console.log('═══════════════════════════════════════════════════════');
   console.log(`   🤖 ASL AI AGENT API - BETA`);
