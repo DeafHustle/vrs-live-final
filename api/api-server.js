@@ -358,7 +358,6 @@ app.post('/v1/auth/get-test-key', (req, res) => {
 });
 
 // Root endpoint
-const path = require('path');
 
 // Serve website HTML files
 app.get('/', (req, res) => {
