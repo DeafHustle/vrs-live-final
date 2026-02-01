@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const crypto = require('crypto');
 
@@ -357,7 +358,27 @@ app.post('/v1/auth/get-test-key', (req, res) => {
 });
 
 // Root endpoint
+const path = require('path');
+
+// Serve website HTML files
 app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../under-construction.html'));
+});
+
+app.get('/request-service', (req, res) => {
+  res.sendFile(path.join(__dirname, '../request-service.html'));
+});
+
+app.get('/vri', (req, res) => {
+  res.sendFile(path.join(__dirname, '../vri-business.html'));
+});
+
+app.get('/interpreter', (req, res) => {
+  res.sendFile(path.join(__dirname, '../interpreter-dashboard.html'));
+});
+
+// API info endpoint
+app.get('/api', (req, res) => {
   res.json({
     name: 'ASL AI Agent API',
     version: '1.0.0-beta',
