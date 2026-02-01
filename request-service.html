@@ -608,7 +608,22 @@
       e.preventDefault();
       
       const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData);
+const formObject = Object.fromEntries(formData);
+
+// Map form fields to server expected fields
+const data = {
+  name: formObject.name,
+  email: formObject.email,
+  company: formObject.business,
+  phone: formObject.phone,
+  service: formObject.serviceType,
+  message: `Service Type: ${formObject.serviceType}
+Date/Time: ${formObject.datetime || 'Not specified'}
+Duration: ${formObject.duration || 'Not specified'}
+Description: ${formObject.description}
+Special Requirements: ${formObject.requirements || 'None'}
+Referral Source: ${formObject.referral || 'Not specified'}`
+};
       
       // Show loading state
       const submitBtn = e.target.querySelector('.submit-btn');
@@ -618,7 +633,7 @@
       
       try {
         // Send to your backend or email service
-        const response = await fetch('/api/request-service', {
+        const response = await fetch('/api/sumbit-request', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
