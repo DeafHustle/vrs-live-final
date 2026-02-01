@@ -453,7 +453,7 @@ app.post('/api/submit-request', async (req, res) => {
             </tr>
           </table>
           <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
-          <p style="color: #666; font-size: 12px;"><em>Submitted: ${new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })}</em></p>
+          <p style="color: #666; font-size: 12px;"><em>Submitted: ${new Date().toLocaleString()}</em></p>
         </div>
       `
     };
