@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Started | americansignlanguage.eth</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      opacity: 0.9;
+    }
+    
+    .content {
+      padding: 30px;
+    }
+    
+    .steps {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    
+    .step {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      background: #e9ecef;
+      color: #666;
+    }
+    
+    .step.active {
+      background: #667eea;
+      color: white;
+    }
+    
+    .step.done {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    .step-line {
+      width: 30px;
+      height: 3px;
+      background: #e9ecef;
+      align-self: center;
+    }
+    
+    .step-line.done {
+      background: #4CAF50;
+    }
+    
+    .form-section {
+      display: none;
+    }
+    
+    .form-section.active {
+      display: block;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-success {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #666;
+    }
+    
+    .login-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    /* Stripe Elements */
+    #card-element {
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: white;
+    }
+    
+    #card-element.StripeElement--focus {
+      border-color: #667eea;
+    }
+    
+    #card-errors {
+      color: #dc3545;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+    
+    .payment-info {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .payment-info h4 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    
+    .payment-info p {
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    
+    .rate-display {
+      background: linear-gradient(135deg, #667eea22 0%, #764ba222 100%);
+      border: 2px solid #667eea;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .rate-display .rate {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #667eea;
+    }
+    
+    .rate-display .rate-note {
+      color: #666;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+    
+    .success-section {
+      text-align: center;
+      padding: 20px 0;
+    }
+    
+    .success-section .icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+    
+    .success-section h2 {
+      color: #4CAF50;
+      margin-bottom: 15px;
+    }
+    
+    .success-section p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+    
+    .saved-cards {
+      margin-bottom: 20px;
+    }
+    
+    .saved-card {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .saved-card:hover {
+      border-color: #667eea;
+    }
+    
+    .saved-card.selected {
+      border-color: #667eea;
+      background: #667eea11;
+    }
+    
+    .saved-card .card-icon {
+      font-size: 1.5rem;
+    }
+    
+    .saved-card .card-info {
+      flex: 1;
+    }
+    
+    .saved-card .card-brand {
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+    
+    .saved-card .card-last4 {
+      color: #666;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🤟 americansignlanguage.eth</h1>
+      <p>Create your account to request interpreters</p>
+    </div>
+    
+    <div class="content">
+      <!-- Progress Steps -->
+      <div class="steps">
+        <div class="step active" id="step1">1</div>
+        <div class="step-line" id="line1"></div>
+        <div class="step" id="step2">2</div>
+        <div class="step-line" id="line2"></div>
+        <div class="step" id="step3">3</div>
+      </div>
+      
+      <!-- Step 1: Account Info -->
+      <div class="form-section active" id="section1">
+        <h3 style="margin-bottom: 20px;">Create Your Account</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="firstName" required>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="lastName" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="email" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Video Phone (VP) Number *</label>
+          <input type="tel" id="vpPhone" required placeholder="Your VP number for interpreter callbacks">
+        </div>
+        
+        <div class="form-group">
+          <label>Text Phone Number (optional)</label>
+          <input type="tel" id="textPhone" placeholder="For SMS notifications">
+        </div>
+        
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="password" required minlength="8">
+        </div>
+        
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" id="confirmPassword" required>
+        </div>
+        
+        <button class="btn-primary" onclick="createAccount()">Continue →</button>
+        
+        <div class="login-link">
+          Already have an account? <a href="/login">Log in</a>
+        </div>
+      </div>
+      
+      <!-- Step 2: Add Payment Method -->
+      <div class="form-section" id="section2">
+        <h3 style="margin-bottom: 20px;">Add Payment Method</h3>
+        
+        <div class="rate-display">
+          <div class="rate">$2.50/min</div>
+          <div class="rate-note">Only charged for actual session time</div>
+        </div>
+        
+        <div class="payment-info">
+          <h4>🔒 Secure Payments</h4>
+          <p>Your card is securely stored by Stripe. You'll only be charged for the actual minutes used in each session. A temporary hold is placed when you request an interpreter, then the actual amount is charged when the session ends.</p>
+        </div>
+        
+        <div class="form-group">
+          <label>Card Details</label>
+          <div id="card-element"></div>
+          <div id="card-errors"></div>
+        </div>
+        
+        <button class="btn-primary" onclick="saveCard()" id="saveCardBtn">Save Card & Continue →</button>
+        
+        <p style="text-align: center; margin-top: 15px; color: #666; font-size: 0.9rem;">
+          <a href="#" onclick="skipPayment()" style="color: #666;">Skip for now →</a>
+        </p>
+      </div>
+      
+      <!-- Step 3: Success -->
+      <div class="form-section" id="section3">
+        <div class="success-section">
+          <div class="icon">🎉</div>
+          <h2>You're All Set!</h2>
+          <p>Your account is ready. You can now request ASL interpreters instantly.</p>
+          
+          <div id="cardAddedNote" class="hidden" style="background: #d4edda; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: left;">
+            <strong style="color: #155724;">✓ Payment method saved</strong>
+            <p style="color: #155724; font-size: 0.9rem; margin-top: 5px;">Your card ending in <span id="savedCardLast4">****</span> is ready for instant sessions.</p>
+          </div>
+          
+          <div id="noCardNote" class="hidden" style="background: #fff3cd; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: left;">
+            <strong style="color: #856404;">⚠️ No payment method</strong>
+            <p style="color: #856404; font-size: 0.9rem; margin-top: 5px;">You'll need to add a card before requesting an interpreter.</p>
+          </div>
+          
+          <button class="btn-success" onclick="goToDashboard()">Request Interpreter →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let stripe, elements, cardElement;
+    let userData = null;
+    
+    // Initialize Stripe
+    async function initStripe() {
+      const response = await fetch('/api/stripe/config');
+      const config = await response.json();
+      
+      stripe = Stripe(config.publishableKey);
+      elements = stripe.elements();
+      
+      cardElement = elements.create('card', {
+        style: {
+          base: {
+            fontSize: '16px',
+            color: '#333',
+            '::placeholder': { color: '#aab7c4' }
+          }
+        }
+      });
+      
+      cardElement.mount('#card-element');
+      
+      cardElement.on('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        if (event.error) {
+          displayError.textContent = event.error.message;
+        } else {
+          displayError.textContent = '';
+        }
+      });
+    }
+    
+    initStripe();
+    
+    async function createAccount() {
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const vpPhone = document.getElementById('vpPhone').value.trim();
+      const textPhone = document.getElementById('textPhone').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (!firstName || !lastName || !email || !vpPhone || !password) {
+        alert('Please fill in all required fields');
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+      
+      if (password.length < 8) {
+        alert('Password must be at least 8 characters');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/user/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            firstName, 
+            lastName, 
+            email, 
+            vpPhone,
+            textPhone,
+            password 
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          userData = result.user;
+          
+          // Store in localStorage
+          localStorage.setItem('asl_user', JSON.stringify(userData));
+          
+          // Move to step 2
+          goToStep(2);
+        } else {
+          alert(result.error || 'Registration failed');
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        alert('Registration failed. Please try again.');
+      }
+    }
+    
+    async function saveCard() {
+      const btn = document.getElementById('saveCardBtn');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+      
+      try {
+        // Create setup intent
+        const setupResponse = await fetch('/api/stripe/setup-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customerId: userData.stripeCustomerId })
+        });
+        
+        const { clientSecret } = await setupResponse.json();
+        
+        // Confirm card setup
+        const { error, setupIntent } = await stripe.confirmCardSetup(clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name: `${userData.firstName} ${userData.lastName}`,
+              email: userData.email
+            }
+          }
+        });
+        
+        if (error) {
+          document.getElementById('card-errors').textContent = error.message;
+          btn.disabled = false;
+          btn.textContent = 'Save Card & Continue →';
+          return;
+        }
+        
+        // Get card details for display
+        const paymentMethod = await stripe.paymentMethods.retrieve(setupIntent.payment_method);
+        
+        // Show success
+        document.getElementById('cardAddedNote').classList.remove('hidden');
+        document.getElementById('savedCardLast4').textContent = paymentMethod?.card?.last4 || '****';
+        
+        goToStep(3);
+        
+      } catch (error) {
+        console.error('Save card error:', error);
+        alert('Failed to save card. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Save Card & Continue →';
+      }
+    }
+    
+    function skipPayment() {
+      document.getElementById('noCardNote').classList.remove('hidden');
+      goToStep(3);
+    }
+    
+    function goToStep(step) {
+      // Update progress indicators
+      for (let i = 1; i <= 3; i++) {
+        const stepEl = document.getElementById(`step${i}`);
+        const lineEl = document.getElementById(`line${i}`);
+        const sectionEl = document.getElementById(`section${i}`);
+        
+        stepEl.classList.remove('active', 'done');
+        if (lineEl) lineEl.classList.remove('done');
+        sectionEl.classList.remove('active');
+        
+        if (i < step) {
+          stepEl.classList.add('done');
+          stepEl.innerHTML = '✓';
+          if (lineEl) lineEl.classList.add('done');
+        } else if (i === step) {
+          stepEl.classList.add('active');
+          sectionEl.classList.add('active');
+        }
+      }
+    }
+    
+    function goToDashboard() {
+      window.location.href = '/vri';
+    }
+  </script>
+</body>
+</html>
