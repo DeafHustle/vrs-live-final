@@ -1,11 +1,8 @@
-// Start API server on different port
-const apiServer = require('./api/api-server');
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const path = require('path');
 
 const app = express();
 app.use(cors());
@@ -23,10 +20,14 @@ mongoose.connect('mongodb+srv://vrsadmin:vrs123456@asleth.gjolaoq.mongodb.net/as
   .then(() => console.log('✅ MONGODB CONNECTED'))
   .catch(err => console.log('❌ MongoDB Error:', err));
 
+// ============================================
+// SCHEMAS
+// ============================================
+
 // Session schema for tracking
 const sessionSchema = new mongoose.Schema({
   roomType: String,
-  userWallet: String,
+visitorWallet: String,
   interpreterWallet: String,
   startTime: Date,
   endTime: Date,
@@ -35,6 +36,89 @@ const sessionSchema = new mongoose.Schema({
   status: String // 'active', 'completed', 'cancelled'
 });
 const Session = mongoose.model('Session', sessionSchema);
+
+// Enhanced Interpreter Schema
+const interpreterSchema = new mongoose.Schema({
+  // Basic Info
+  wallet: { type: String, required: true, unique: true, lowercase: true },
+  email: { type: String, required: true, unique: true, lowercase: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  phone: { type: String },
+  profilePhoto: { type: String },
+  
+  // Verification Status
+  status: { 
+    type: String, 
+    enum: ['pending', 'under_review', 'approved', 'rejected', 'suspended'],
+    default: 'pending'
+  },
+  
+  // Credentials
+  credentials: {
+    ridCertified: { type: Boolean, default: false },
+    ridNumber: { type: String },
+    ridExpiration: { type: Date },
+    nicCertified: { type: Boolean, default: false },
+    nicNumber: { type: String },
+    stateLicense: { type: String },
+    stateLicenseNumber: { type: String },
+    yearsExperience: { type: Number, default: 0 },
+    specializations: [{ 
+      type: String, 
+      enum: ['medical', 'legal', 'educational', 'mental_health', 'vri', 'general']
+    }]
+  },
+  
+  // Documents (URLs to uploaded files)
+  documents: {
+    ridCertificate: { type: String },
+    stateLicense: { type: String },
+    photoId: { type: String },
+    proofOfInsurance: { type: String }
+  },
+  
+  // Verification Process
+  verification: {
+    submittedAt: { type: Date },
+    reviewedAt: { type: Date },
+    reviewedBy: { type: String },
+    notes: { type: String },
+    rejectionReason: { type: String }
+  },
+  
+  // Platform Stats
+  stats: {
+    totalSessions: { type: Number, default: 0 },
+    totalMinutes: { type: Number, default: 0 },
+    totalEarnings: { type: Number, default: 0 },
+    averageRating: { type: Number, default: 0 },
+    totalRatings: { type: Number, default: 0 }
+  },
+  
+  // Availability
+  isOnline: { type: Boolean, default: false },
+  lastOnline: { type: Date },
+  
+  // Timestamps
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+const Interpreter = mongoose.model('Interpreter', interpreterSchema);
+
+// Admin Schema
+const adminSchema = new mongoose.Schema({
+  wallet: { type: String, required: true, unique: true, lowercase: true },
+  email: { type: String, required: true },
+  name: { type: String, required: true },
+  role: { type: String, enum: ['owner', 'admin', 'reviewer'], default: 'reviewer' },
+  createdAt: { type: Date, default: Date.now }
+});
+const Admin = mongoose.model('Admin', adminSchema);
+
+// ============================================
+// ROOM CONFIGURATION
+// ============================================
 
 const rooms = {
   vrs:      { name: "VRS Call",          rate: 10 },
@@ -45,13 +129,17 @@ const rooms = {
 };
 
 let activeRooms = {};
-let sessions = {}; // Track active sessions by socket ID
+let sessions = {};
+
+// ============================================
+// SOCKET.IO - REAL-TIME COMMUNICATION
+// ============================================
 
 io.on('connection', (socket) => {
   console.log(`🔌 New connection: ${socket.id}`);
 
   // Join room and request interpreter
-  socket.on('join-room', ({ room, role, wallet, userName }) => {
+  socket.on('join-room', async ({ room, role, wallet, userName }) => {
     socket.room = room;
     socket.role = role;
     socket.wallet = wallet.toLowerCase();
@@ -61,10 +149,29 @@ io.on('connection', (socket) => {
       activeRooms[room] = { users: [], interpreters: [] };
     }
     
+    // VERIFICATION CHECK FOR INTERPRETERS
     if (role === 'interpreter') {
+      const interpreter = await Interpreter.findOne({ 
+        wallet: wallet.toLowerCase(),
+        status: 'approved'
+      });
+      
+      if (!interpreter) {
+        socket.emit('error', { 
+          message: 'You must be an approved interpreter to go online. Please apply at /interpreter/apply',
+          code: 'NOT_APPROVED'
+        });
+        return;
+      }
+      
+      // Update online status
+      interpreter.isOnline = true;
+      interpreter.lastOnline = new Date();
+      await interpreter.save();
+      
       activeRooms[room].interpreters.push(socket);
       console.log(`🎤 INTERPRETER → ${rooms[room].name} → ${wallet}`);
-      // Notify interpreter of waiting users
+      
       io.to(socket.id).emit('waiting-users', {
         count: activeRooms[room].users.length
       });
@@ -111,7 +218,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('end-session', () => endSession(socket));
-  socket.on('disconnect', () => endSession(socket));
+  socket.on('disconnect', () => handleDisconnect(socket));
 });
 
 function matchInRoom(roomKey) {
@@ -140,7 +247,7 @@ function matchInRoom(roomKey) {
       sessions[interpreter.id] = doc._id;
     });
     
-    // Notify both parties with partner details
+    // Notify both parties
     io.to(user.id).emit('match-found', {
       partnerId: interpreter.id,
       partnerName: interpreter.userName,
@@ -159,6 +266,19 @@ function matchInRoom(roomKey) {
   }
 }
 
+async function handleDisconnect(socket) {
+  // Update interpreter online status
+  if (socket.role === 'interpreter' && socket.wallet) {
+    await Interpreter.findOneAndUpdate(
+      { wallet: socket.wallet },
+      { isOnline: false, lastOnline: new Date() }
+    );
+  }
+  
+  // End any active session
+  await endSession(socket);
+}
+
 async function endSession(socket) {
   if (!socket.callStart) return;
   
@@ -167,9 +287,9 @@ async function endSession(socket) {
   
   const rate = rooms[socket.room].rate;
   const total = minutes * rate;
-  const interpreter = Math.floor(total * 45 / 100);
-  const dev = Math.floor(total * 45 / 100);
-  const user = total - interpreter - dev;
+  const interpreterShare = Math.floor(total * 45 / 100);
+  const devShare = Math.floor(total * 45 / 100);
+  const userShare = total - interpreterShare - devShare;
 
   const partnerSocket = io.sockets.sockets.get(socket.partner);
   const interpreterWallet = socket.role === 'interpreter' ? socket.wallet : partnerSocket?.wallet;
@@ -183,6 +303,21 @@ async function endSession(socket) {
       tokensEarned: total,
       status: 'completed'
     });
+    
+    // Update interpreter stats
+    if (interpreterWallet) {
+      await Interpreter.findOneAndUpdate(
+        { wallet: interpreterWallet },
+        { 
+          $inc: { 
+            'stats.totalSessions': 1,
+            'stats.totalMinutes': minutes,
+            'stats.totalEarnings': interpreterShare
+          }
+        }
+      );
+    }
+    
     delete sessions[socket.id];
     if (socket.partner) delete sessions[socket.partner];
   }
@@ -191,9 +326,9 @@ async function endSession(socket) {
   const mintData = {
     minutes, 
     total, 
-    interpreter, 
-    dev, 
-    user,
+    interpreter: interpreterShare, 
+    dev: devShare, 
+    user: userShare,
     interpreterWallet,
     userWallet,
     roomName: rooms[socket.room].name
@@ -202,23 +337,18 @@ async function endSession(socket) {
   io.to(socket.id).emit('mint-request', mintData);
   if (socket.partner) {
     io.to(socket.partner).emit('mint-request', mintData);
-    io.to(socket.partner).emit('partner-ended-call'); // Notify partner
   }
 
-  // Notify both to end call UI
-  io.to(socket.id).emit('call-ended');
-
-  console.log(`💰 ${rooms[socket.room].name}: ${minutes} min → ${total} $ASL (I:${interpreter} D:${dev} U:${user})`);
+  console.log(`💰 ${rooms[socket.room].name}: ${minutes} min → ${total} $ASL (I:${interpreterShare} D:${devShare} U:${userShare})`);
   
   socket.callStart = null;
-  if (partnerSocket) {
-    partnerSocket.callStart = null;
-    partnerSocket.partner = null;
-  }
   socket.partner = null;
 }
 
-// API Endpoints
+// ============================================
+// API ENDPOINTS - STATS
+// ============================================
+
 app.get('/api/stats', async (req, res) => {
   try {
     const totalSessions = await Session.countDocuments({ status: 'completed' });
@@ -230,11 +360,15 @@ app.get('/api/stats', async (req, res) => {
       { $match: { status: 'completed' } },
       { $group: { _id: null, total: { $sum: '$tokensEarned' } } }
     ]);
+    const approvedInterpreters = await Interpreter.countDocuments({ status: 'approved' });
+    const onlineInterpreters = await Interpreter.countDocuments({ status: 'approved', isOnline: true });
     
     res.json({
       totalSessions,
       totalMinutes: totalMinutes[0]?.total || 0,
       totalTokens: totalTokens[0]?.total || 0,
+      approvedInterpreters,
+      onlineInterpreters,
       activeUsers: Object.keys(activeRooms).reduce((sum, room) => 
         sum + activeRooms[room].users.length + activeRooms[room].interpreters.length, 0)
     });
@@ -246,92 +380,341 @@ app.get('/api/stats', async (req, res) => {
 app.get('/api/interpreter-earnings/:wallet', async (req, res) => {
   try {
     const wallet = req.params.wallet.toLowerCase();
-    const earnings = await Session.aggregate([
-      { $match: { interpreterWallet: wallet, status: 'completed' } },
-      { $group: { 
-        _id: null, 
-        totalTokens: { $sum: '$tokensEarned' },
-        totalMinutes: { $sum: '$duration' },
-        sessionCount: { $sum: 1 }
-      }}
-    ]);
+    const interpreter = await Interpreter.findOne({ wallet });
     
-    res.json(earnings[0] || { totalTokens: 0, totalMinutes: 0, sessionCount: 0 });
+    if (interpreter) {
+      res.json({
+        totalTokens: interpreter.stats.totalEarnings || 0,
+        totalMinutes: interpreter.stats.totalMinutes || 0,
+        sessionCount: interpreter.stats.totalSessions || 0,
+        averageRating: interpreter.stats.averageRating || 0,
+        status: interpreter.status
+      });
+    } else {
+      // Fallback to session-based calculation for non-verified interpreters
+      const earnings = await Session.aggregate([
+        { $match: { interpreterWallet: wallet, status: 'completed' } },
+        { $group: { 
+          _id: null, 
+          totalTokens: { $sum: '$tokensEarned' },
+          totalMinutes: { $sum: '$duration' },
+          sessionCount: { $sum: 1 }
+        }}
+      ]);
+      res.json(earnings[0] || { totalTokens: 0, totalMinutes: 0, sessionCount: 0 });
+    }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Serve static HTML pages
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'under-construction.html'));
-});
+// ============================================
+// API ENDPOINTS - INTERPRETER VERIFICATION
+// ============================================
 
-app.get('/request-service', (req, res) => {
-  res.sendFile(path.join(__dirname, 'request-service.html'));
-});
-
-app.get('/vri', (req, res) => {
-  res.sendFile(path.join(__dirname, 'vri-business.html'));
-});
-
-app.get('/interpreter', (req, res) => {
-  res.sendFile(path.join(__dirname, 'interpreter-dashboard.html'));
-});
-
-// API endpoint for service requests
-app.post('/api/request-service', async (req, res) => {
+// 1. Submit interpreter application
+app.post('/api/interpreter/apply', async (req, res) => {
   try {
-    const requestData = req.body;
+    const {
+      wallet,
+      email,
+      firstName,
+      lastName,
+      phone,
+      ridCertified,
+      ridNumber,
+      ridExpiration,
+      nicCertified,
+      nicNumber,
+      stateLicense,
+      stateLicenseNumber,
+      yearsExperience,
+      specializations
+    } = req.body;
+
+    // Check if already exists
+    const existing = await Interpreter.findOne({ 
+      $or: [{ wallet: wallet.toLowerCase() }, { email: email.toLowerCase() }] 
+    });
     
-    // Save to database
-    const ServiceRequest = mongoose.model('ServiceRequest', new mongoose.Schema({
-      name: String,
-      business: String,
-      email: String,
-      phone: String,
-      serviceType: String,
-      datetime: Date,
-      duration: String,
-      description: String,
-      requirements: String,
-      referral: String,
-      createdAt: { type: Date, default: Date.now }
-    }));
+    if (existing) {
+      return res.status(400).json({ 
+        error: 'Application already exists for this wallet or email',
+        status: existing.status
+      });
+    }
+
+    const interpreter = new Interpreter({
+      wallet: wallet.toLowerCase(),
+      email: email.toLowerCase(),
+      firstName,
+      lastName,
+      phone,
+      credentials: {
+        ridCertified,
+        ridNumber,
+        ridExpiration: ridExpiration ? new Date(ridExpiration) : null,
+        nicCertified,
+        nicNumber,
+        stateLicense,
+        stateLicenseNumber,
+        yearsExperience: parseInt(yearsExperience) || 0,
+        specializations: specializations || ['general']
+      },
+      verification: {
+        submittedAt: new Date()
+      }
+    });
+
+    await interpreter.save();
     
-    await ServiceRequest.create(requestData);
+    console.log(`📝 NEW INTERPRETER APPLICATION: ${firstName} ${lastName} (${wallet})`);
     
-    console.log('📨 New service request:', requestData.email);
-    
-    // TODO: Send email notification
-    
-    res.json({ success: true });
+    res.json({ 
+      success: true, 
+      message: 'Application submitted successfully! We will review within 24-48 hours.',
+      applicationId: interpreter._id,
+      status: 'pending'
+    });
+
   } catch (error) {
-    console.error('Service request error:', error);
-    res.status(500).json({ error: 'Failed to submit request' });
+    console.error('Application error:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
-// API endpoint for newsletter
-app.post('/api/newsletter', async (req, res) => {
+// 2. Check application status
+app.get('/api/interpreter/status/:wallet', async (req, res) => {
   try {
-    const { email } = req.body;
+    const wallet = req.params.wallet.toLowerCase();
+    const interpreter = await Interpreter.findOne({ wallet });
     
-    const Newsletter = mongoose.model('Newsletter', new mongoose.Schema({
-      email: String,
-      subscribedAt: { type: Date, default: Date.now }
-    }));
-    
-    await Newsletter.create({ email });
-    
-    console.log('📧 Newsletter signup:', email);
-    
-    res.json({ success: true });
+    if (!interpreter) {
+      return res.json({ exists: false });
+    }
+
+    res.json({
+      exists: true,
+      status: interpreter.status,
+      firstName: interpreter.firstName,
+      lastName: interpreter.lastName,
+      submittedAt: interpreter.verification.submittedAt,
+      reviewedAt: interpreter.verification.reviewedAt,
+      rejectionReason: interpreter.verification.rejectionReason,
+      stats: interpreter.stats,
+      credentials: {
+        ridCertified: interpreter.credentials.ridCertified,
+        nicCertified: interpreter.credentials.nicCertified,
+        specializations: interpreter.credentials.specializations
+      }
+    });
+
   } catch (error) {
-    console.error('Newsletter error:', error);
-    res.status(500).json({ error: 'Failed to subscribe' });
+    res.status(500).json({ error: error.message });
   }
 });
+
+// 3. Get approved interpreters count (public)
+app.get('/api/interpreters/count', async (req, res) => {
+  try {
+    const approved = await Interpreter.countDocuments({ status: 'approved' });
+    const online = await Interpreter.countDocuments({ status: 'approved', isOnline: true });
+    
+    res.json({ approved, online });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================
+// API ENDPOINTS - ADMIN
+// ============================================
+
+// Initialize admin (run once with your wallet)
+app.post('/api/admin/init', async (req, res) => {
+  try {
+    const { wallet, email, name, secretKey } = req.body;
+    
+    // Change this secret key!
+    if (secretKey !== 'JIBRIL_ASL_2026') {
+      return res.status(403).json({ error: 'Invalid secret key' });
+    }
+
+    const existing = await Admin.findOne({ wallet: wallet.toLowerCase() });
+    if (existing) {
+      return res.json({ message: 'Admin already exists', admin: existing });
+    }
+
+    const admin = new Admin({
+      wallet: wallet.toLowerCase(),
+      email,
+      name,
+      role: 'owner'
+    });
+
+    await admin.save();
+    console.log(`👑 ADMIN CREATED: ${name} (${wallet})`);
+    res.json({ success: true, message: 'Admin created', admin });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get pending applications
+app.get('/api/admin/applications/pending', async (req, res) => {
+  try {
+    const adminWallet = req.headers['x-admin-wallet']?.toLowerCase();
+    
+    const admin = await Admin.findOne({ wallet: adminWallet });
+    if (!admin) {
+      return res.status(403).json({ error: 'Not authorized' });
+    }
+
+    const applications = await Interpreter.find({ 
+      status: { $in: ['pending', 'under_review'] }
+    }).sort({ 'verification.submittedAt': -1 });
+
+    res.json({ applications, count: applications.length });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get all interpreters
+app.get('/api/admin/interpreters', async (req, res) => {
+  try {
+    const adminWallet = req.headers['x-admin-wallet']?.toLowerCase();
+    
+    const admin = await Admin.findOne({ wallet: adminWallet });
+    if (!admin) {
+      return res.status(403).json({ error: 'Not authorized' });
+    }
+
+    const { status, page = 1, limit = 20 } = req.query;
+    const query = status ? { status } : {};
+    
+    const interpreters = await Interpreter.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const total = await Interpreter.countDocuments(query);
+
+    res.json({ 
+      interpreters,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Review application (approve/reject)
+app.post('/api/admin/interpreter/:id/review', async (req, res) => {
+  try {
+    const adminWallet = req.headers['x-admin-wallet']?.toLowerCase();
+    
+    const admin = await Admin.findOne({ wallet: adminWallet });
+    if (!admin) {
+      return res.status(403).json({ error: 'Not authorized' });
+    }
+
+    const { decision, notes, rejectionReason } = req.body;
+    
+    if (!['approved', 'rejected'].includes(decision)) {
+      return res.status(400).json({ error: 'Decision must be approved or rejected' });
+    }
+
+    const interpreter = await Interpreter.findById(req.params.id);
+    if (!interpreter) {
+      return res.status(404).json({ error: 'Interpreter not found' });
+    }
+
+    interpreter.status = decision;
+    interpreter.verification.reviewedAt = new Date();
+    interpreter.verification.reviewedBy = adminWallet;
+    interpreter.verification.notes = notes;
+    
+    if (decision === 'rejected') {
+      interpreter.verification.rejectionReason = rejectionReason;
+    }
+
+    interpreter.updatedAt = new Date();
+    await interpreter.save();
+
+    console.log(`✅ INTERPRETER ${decision.toUpperCase()}: ${interpreter.firstName} ${interpreter.lastName}`);
+
+    res.json({ 
+      success: true, 
+      message: `Interpreter ${decision}`,
+      interpreter: {
+        id: interpreter._id,
+        name: `${interpreter.firstName} ${interpreter.lastName}`,
+        status: interpreter.status
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Suspend interpreter
+app.post('/api/admin/interpreter/:id/suspend', async (req, res) => {
+  try {
+    const adminWallet = req.headers['x-admin-wallet']?.toLowerCase();
+    
+    const admin = await Admin.findOne({ wallet: adminWallet });
+    if (!admin) {
+      return res.status(403).json({ error: 'Not authorized' });
+    }
+
+    const { reason } = req.body;
+
+    const interpreter = await Interpreter.findById(req.params.id);
+    if (!interpreter) {
+      return res.status(404).json({ error: 'Interpreter not found' });
+    }
+
+    interpreter.status = 'suspended';
+    interpreter.verification.notes = `Suspended: ${reason}`;
+    interpreter.verification.reviewedAt = new Date();
+    interpreter.verification.reviewedBy = adminWallet;
+    interpreter.isOnline = false;
+    interpreter.updatedAt = new Date();
+    
+    await interpreter.save();
+
+    console.log(`⛔ INTERPRETER SUSPENDED: ${interpreter.firstName} ${interpreter.lastName}`);
+
+    res.json({ success: true, message: 'Interpreter suspended' });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================
+// STATIC FILE SERVING
+// ============================================
+
+app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
+app.get('/vri', (req, res) => res.sendFile(__dirname + '/vri-business.html'));
+app.get('/interpreter', (req, res) => res.sendFile(__dirname + '/interpreter-dashboard.html'));
+app.get('/interpreter/apply', (req, res) => res.sendFile(__dirname + '/interpreter-apply.html'));
+app.get('/admin', (req, res) => res.sendFile(__dirname + '/admin-dashboard.html'));
+
+// ============================================
+// SERVER START
+// ============================================
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
@@ -339,6 +722,8 @@ server.listen(PORT, () => {
   console.log('   🌐 americansignlanguage.eth — LIVE WITH WEBRTC');
   console.log(`   📡 Server: http://localhost:${PORT}`);
   console.log('   📹 VRI Business: /vri');
-  console.log('   🎤 Interpreter: /interpreter');
+  console.log('   🎤 Interpreter Dashboard: /interpreter');
+  console.log('   📝 Interpreter Apply: /interpreter/apply');
+  console.log('   👑 Admin Dashboard: /admin');
   console.log('═══════════════════════════════════════════════════════');
 });
