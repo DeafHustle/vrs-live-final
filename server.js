@@ -4,6 +4,19 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const Stripe = require('stripe');
+
+// Initialize Stripe with environment variable
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_PUBLISHABLE_KEY;
+
+// Platform Configuration
+const PLATFORM_CONFIG = {
+  ratePerMinute: 250, // $2.50 in cents
+  interpreterShare: 0.45, // 45%
+  platformShare: 0.55, // 55%
+  currency: 'usd'
+};
 
 const app = express();
 app.use(cors());
@@ -25,18 +38,58 @@ mongoose.connect('mongodb+srv://vrsadmin:vrs123456@asleth.gjolaoq.mongodb.net/as
 // SCHEMAS
 // ============================================
 
-// Session schema for tracking
+// Session schema for tracking (with payment info)
 const sessionSchema = new mongoose.Schema({
   roomType: String,
-visitorWallet: String,
+  // User info
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  userWallet: String,
+  userEmail: String,
+  // Interpreter info
+  interpreterId: { type: mongoose.Schema.Types.ObjectId, ref: 'Interpreter' },
   interpreterWallet: String,
+  interpreterEmail: String,
+  // Timing
   startTime: Date,
   endTime: Date,
-  duration: Number,
+  duration: Number, // in minutes
+  // Payment
+  payment: {
+    ratePerMinute: { type: Number, default: 250 }, // cents
+    totalAmount: Number, // cents
+    interpreterPayout: Number, // cents
+    platformFee: Number, // cents
+    stripePaymentIntentId: String,
+    stripeTransferId: String,
+    paymentStatus: { type: String, enum: ['pending', 'authorized', 'captured', 'failed', 'refunded'], default: 'pending' },
+    payoutStatus: { type: String, enum: ['pending', 'processing', 'completed', 'failed'], default: 'pending' }
+  },
   tokensEarned: Number,
-  status: String // 'active', 'completed', 'cancelled'
+  status: { type: String, enum: ['waiting', 'active', 'completed', 'cancelled'], default: 'waiting' }
 });
 const Session = mongoose.model('Session', sessionSchema);
+
+// User schema (for deaf users/customers)
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true, lowercase: true },
+  password: { type: String, required: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  vpPhone: { type: String, required: true }, // Video Phone number - required
+  textPhone: { type: String }, // Text phone - optional
+  wallet: { type: String, lowercase: true, sparse: true },
+  // Stripe
+  stripeCustomerId: { type: String },
+  // Stats
+  stats: {
+    totalSessions: { type: Number, default: 0 },
+    totalMinutes: { type: Number, default: 0 },
+    totalSpent: { type: Number, default: 0 }, // cents
+    tokensEarned: { type: Number, default: 0 }
+  },
+  createdAt: { type: Date, default: Date.now }
+});
+const User = mongoose.model('User', userSchema);
 
 // Enhanced Interpreter Schema (wallet optional, email required)
 const interpreterSchema = new mongoose.Schema({
@@ -49,6 +102,14 @@ const interpreterSchema = new mongoose.Schema({
   phone: { type: String },
   profilePhoto: { type: String },
   bio: { type: String },
+  
+  // Stripe Connect (for payouts)
+  stripe: {
+    connectAccountId: { type: String }, // Stripe Express account ID
+    onboardingComplete: { type: Boolean, default: false },
+    payoutsEnabled: { type: Boolean, default: false },
+    instantPayoutsEnabled: { type: Boolean, default: false }
+  },
   
   // Verification Status
   status: { 
@@ -434,6 +495,586 @@ app.get('/api/interpreter-earnings/:wallet', async (req, res) => {
     }
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// ============================================
+// API ENDPOINTS - INTERPRETER VERIFICATION
+// ============================================
+
+// ============================================
+// API ENDPOINTS - STRIPE PAYMENTS
+// ============================================
+
+// Get Stripe publishable key
+app.get('/api/stripe/config', (req, res) => {
+  res.json({ 
+    publishableKey: STRIPE_PUBLISHABLE_KEY,
+    ratePerMinute: PLATFORM_CONFIG.ratePerMinute,
+    currency: PLATFORM_CONFIG.currency
+  });
+});
+
+// USER: Create/get Stripe customer
+app.post('/api/stripe/create-customer', async (req, res) => {
+  try {
+    const { email, userId } = req.body;
+    
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Check if customer already exists
+    if (user.stripeCustomerId) {
+      const customer = await stripe.customers.retrieve(user.stripeCustomerId);
+      return res.json({ customerId: customer.id });
+    }
+    
+    // Create new Stripe customer
+    const customer = await stripe.customers.create({
+      email: user.email,
+      name: `${user.firstName} ${user.lastName}`,
+      metadata: {
+        userId: userId,
+        platform: 'americansignlanguage.xyz'
+      }
+    });
+    
+    // Save to database
+    user.stripeCustomerId = customer.id;
+    await user.save();
+    
+    console.log(`💳 STRIPE CUSTOMER CREATED: ${user.email} → ${customer.id}`);
+    
+    res.json({ customerId: customer.id });
+    
+  } catch (error) {
+    console.error('Create customer error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// USER: Create setup intent (for saving card)
+app.post('/api/stripe/setup-intent', async (req, res) => {
+  try {
+    const { customerId } = req.body;
+    
+    const setupIntent = await stripe.setupIntents.create({
+      customer: customerId,
+      payment_method_types: ['card'],
+      metadata: {
+        platform: 'americansignlanguage.xyz'
+      }
+    });
+    
+    res.json({ clientSecret: setupIntent.client_secret });
+    
+  } catch (error) {
+    console.error('Setup intent error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// USER: Get saved payment methods
+app.get('/api/stripe/payment-methods/:customerId', async (req, res) => {
+  try {
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: req.params.customerId,
+      type: 'card'
+    });
+    
+    res.json({ 
+      paymentMethods: paymentMethods.data.map(pm => ({
+        id: pm.id,
+        brand: pm.card.brand,
+        last4: pm.card.last4,
+        expMonth: pm.card.exp_month,
+        expYear: pm.card.exp_year
+      }))
+    });
+    
+  } catch (error) {
+    console.error('Get payment methods error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// USER: Delete payment method
+app.delete('/api/stripe/payment-method/:paymentMethodId', async (req, res) => {
+  try {
+    await stripe.paymentMethods.detach(req.params.paymentMethodId);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete payment method error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// SESSION: Create payment intent (authorize hold at session start)
+app.post('/api/stripe/create-session-payment', async (req, res) => {
+  try {
+    const { customerId, paymentMethodId, sessionId, estimatedMinutes = 60 } = req.body;
+    
+    // Calculate estimated amount (authorize for up to estimatedMinutes)
+    const estimatedAmount = estimatedMinutes * PLATFORM_CONFIG.ratePerMinute;
+    
+    // Create payment intent with manual capture (hold, don't charge yet)
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: estimatedAmount,
+      currency: PLATFORM_CONFIG.currency,
+      customer: customerId,
+      payment_method: paymentMethodId,
+      capture_method: 'manual', // Important: This creates a hold, not a charge
+      confirm: true,
+      metadata: {
+        sessionId: sessionId,
+        estimatedMinutes: estimatedMinutes,
+        ratePerMinute: PLATFORM_CONFIG.ratePerMinute,
+        platform: 'americansignlanguage.xyz'
+      }
+    });
+    
+    // Update session with payment intent
+    await Session.findByIdAndUpdate(sessionId, {
+      'payment.stripePaymentIntentId': paymentIntent.id,
+      'payment.paymentStatus': 'authorized',
+      'payment.ratePerMinute': PLATFORM_CONFIG.ratePerMinute
+    });
+    
+    console.log(`💳 PAYMENT AUTHORIZED: Session ${sessionId} → $${(estimatedAmount/100).toFixed(2)} hold`);
+    
+    res.json({ 
+      success: true,
+      paymentIntentId: paymentIntent.id,
+      amountAuthorized: estimatedAmount
+    });
+    
+  } catch (error) {
+    console.error('Create session payment error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// SESSION: Capture payment (charge actual amount at session end)
+app.post('/api/stripe/capture-session-payment', async (req, res) => {
+  try {
+    const { sessionId } = req.body;
+    
+    const session = await Session.findById(sessionId);
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+    
+    if (!session.payment?.stripePaymentIntentId) {
+      return res.status(400).json({ error: 'No payment intent for this session' });
+    }
+    
+    // Calculate actual amount based on duration
+    const actualAmount = session.duration * PLATFORM_CONFIG.ratePerMinute;
+    const interpreterPayout = Math.floor(actualAmount * PLATFORM_CONFIG.interpreterShare);
+    const platformFee = actualAmount - interpreterPayout;
+    
+    // Capture the actual amount (less than or equal to authorized amount)
+    const paymentIntent = await stripe.paymentIntents.capture(
+      session.payment.stripePaymentIntentId,
+      { amount_to_capture: actualAmount }
+    );
+    
+    // Update session with final payment info
+    session.payment.totalAmount = actualAmount;
+    session.payment.interpreterPayout = interpreterPayout;
+    session.payment.platformFee = platformFee;
+    session.payment.paymentStatus = 'captured';
+    await session.save();
+    
+    console.log(`💰 PAYMENT CAPTURED: Session ${sessionId} → $${(actualAmount/100).toFixed(2)} (Interpreter: $${(interpreterPayout/100).toFixed(2)})`);
+    
+    // Trigger instant payout to interpreter if they have Stripe Connect
+    const interpreter = await Interpreter.findById(session.interpreterId);
+    if (interpreter?.stripe?.connectAccountId && interpreter?.stripe?.payoutsEnabled) {
+      try {
+        await processInterpreterPayout(session, interpreter);
+      } catch (payoutError) {
+        console.error('Instant payout failed:', payoutError);
+        // Don't fail the whole request, payout can be retried
+      }
+    }
+    
+    res.json({
+      success: true,
+      captured: actualAmount,
+      interpreterPayout,
+      platformFee
+    });
+    
+  } catch (error) {
+    console.error('Capture payment error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Helper: Process interpreter payout via Stripe Connect
+async function processInterpreterPayout(session, interpreter) {
+  if (!interpreter.stripe?.connectAccountId) {
+    throw new Error('Interpreter has no Stripe Connect account');
+  }
+  
+  // Create transfer to interpreter's connected account
+  const transfer = await stripe.transfers.create({
+    amount: session.payment.interpreterPayout,
+    currency: PLATFORM_CONFIG.currency,
+    destination: interpreter.stripe.connectAccountId,
+    metadata: {
+      sessionId: session._id.toString(),
+      platform: 'americansignlanguage.xyz'
+    }
+  });
+  
+  // Update session with transfer info
+  session.payment.stripeTransferId = transfer.id;
+  session.payment.payoutStatus = 'completed';
+  await session.save();
+  
+  // Update interpreter earnings
+  await Interpreter.findByIdAndUpdate(interpreter._id, {
+    $inc: { 'stats.totalEarnings': session.payment.interpreterPayout }
+  });
+  
+  console.log(`💸 INSTANT PAYOUT: ${interpreter.firstName} → $${(session.payment.interpreterPayout/100).toFixed(2)}`);
+  
+  return transfer;
+}
+
+// SESSION: Cancel/refund payment
+app.post('/api/stripe/cancel-session-payment', async (req, res) => {
+  try {
+    const { sessionId, reason } = req.body;
+    
+    const session = await Session.findById(sessionId);
+    if (!session?.payment?.stripePaymentIntentId) {
+      return res.status(400).json({ error: 'No payment to cancel' });
+    }
+    
+    const paymentIntent = await stripe.paymentIntents.retrieve(session.payment.stripePaymentIntentId);
+    
+    if (paymentIntent.status === 'requires_capture') {
+      // Just cancel the hold (not yet charged)
+      await stripe.paymentIntents.cancel(session.payment.stripePaymentIntentId);
+      session.payment.paymentStatus = 'cancelled';
+    } else if (paymentIntent.status === 'succeeded') {
+      // Refund the charge
+      await stripe.refunds.create({
+        payment_intent: session.payment.stripePaymentIntentId,
+        reason: 'requested_by_customer'
+      });
+      session.payment.paymentStatus = 'refunded';
+    }
+    
+    session.status = 'cancelled';
+    await session.save();
+    
+    console.log(`❌ PAYMENT CANCELLED: Session ${sessionId} → ${reason}`);
+    
+    res.json({ success: true });
+    
+  } catch (error) {
+    console.error('Cancel payment error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================
+// API ENDPOINTS - INTERPRETER STRIPE CONNECT
+// ============================================
+
+// INTERPRETER: Create Stripe Connect onboarding link
+app.post('/api/stripe/connect/create-account', async (req, res) => {
+  try {
+    const { interpreterId } = req.body;
+    
+    const interpreter = await Interpreter.findById(interpreterId);
+    if (!interpreter) {
+      return res.status(404).json({ error: 'Interpreter not found' });
+    }
+    
+    let accountId = interpreter.stripe?.connectAccountId;
+    
+    // Create new Connect account if doesn't exist
+    if (!accountId) {
+      const account = await stripe.accounts.create({
+        type: 'express',
+        country: 'US',
+        email: interpreter.email,
+        capabilities: {
+          card_payments: { requested: true },
+          transfers: { requested: true }
+        },
+        business_type: 'individual',
+        metadata: {
+          interpreterId: interpreterId,
+          platform: 'americansignlanguage.xyz'
+        }
+      });
+      
+      accountId = account.id;
+      
+      // Save to database
+      interpreter.stripe = interpreter.stripe || {};
+      interpreter.stripe.connectAccountId = accountId;
+      await interpreter.save();
+      
+      console.log(`🔗 STRIPE CONNECT ACCOUNT CREATED: ${interpreter.email} → ${accountId}`);
+    }
+    
+    // Create onboarding link
+    const accountLink = await stripe.accountLinks.create({
+      account: accountId,
+      refresh_url: `https://americansignlanguage.xyz/interpreter/stripe-refresh?id=${interpreterId}`,
+      return_url: `https://americansignlanguage.xyz/interpreter/stripe-complete?id=${interpreterId}`,
+      type: 'account_onboarding'
+    });
+    
+    res.json({ 
+      url: accountLink.url,
+      accountId: accountId
+    });
+    
+  } catch (error) {
+    console.error('Create Connect account error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// INTERPRETER: Check Stripe Connect status
+app.get('/api/stripe/connect/status/:interpreterId', async (req, res) => {
+  try {
+    const interpreter = await Interpreter.findById(req.params.interpreterId);
+    if (!interpreter) {
+      return res.status(404).json({ error: 'Interpreter not found' });
+    }
+    
+    if (!interpreter.stripe?.connectAccountId) {
+      return res.json({ 
+        hasAccount: false,
+        onboardingComplete: false,
+        payoutsEnabled: false
+      });
+    }
+    
+    // Get account status from Stripe
+    const account = await stripe.accounts.retrieve(interpreter.stripe.connectAccountId);
+    
+    // Update local status
+    interpreter.stripe.onboardingComplete = account.details_submitted;
+    interpreter.stripe.payoutsEnabled = account.payouts_enabled;
+    interpreter.stripe.instantPayoutsEnabled = account.capabilities?.instant_payouts === 'active';
+    await interpreter.save();
+    
+    res.json({
+      hasAccount: true,
+      accountId: interpreter.stripe.connectAccountId,
+      onboardingComplete: account.details_submitted,
+      payoutsEnabled: account.payouts_enabled,
+      chargesEnabled: account.charges_enabled,
+      instantPayoutsEnabled: account.capabilities?.instant_payouts === 'active'
+    });
+    
+  } catch (error) {
+    console.error('Connect status error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// INTERPRETER: Get payout history
+app.get('/api/stripe/connect/payouts/:interpreterId', async (req, res) => {
+  try {
+    const interpreter = await Interpreter.findById(req.params.interpreterId);
+    if (!interpreter?.stripe?.connectAccountId) {
+      return res.json({ payouts: [] });
+    }
+    
+    // Get recent transfers to this account
+    const transfers = await stripe.transfers.list({
+      destination: interpreter.stripe.connectAccountId,
+      limit: 50
+    });
+    
+    res.json({
+      payouts: transfers.data.map(t => ({
+        id: t.id,
+        amount: t.amount,
+        currency: t.currency,
+        created: new Date(t.created * 1000),
+        sessionId: t.metadata?.sessionId
+      }))
+    });
+    
+  } catch (error) {
+    console.error('Get payouts error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// INTERPRETER: Create Stripe Connect dashboard link
+app.post('/api/stripe/connect/dashboard-link', async (req, res) => {
+  try {
+    const { interpreterId } = req.body;
+    
+    const interpreter = await Interpreter.findById(interpreterId);
+    if (!interpreter?.stripe?.connectAccountId) {
+      return res.status(400).json({ error: 'No Stripe account connected' });
+    }
+    
+    const loginLink = await stripe.accounts.createLoginLink(
+      interpreter.stripe.connectAccountId
+    );
+    
+    res.json({ url: loginLink.url });
+    
+  } catch (error) {
+    console.error('Dashboard link error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================
+// API ENDPOINTS - USER REGISTRATION/AUTH
+// ============================================
+
+// USER: Register new user
+app.post('/api/user/register', async (req, res) => {
+  try {
+    const { email, password, firstName, lastName, vpPhone, textPhone, wallet } = req.body;
+    
+    if (!email || !password || !firstName || !lastName || !vpPhone) {
+      return res.status(400).json({ error: 'Email, password, first name, last name, and VP phone number are required' });
+    }
+    
+    // Check if exists
+    const existing = await User.findOne({ email: email.toLowerCase() });
+    if (existing) {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+    
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // Create user
+    const user = new User({
+      email: email.toLowerCase(),
+      password: hashedPassword,
+      firstName,
+      lastName,
+      vpPhone,
+      textPhone,
+      wallet: wallet?.toLowerCase()
+    });
+    
+    await user.save();
+    
+    // Create Stripe customer
+    const customer = await stripe.customers.create({
+      email: user.email,
+      name: `${user.firstName} ${user.lastName}`,
+      phone: user.vpPhone,
+      metadata: { userId: user._id.toString() }
+    });
+    
+    user.stripeCustomerId = customer.id;
+    await user.save();
+    
+    console.log(`👤 NEW USER REGISTERED: ${user.email} (VP: ${user.vpPhone})`);
+    
+    res.json({
+      success: true,
+      user: {
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        vpPhone: user.vpPhone,
+        stripeCustomerId: user.stripeCustomerId
+      }
+    });
+    
+  } catch (error) {
+    console.error('User registration error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// USER: Login
+app.post('/api/user/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+    
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+    
+    res.json({
+      success: true,
+      user: {
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        stripeCustomerId: user.stripeCustomerId,
+        hasPaymentMethod: !!user.stripeCustomerId,
+        stats: user.stats
+      }
+    });
+    
+  } catch (error) {
+    console.error('User login error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// USER: Get profile
+app.get('/api/user/:userId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Get payment methods if has Stripe customer
+    let paymentMethods = [];
+    if (user.stripeCustomerId) {
+      const methods = await stripe.paymentMethods.list({
+        customer: user.stripeCustomerId,
+        type: 'card'
+      });
+      paymentMethods = methods.data.map(pm => ({
+        id: pm.id,
+        brand: pm.card.brand,
+        last4: pm.card.last4
+      }));
+    }
+    
+    res.json({
+      id: user._id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+      wallet: user.wallet,
+      stripeCustomerId: user.stripeCustomerId,
+      paymentMethods,
+      stats: user.stats
+    });
+    
+  } catch (error) {
+    console.error('Get user error:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -880,7 +1521,11 @@ app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 app.get('/vri', (req, res) => res.sendFile(__dirname + '/vri-business.html'));
 app.get('/interpreter', (req, res) => res.sendFile(__dirname + '/interpreter-dashboard.html'));
 app.get('/interpreter/apply', (req, res) => res.sendFile(__dirname + '/interpreter-apply.html'));
+app.get('/interpreter/stripe-refresh', (req, res) => res.sendFile(__dirname + '/interpreter-stripe-refresh.html'));
+app.get('/interpreter/stripe-complete', (req, res) => res.sendFile(__dirname + '/interpreter-stripe-complete.html'));
 app.get('/admin', (req, res) => res.sendFile(__dirname + '/admin-dashboard.html'));
+app.get('/signup', (req, res) => res.sendFile(__dirname + '/user-signup.html'));
+app.get('/login', (req, res) => res.sendFile(__dirname + '/user-login.html'));
 
 // ============================================
 // SERVER START
@@ -889,11 +1534,13 @@ app.get('/admin', (req, res) => res.sendFile(__dirname + '/admin-dashboard.html'
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log('═══════════════════════════════════════════════════════');
-  console.log('   🌐 americansignlanguage.eth — LIVE WITH WEBRTC');
+  console.log('   🌐 americansignlanguage.eth — LIVE WITH WEBRTC + STRIPE');
   console.log(`   📡 Server: http://localhost:${PORT}`);
   console.log('   📹 VRI Business: /vri');
   console.log('   🎤 Interpreter Dashboard: /interpreter');
   console.log('   📝 Interpreter Apply: /interpreter/apply');
   console.log('   👑 Admin Dashboard: /admin');
+  console.log('   👤 User Signup: /signup');
+  console.log('   💳 Rate: $' + (PLATFORM_CONFIG.ratePerMinute/100).toFixed(2) + '/min');
   console.log('═══════════════════════════════════════════════════════');
 });
