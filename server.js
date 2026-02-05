@@ -3,6 +3,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const app = express();
 app.use(cors());
@@ -37,15 +38,17 @@ visitorWallet: String,
 });
 const Session = mongoose.model('Session', sessionSchema);
 
-// Enhanced Interpreter Schema
+// Enhanced Interpreter Schema (wallet optional, email required)
 const interpreterSchema = new mongoose.Schema({
   // Basic Info
-  wallet: { type: String, required: true, unique: true, lowercase: true },
+  wallet: { type: String, lowercase: true, sparse: true }, // Optional - can add later
   email: { type: String, required: true, unique: true, lowercase: true },
+  password: { type: String, required: true }, // Hashed password for email login
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   phone: { type: String },
   profilePhoto: { type: String },
+  bio: { type: String },
   
   // Verification Status
   status: { 
@@ -139,10 +142,11 @@ io.on('connection', (socket) => {
   console.log(`🔌 New connection: ${socket.id}`);
 
   // Join room and request interpreter
-  socket.on('join-room', async ({ room, role, wallet, userName }) => {
+  socket.on('join-room', async ({ room, role, wallet, email, userName }) => {
     socket.room = room;
     socket.role = role;
-    socket.wallet = wallet.toLowerCase();
+    socket.wallet = wallet ? wallet.toLowerCase() : null;
+    socket.email = email ? email.toLowerCase() : null;
     socket.userName = userName || 'Anonymous';
     
     if (!activeRooms[room]) {
@@ -151,10 +155,20 @@ io.on('connection', (socket) => {
     
     // VERIFICATION CHECK FOR INTERPRETERS
     if (role === 'interpreter') {
-      const interpreter = await Interpreter.findOne({ 
-        wallet: wallet.toLowerCase(),
-        status: 'approved'
-      });
+      let interpreter;
+      
+      // Find by wallet or email
+      if (wallet) {
+        interpreter = await Interpreter.findOne({ 
+          wallet: wallet.toLowerCase(),
+          status: 'approved'
+        });
+      } else if (email) {
+        interpreter = await Interpreter.findOne({ 
+          email: email.toLowerCase(),
+          status: 'approved'
+        });
+      }
       
       if (!interpreter) {
         socket.emit('error', { 
@@ -164,20 +178,23 @@ io.on('connection', (socket) => {
         return;
       }
       
+      // Store interpreter ID for later
+      socket.interpreterId = interpreter._id;
+      
       // Update online status
       interpreter.isOnline = true;
       interpreter.lastOnline = new Date();
       await interpreter.save();
       
       activeRooms[room].interpreters.push(socket);
-      console.log(`🎤 INTERPRETER → ${rooms[room].name} → ${wallet}`);
+      console.log(`🎤 INTERPRETER → ${rooms[room].name} → ${interpreter.firstName} ${interpreter.lastName}`);
       
       io.to(socket.id).emit('waiting-users', {
         count: activeRooms[room].users.length
       });
     } else {
       activeRooms[room].users.push(socket);
-      console.log(`👤 USER → ${rooms[room].name} → ${wallet}`);
+      console.log(`👤 USER → ${rooms[room].name} → ${wallet || 'anonymous'}`);
     }
     
     socket.join(room);
@@ -268,11 +285,23 @@ function matchInRoom(roomKey) {
 
 async function handleDisconnect(socket) {
   // Update interpreter online status
-  if (socket.role === 'interpreter' && socket.wallet) {
-    await Interpreter.findOneAndUpdate(
-      { wallet: socket.wallet },
-      { isOnline: false, lastOnline: new Date() }
-    );
+  if (socket.role === 'interpreter') {
+    if (socket.interpreterId) {
+      await Interpreter.findByIdAndUpdate(socket.interpreterId, {
+        isOnline: false,
+        lastOnline: new Date()
+      });
+    } else if (socket.wallet) {
+      await Interpreter.findOneAndUpdate(
+        { wallet: socket.wallet },
+        { isOnline: false, lastOnline: new Date() }
+      );
+    } else if (socket.email) {
+      await Interpreter.findOneAndUpdate(
+        { email: socket.email },
+        { isOnline: false, lastOnline: new Date() }
+      );
+    }
   }
   
   // End any active session
@@ -412,15 +441,17 @@ app.get('/api/interpreter-earnings/:wallet', async (req, res) => {
 // API ENDPOINTS - INTERPRETER VERIFICATION
 // ============================================
 
-// 1. Submit interpreter application
+// 1. Submit interpreter application (email-first, wallet optional)
 app.post('/api/interpreter/apply', async (req, res) => {
   try {
     const {
-      wallet,
       email,
+      password,
+      wallet,
       firstName,
       lastName,
       phone,
+      bio,
       ridCertified,
       ridNumber,
       ridExpiration,
@@ -432,24 +463,46 @@ app.post('/api/interpreter/apply', async (req, res) => {
       specializations
     } = req.body;
 
-    // Check if already exists
-    const existing = await Interpreter.findOne({ 
-      $or: [{ wallet: wallet.toLowerCase() }, { email: email.toLowerCase() }] 
-    });
-    
-    if (existing) {
+    // Validate required fields
+    if (!email || !password || !firstName || !lastName) {
+      return res.status(400).json({ error: 'Email, password, first name, and last name are required' });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    }
+
+    // Check if email already exists
+    const existingEmail = await Interpreter.findOne({ email: email.toLowerCase() });
+    if (existingEmail) {
       return res.status(400).json({ 
-        error: 'Application already exists for this wallet or email',
-        status: existing.status
+        error: 'An application with this email already exists',
+        status: existingEmail.status
       });
     }
 
+    // Check if wallet already exists (if provided)
+    if (wallet) {
+      const existingWallet = await Interpreter.findOne({ wallet: wallet.toLowerCase() });
+      if (existingWallet) {
+        return res.status(400).json({ 
+          error: 'This wallet is already associated with another application',
+          status: existingWallet.status
+        });
+      }
+    }
+
+    // Hash password with bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const interpreter = new Interpreter({
-      wallet: wallet.toLowerCase(),
       email: email.toLowerCase(),
+      password: hashedPassword,
+      wallet: wallet ? wallet.toLowerCase() : null,
       firstName,
       lastName,
       phone,
+      bio,
       credentials: {
         ridCertified,
         ridNumber,
@@ -468,13 +521,14 @@ app.post('/api/interpreter/apply', async (req, res) => {
 
     await interpreter.save();
     
-    console.log(`📝 NEW INTERPRETER APPLICATION: ${firstName} ${lastName} (${wallet})`);
+    console.log(`📝 NEW INTERPRETER APPLICATION: ${firstName} ${lastName} (${email})${wallet ? ' + wallet' : ' (no wallet)'}`);
     
     res.json({ 
       success: true, 
       message: 'Application submitted successfully! We will review within 24-48 hours.',
       applicationId: interpreter._id,
-      status: 'pending'
+      status: 'pending',
+      hasWallet: !!wallet
     });
 
   } catch (error) {
@@ -483,7 +537,7 @@ app.post('/api/interpreter/apply', async (req, res) => {
   }
 });
 
-// 2. Check application status
+// 2. Check application status by wallet
 app.get('/api/interpreter/status/:wallet', async (req, res) => {
   try {
     const wallet = req.params.wallet.toLowerCase();
@@ -514,6 +568,122 @@ app.get('/api/interpreter/status/:wallet', async (req, res) => {
   }
 });
 
+// 2b. Check application status by email
+app.get('/api/interpreter/status-by-email/:email', async (req, res) => {
+  try {
+    const email = decodeURIComponent(req.params.email).toLowerCase();
+    const interpreter = await Interpreter.findOne({ email });
+    
+    if (!interpreter) {
+      return res.json({ exists: false });
+    }
+
+    res.json({
+      exists: true,
+      status: interpreter.status,
+      firstName: interpreter.firstName,
+      lastName: interpreter.lastName,
+      hasWallet: !!interpreter.wallet,
+      submittedAt: interpreter.verification.submittedAt,
+      reviewedAt: interpreter.verification.reviewedAt,
+      rejectionReason: interpreter.verification.rejectionReason,
+      stats: interpreter.stats
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 2c. Interpreter login (email + password)
+app.post('/api/interpreter/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password required' });
+    }
+
+    const interpreter = await Interpreter.findOne({ email: email.toLowerCase() });
+    
+    if (!interpreter) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Check password with bcrypt
+    const isValidPassword = await bcrypt.compare(password, interpreter.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Generate simple session token (use JWT in production)
+    const sessionToken = Buffer.from(`${interpreter._id}:${Date.now()}`).toString('base64');
+
+    res.json({
+      success: true,
+      interpreter: {
+        id: interpreter._id,
+        email: interpreter.email,
+        firstName: interpreter.firstName,
+        lastName: interpreter.lastName,
+        status: interpreter.status,
+        hasWallet: !!interpreter.wallet,
+        wallet: interpreter.wallet,
+        stats: interpreter.stats
+      },
+      token: sessionToken
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 2d. Add wallet to existing interpreter account
+app.post('/api/interpreter/add-wallet', async (req, res) => {
+  try {
+    const { email, password, wallet } = req.body;
+    
+    if (!email || !password || !wallet) {
+      return res.status(400).json({ error: 'Email, password, and wallet required' });
+    }
+
+    const interpreter = await Interpreter.findOne({ email: email.toLowerCase() });
+    
+    if (!interpreter) {
+      return res.status(404).json({ error: 'Account not found' });
+    }
+
+    // Verify password with bcrypt
+    const isValidPassword = await bcrypt.compare(password, interpreter.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Invalid password' });
+    }
+
+    // Check if wallet already used
+    const existingWallet = await Interpreter.findOne({ wallet: wallet.toLowerCase() });
+    if (existingWallet && existingWallet._id.toString() !== interpreter._id.toString()) {
+      return res.status(400).json({ error: 'This wallet is already linked to another account' });
+    }
+
+    // Update wallet
+    interpreter.wallet = wallet.toLowerCase();
+    interpreter.updatedAt = new Date();
+    await interpreter.save();
+
+    console.log(`🔗 WALLET LINKED: ${interpreter.firstName} ${interpreter.lastName} → ${wallet}`);
+
+    res.json({
+      success: true,
+      message: 'Wallet linked successfully! You can now earn $ASL tokens.',
+      wallet: interpreter.wallet
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // 3. Get approved interpreters count (public)
 app.get('/api/interpreters/count', async (req, res) => {
   try {
@@ -535,8 +705,8 @@ app.post('/api/admin/init', async (req, res) => {
   try {
     const { wallet, email, name, secretKey } = req.body;
     
-    // Change this secret key!
-    if (secretKey !== 'JIBRIL_ASL_2026') {
+    // Secret key for admin initialization
+    if (secretKey !== 'deafdev_ASL_2026') {
       return res.status(403).json({ error: 'Invalid secret key' });
     }
 
