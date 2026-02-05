@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
@@ -9,14 +9,9 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 4000;
-// Email transporter configuration
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'asltranscribe@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || 'khkyqxwndsiu vrny'
-  }
-});
+
+// Email configuration with Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // In-memory storage (replace with database later)
 const sessions = new Map();
@@ -366,8 +361,6 @@ app.post('/v1/auth/get-test-key', (req, res) => {
   });
 });
 
-// Root endpoint
-
 // Serve website HTML files
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../under-construction.html'));
@@ -405,6 +398,7 @@ app.get('/api', (req, res) => {
     note: 'Using mock data while recruiting interpreters. Full production: April 15, 2026'
   });
 });
+
 // Contact form submission endpoint
 app.post('/api/submit-request', async (req, res) => {
   try {
@@ -418,9 +412,9 @@ app.post('/api/submit-request', async (req, res) => {
       });
     }
     
-    // Email content
-    const mailOptions = {
-      from: 'asltranscribe@gmail.com',
+    // Send email using Resend
+    await resend.emails.send({
+      from: 'VRI Requests <onboarding@resend.dev>',
       to: 'asltranscribe@gmail.com',
       subject: `🔔 New VRI Service Request from ${name}`,
       html: `
@@ -456,10 +450,7 @@ app.post('/api/submit-request', async (req, res) => {
           <p style="color: #666; font-size: 12px;"><em>Submitted: ${new Date().toLocaleString()}</em></p>
         </div>
       `
-    };
-    
-    // Send email
-    await transporter.sendMail(mailOptions);
+    });
     
     console.log(`📧 Email sent for request from ${name} (${email})`);
     
@@ -476,6 +467,7 @@ app.post('/api/submit-request', async (req, res) => {
     });
   }
 });
+
 app.listen(PORT, () => {
   console.log('═══════════════════════════════════════════════════════');
   console.log(`   🤖 ASL AI AGENT API - BETA`);
