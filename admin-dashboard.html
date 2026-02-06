@@ -25,10 +25,7 @@
       border-bottom: 1px solid #333;
     }
     
-    .header h1 {
-      color: #667eea;
-      font-size: 1.8rem;
-    }
+    .header h1 { color: #667eea; font-size: 1.8rem; }
     
     .wallet-status {
       background: #333;
@@ -37,9 +34,7 @@
       font-family: monospace;
     }
     
-    .wallet-status.connected {
-      background: #155724;
-    }
+    .wallet-status.connected { background: #155724; }
     
     .stats-grid {
       display: grid;
@@ -55,22 +50,10 @@
       text-align: center;
     }
     
-    .stat-card .value {
-      font-size: 2.5rem;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
+    .stat-card .value { font-size: 2.5rem; font-weight: bold; margin-bottom: 5px; }
+    .stat-card .label { opacity: 0.9; font-size: 0.9rem; }
     
-    .stat-card .label {
-      opacity: 0.9;
-      font-size: 0.9rem;
-    }
-    
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
     
     .tab {
       padding: 12px 25px;
@@ -83,13 +66,8 @@
       transition: all 0.3s;
     }
     
-    .tab:hover {
-      background: #444;
-    }
-    
-    .tab.active {
-      background: #667eea;
-    }
+    .tab:hover { background: #444; }
+    .tab.active { background: #667eea; }
     
     .tab .badge {
       background: #f44336;
@@ -112,13 +90,8 @@
       transition: background 0.3s;
     }
     
-    .application-card:hover {
-      background: #2a2a4a;
-    }
-    
-    .application-card:last-child {
-      border-bottom: none;
-    }
+    .application-card:hover { background: #2a2a4a; }
+    .application-card:last-child { border-bottom: none; }
     
     .app-header {
       display: flex;
@@ -127,16 +100,8 @@
       margin-bottom: 15px;
     }
     
-    .app-name {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: #667eea;
-    }
-    
-    .app-email {
-      color: #888;
-      font-size: 0.9rem;
-    }
+    .app-name { font-size: 1.3rem; font-weight: bold; color: #667eea; }
+    .app-email { color: #888; font-size: 0.9rem; }
     
     .app-status {
       padding: 5px 15px;
@@ -145,25 +110,10 @@
       font-weight: bold;
     }
     
-    .app-status.pending {
-      background: #ff9800;
-      color: #000;
-    }
-    
-    .app-status.approved {
-      background: #4CAF50;
-      color: white;
-    }
-    
-    .app-status.rejected {
-      background: #f44336;
-      color: white;
-    }
-    
-    .app-status.suspended {
-      background: #9e9e9e;
-      color: white;
-    }
+    .app-status.pending { background: #ff9800; color: #000; }
+    .app-status.approved { background: #4CAF50; color: white; }
+    .app-status.rejected { background: #f44336; color: white; }
+    .app-status.suspended { background: #9e9e9e; color: white; }
     
     .app-details {
       display: grid;
@@ -172,67 +122,20 @@
       margin-bottom: 15px;
     }
     
-    .detail-item {
-      background: #333;
-      padding: 12px;
-      border-radius: 8px;
-    }
+    .detail-item { background: #333; padding: 12px; border-radius: 8px; }
+    .detail-item label { display: block; color: #888; font-size: 0.8rem; margin-bottom: 5px; }
+    .detail-item value { display: block; font-weight: 600; }
     
-    .detail-item label {
-      display: block;
-      color: #888;
-      font-size: 0.8rem;
-      margin-bottom: 5px;
-    }
+    .certifications { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
     
-    .detail-item value {
-      display: block;
-      font-weight: 600;
-    }
+    .cert-badge { padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; }
+    .cert-badge.has { background: #4CAF50; color: white; }
+    .cert-badge.none { background: #666; color: #aaa; }
     
-    .certifications {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 15px;
-    }
+    .specializations { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
+    .spec-tag { background: #667eea; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; }
     
-    .cert-badge {
-      padding: 5px 12px;
-      border-radius: 15px;
-      font-size: 0.85rem;
-      font-weight: bold;
-    }
-    
-    .cert-badge.has {
-      background: #4CAF50;
-      color: white;
-    }
-    
-    .cert-badge.none {
-      background: #666;
-      color: #aaa;
-    }
-    
-    .specializations {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 15px;
-    }
-    
-    .spec-tag {
-      background: #667eea;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-    }
-    
-    .app-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
+    .app-actions { display: flex; gap: 10px; margin-top: 15px; }
     
     .app-actions button {
       padding: 10px 25px;
@@ -243,41 +146,19 @@
       transition: all 0.3s;
     }
     
-    .btn-approve {
-      background: #4CAF50;
-      color: white;
-    }
-    
-    .btn-reject {
-      background: #f44336;
-      color: white;
-    }
-    
-    .btn-suspend {
-      background: #ff9800;
-      color: white;
-    }
+    .btn-approve { background: #4CAF50; color: white; }
+    .btn-reject { background: #f44336; color: white; }
+    .btn-suspend { background: #ff9800; color: white; }
     
     .app-actions button:hover {
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
     
-    .empty-state {
-      text-align: center;
-      padding: 60px;
-      color: #666;
-    }
+    .empty-state { text-align: center; padding: 60px; color: #666; }
+    .empty-state .icon { font-size: 4rem; margin-bottom: 20px; }
     
-    .empty-state .icon {
-      font-size: 4rem;
-      margin-bottom: 20px;
-    }
-    
-    .connect-prompt {
-      text-align: center;
-      padding: 60px;
-    }
+    .connect-prompt { text-align: center; padding: 60px; }
     
     .connect-prompt button {
       padding: 20px 40px;
@@ -295,15 +176,10 @@
       box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
     }
     
-    .hidden {
-      display: none;
-    }
-    
     .modal {
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.8);
-      display: flex;
       justify-content: center;
       align-items: center;
       z-index: 1000;
@@ -317,10 +193,7 @@
       width: 90%;
     }
     
-    .modal-content h3 {
-      margin-bottom: 20px;
-      color: #667eea;
-    }
+    .modal-content h3 { margin-bottom: 20px; color: #667eea; }
     
     .modal-content textarea {
       width: 100%;
@@ -334,11 +207,7 @@
       margin-bottom: 20px;
     }
     
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-    }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
     
     .modal-actions button {
       padding: 12px 25px;
@@ -348,20 +217,19 @@
       font-weight: bold;
     }
     
-    .btn-cancel {
-      background: #666;
-      color: white;
-    }
+    .btn-cancel { background: #666; color: white; }
   </style>
 </head>
 <body>
+  <!-- Connect Prompt - shown by default -->
   <div id="connectPrompt" class="connect-prompt">
     <h2 style="margin-bottom: 20px;">👑 Admin Dashboard</h2>
     <p style="color: #888; margin-bottom: 30px;">Connect your admin wallet to access the dashboard</p>
     <button onclick="connectWallet()">🦊 Connect MetaMask</button>
   </div>
 
-  <div id="dashboard" class="hidden">
+  <!-- Dashboard - hidden by default -->
+  <div id="dashboard" style="display: none;">
     <div class="header">
       <h1>👑 Admin Dashboard</h1>
       <div id="walletStatus" class="wallet-status">Not Connected</div>
@@ -402,8 +270,8 @@
     </div>
   </div>
 
-  <!-- Rejection Modal -->
-  <div id="rejectModal" class="modal hidden">
+  <!-- Rejection Modal - HIDDEN with inline style -->
+  <div id="rejectModal" class="modal" style="display: none;">
     <div class="modal-content">
       <h3>❌ Reject Application</h3>
       <p style="color: #888; margin-bottom: 15px;">Please provide a reason for rejection:</p>
@@ -440,10 +308,10 @@
           return;
         }
         
-        document.getElementById('connectPrompt').classList.add('hidden');
-        document.getElementById('dashboard').classList.remove('hidden');
+        document.getElementById('connectPrompt').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
         document.getElementById('walletStatus').textContent = 
-          `${adminWallet.substring(0, 6)}...${adminWallet.slice(-4)}`;
+          adminWallet.substring(0, 6) + '...' + adminWallet.slice(-4);
         document.getElementById('walletStatus').classList.add('connected');
         
         loadStats();
@@ -474,7 +342,7 @@
         if (currentTab === 'pending') {
           url = '/api/admin/applications/pending';
         } else {
-          url = `/api/admin/interpreters${currentTab === 'approved' ? '?status=approved' : ''}`;
+          url = '/api/admin/interpreters' + (currentTab === 'approved' ? '?status=approved' : '');
         }
         
         const response = await fetch(url, {
@@ -484,7 +352,6 @@
         const data = await response.json();
         const applications = data.applications || data.interpreters || [];
         
-        // Update pending count
         if (currentTab === 'pending') {
           document.getElementById('statPending').textContent = applications.length;
           document.getElementById('pendingBadge').textContent = applications.length;
@@ -501,79 +368,54 @@
       const container = document.getElementById('applicationsList');
       
       if (applications.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="icon">✅</div>
-            <p>No ${currentTab} applications</p>
-          </div>
-        `;
+        container.innerHTML = '<div class="empty-state"><div class="icon">✅</div><p>No ' + currentTab + ' applications</p></div>';
         return;
       }
       
-      container.innerHTML = applications.map(app => `
-        <div class="application-card">
-          <div class="app-header">
-            <div>
-              <div class="app-name">${app.firstName} ${app.lastName}</div>
-              <div class="app-email">${app.email}</div>
-            </div>
-            <span class="app-status ${app.status}">${app.status.toUpperCase()}</span>
-          </div>
-          
-          <div class="certifications">
-            <span class="cert-badge ${app.credentials?.ridCertified ? 'has' : 'none'}">
-              ${app.credentials?.ridCertified ? '✓ RID Certified' : '✗ No RID'}
-            </span>
-            <span class="cert-badge ${app.credentials?.nicCertified ? 'has' : 'none'}">
-              ${app.credentials?.nicCertified ? '✓ NIC Certified' : '✗ No NIC'}
-            </span>
-            ${app.credentials?.stateLicense ? 
-              `<span class="cert-badge has">✓ ${app.credentials.stateLicense} License</span>` : ''}
-          </div>
-          
-          <div class="specializations">
-            ${(app.credentials?.specializations || ['general']).map(spec => 
-              `<span class="spec-tag">${spec}</span>`
-            ).join('')}
-          </div>
-          
-          <div class="app-details">
-            <div class="detail-item">
-              <label>Experience</label>
-              <value>${app.credentials?.yearsExperience || 0}+ years</value>
-            </div>
-            <div class="detail-item">
-              <label>Wallet</label>
-              <value style="font-family: monospace; font-size: 0.8rem;">${app.wallet}</value>
-            </div>
-            <div class="detail-item">
-              <label>Applied</label>
-              <value>${new Date(app.verification?.submittedAt || app.createdAt).toLocaleDateString()}</value>
-            </div>
-            ${app.stats ? `
-              <div class="detail-item">
-                <label>Sessions / Earnings</label>
-                <value>${app.stats.totalSessions} sessions / ${app.stats.totalEarnings} $ASL</value>
-              </div>
-            ` : ''}
-          </div>
-          
-          <div class="app-actions">
-            ${app.status === 'pending' || app.status === 'under_review' ? `
-              <button class="btn-approve" onclick="approveInterpreter('${app._id}')">✓ Approve</button>
-              <button class="btn-reject" onclick="openRejectModal('${app._id}')">✗ Reject</button>
-            ` : ''}
-            ${app.status === 'approved' ? `
-              <button class="btn-suspend" onclick="suspendInterpreter('${app._id}')">⛔ Suspend</button>
-            ` : ''}
-          </div>
-        </div>
-      `).join('');
+      container.innerHTML = applications.map(function(app) {
+        return '<div class="application-card">' +
+          '<div class="app-header">' +
+            '<div>' +
+              '<div class="app-name">' + app.firstName + ' ' + app.lastName + '</div>' +
+              '<div class="app-email">' + app.email + '</div>' +
+            '</div>' +
+            '<span class="app-status ' + app.status + '">' + app.status.toUpperCase() + '</span>' +
+          '</div>' +
+          '<div class="certifications">' +
+            '<span class="cert-badge ' + (app.credentials && app.credentials.ridCertified ? 'has' : 'none') + '">' +
+              (app.credentials && app.credentials.ridCertified ? '✓ RID Certified' : '✗ No RID') +
+            '</span>' +
+            '<span class="cert-badge ' + (app.credentials && app.credentials.nicCertified ? 'has' : 'none') + '">' +
+              (app.credentials && app.credentials.nicCertified ? '✓ NIC Certified' : '✗ No NIC') +
+            '</span>' +
+            (app.credentials && app.credentials.stateLicense ? '<span class="cert-badge has">✓ ' + app.credentials.stateLicense + ' License</span>' : '') +
+          '</div>' +
+          '<div class="specializations">' +
+            ((app.credentials && app.credentials.specializations) || ['general']).map(function(spec) {
+              return '<span class="spec-tag">' + spec + '</span>';
+            }).join('') +
+          '</div>' +
+          '<div class="app-details">' +
+            '<div class="detail-item"><label>Experience</label><value>' + ((app.credentials && app.credentials.yearsExperience) || 0) + '+ years</value></div>' +
+            '<div class="detail-item"><label>Email</label><value>' + app.email + '</value></div>' +
+            '<div class="detail-item"><label>Applied</label><value>' + new Date((app.verification && app.verification.submittedAt) || app.createdAt).toLocaleDateString() + '</value></div>' +
+          '</div>' +
+          '<div class="app-actions">' +
+            (app.status === 'pending' || app.status === 'under_review' ? 
+              '<button class="btn-approve" onclick="approveInterpreter(\'' + app._id + '\')">✓ Approve</button>' +
+              '<button class="btn-reject" onclick="openRejectModal(\'' + app._id + '\')">✗ Reject</button>' 
+            : '') +
+            (app.status === 'approved' ? 
+              '<button class="btn-suspend" onclick="suspendInterpreter(\'' + app._id + '\')">⛔ Suspend</button>' 
+            : '') +
+          '</div>' +
+        '</div>';
+      }).join('');
     }
     
     function showTab(tab) {
       currentTab = tab;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
       event.target.classList.add('active');
       loadApplications();
     }
@@ -582,7 +424,7 @@
       if (!confirm('Approve this interpreter?')) return;
       
       try {
-        const response = await fetch(`/api/admin/interpreter/${id}/review`, {
+        const response = await fetch('/api/admin/interpreter/' + id + '/review', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -611,12 +453,12 @@
     
     function openRejectModal(id) {
       pendingRejectId = id;
-      document.getElementById('rejectModal').classList.remove('hidden');
+      document.getElementById('rejectModal').style.display = 'flex';
       document.getElementById('rejectionReason').value = '';
     }
     
     function closeModal() {
-      document.getElementById('rejectModal').classList.add('hidden');
+      document.getElementById('rejectModal').style.display = 'none';
       pendingRejectId = null;
     }
     
@@ -629,7 +471,7 @@
       }
       
       try {
-        const response = await fetch(`/api/admin/interpreter/${pendingRejectId}/review`, {
+        const response = await fetch('/api/admin/interpreter/' + pendingRejectId + '/review', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -661,13 +503,13 @@
       if (!reason) return;
       
       try {
-        const response = await fetch(`/api/admin/interpreter/${id}/suspend`, {
+        const response = await fetch('/api/admin/interpreter/' + id + '/suspend', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'X-Admin-Wallet': adminWallet
           },
-          body: JSON.stringify({ reason })
+          body: JSON.stringify({ reason: reason })
         });
         
         const result = await response.json();
