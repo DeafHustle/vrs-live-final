@@ -31,15 +31,8 @@
       text-align: center;
     }
     
-    .header h1 {
-      font-size: 2.2rem;
-      margin-bottom: 10px;
-    }
-    
-    .header p {
-      font-size: 1.1rem;
-      opacity: 0.9;
-    }
+    .header h1 { font-size: 2.2rem; margin-bottom: 10px; }
+    .header p { font-size: 1.1rem; opacity: 0.9; }
     
     .benefits {
       display: grid;
@@ -55,19 +48,10 @@
       text-align: center;
     }
     
-    .benefit .icon {
-      font-size: 2rem;
-      margin-bottom: 5px;
-    }
+    .benefit .icon { font-size: 2rem; margin-bottom: 5px; }
+    .benefit strong { display: block; font-size: 1.3rem; }
     
-    .benefit strong {
-      display: block;
-      font-size: 1.3rem;
-    }
-    
-    .content {
-      padding: 40px;
-    }
+    .content { padding: 40px; }
     
     .status-box {
       padding: 20px;
@@ -76,25 +60,11 @@
       text-align: center;
     }
     
-    .status-box.pending {
-      background: #fff3cd;
-      color: #856404;
-    }
+    .status-box.pending { background: #fff3cd; color: #856404; }
+    .status-box.approved { background: #d4edda; color: #155724; }
+    .status-box.rejected { background: #f8d7da; color: #721c24; }
     
-    .status-box.approved {
-      background: #d4edda;
-      color: #155724;
-    }
-    
-    .status-box.rejected {
-      background: #f8d7da;
-      color: #721c24;
-    }
-    
-    .form-section {
-      margin-bottom: 30px;
-    }
-    
+    .form-section { margin-bottom: 30px; }
     .form-section h3 {
       color: #333;
       margin-bottom: 15px;
@@ -102,10 +72,7 @@
       border-bottom: 2px solid #eee;
     }
     
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
+    .form-group { margin-bottom: 20px; }
     .form-group label {
       display: block;
       font-weight: 600;
@@ -144,10 +111,7 @@
       margin-bottom: 10px;
     }
     
-    .checkbox-group input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-    }
+    .checkbox-group input[type="checkbox"] { width: 20px; height: 20px; }
     
     .specializations {
       display: grid;
@@ -163,17 +127,10 @@
       background: #f8f9fa;
       border-radius: 8px;
       cursor: pointer;
-      transition: background 0.3s;
     }
     
-    .spec-option:hover {
-      background: #e9ecef;
-    }
-    
-    .spec-option input {
-      width: 18px;
-      height: 18px;
-    }
+    .spec-option:hover { background: #e9ecef; }
+    .spec-option input { width: 18px; height: 18px; }
     
     button {
       width: 100%;
@@ -196,10 +153,7 @@
       color: white;
     }
     
-    .btn-submit:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
     
     .info-box {
       background: #e3f2fd;
@@ -208,21 +162,10 @@
       margin-bottom: 30px;
     }
     
-    .info-box h4 {
-      color: #1976d2;
-      margin-bottom: 10px;
-    }
+    .info-box h4 { color: #1976d2; margin-bottom: 10px; }
+    .info-box ul { margin-left: 20px; color: #333; }
+    .info-box li { margin-bottom: 5px; }
     
-    .info-box ul {
-      margin-left: 20px;
-      color: #333;
-    }
-    
-    .info-box li {
-      margin-bottom: 5px;
-    }
-    
-    /* Wallet Section Styling */
     .wallet-section {
       background: linear-gradient(135deg, #667eea22 0%, #764ba222 100%);
       border: 2px dashed #667eea;
@@ -234,9 +177,6 @@
     .wallet-section h4 {
       color: #667eea;
       margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
     
     .wallet-options {
@@ -251,7 +191,6 @@
       border: 2px solid #ddd;
       border-radius: 10px;
       cursor: pointer;
-      transition: all 0.3s;
       text-align: center;
     }
     
@@ -265,20 +204,9 @@
       background: #667eea11;
     }
     
-    .wallet-option .icon {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-    }
-    
-    .wallet-option h5 {
-      color: #333;
-      margin-bottom: 5px;
-    }
-    
-    .wallet-option p {
-      color: #666;
-      font-size: 0.85rem;
-    }
+    .wallet-option .icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .wallet-option h5 { color: #333; margin-bottom: 5px; }
+    .wallet-option p { color: #666; font-size: 0.85rem; }
     
     .wallet-connected {
       background: #d4edda;
@@ -336,14 +264,10 @@
       color: #333;
     }
     
-    .wallet-benefit .check {
-      color: #11998e;
-      font-weight: bold;
-    }
+    .wallet-benefit .check { color: #11998e; font-weight: bold; }
     
-    .hidden {
-      display: none;
-    }
+    /* CRITICAL FIX: Hidden class */
+    .hidden { display: none !important; }
     
     .password-section {
       margin-top: 15px;
@@ -357,11 +281,11 @@
       margin-top: 5px;
     }
     
+    /* Success Modal - hidden by default with inline style too */
     .success-modal {
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.8);
-      display: flex;
       justify-content: center;
       align-items: center;
       z-index: 1000;
@@ -375,21 +299,9 @@
       max-width: 500px;
     }
     
-    .success-content .icon {
-      font-size: 4rem;
-      margin-bottom: 20px;
-    }
-    
-    .success-content h2 {
-      color: #11998e;
-      margin-bottom: 15px;
-    }
-    
-    .success-content p {
-      color: #666;
-      margin-bottom: 20px;
-    }
-    
+    .success-content .icon { font-size: 4rem; margin-bottom: 20px; }
+    .success-content h2 { color: #11998e; margin-bottom: 15px; }
+    .success-content p { color: #666; margin-bottom: 20px; }
     .success-content a {
       display: inline-block;
       background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
@@ -401,25 +313,11 @@
     }
     
     @media (max-width: 768px) {
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-      
-      .benefits {
-        grid-template-columns: 1fr;
-      }
-      
-      .specializations {
-        grid-template-columns: 1fr 1fr;
-      }
-      
-      .wallet-options {
-        grid-template-columns: 1fr;
-      }
-      
-      .wallet-benefits {
-        grid-template-columns: 1fr;
-      }
+      .form-row { grid-template-columns: 1fr; }
+      .benefits { grid-template-columns: 1fr; }
+      .specializations { grid-template-columns: 1fr 1fr; }
+      .wallet-options { grid-template-columns: 1fr; }
+      .wallet-benefits { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -428,7 +326,6 @@
     <div class="header">
       <h1>🎤 Become an Interpreter</h1>
       <p>Join the first Deaf-owned VRI platform and earn 45% of every session</p>
-      
       <div class="benefits">
         <div class="benefit">
           <div class="icon">💰</div>
@@ -449,10 +346,8 @@
     </div>
     
     <div class="content">
-      <!-- Status Display -->
-      <div id="statusBox" class="status-box hidden"></div>
+      <div id="statusBox" class="status-box" style="display: none;"></div>
       
-      <!-- Check Status Section -->
       <div id="checkStatusSection" class="info-box" style="background: #f8f9fa;">
         <h4>🔍 Already Applied?</h4>
         <p style="margin-bottom: 15px;">Enter your email to check your application status:</p>
@@ -462,7 +357,6 @@
         </div>
       </div>
       
-      <!-- Application Form -->
       <form id="applyForm" onsubmit="submitApplication(event)">
         <div class="info-box">
           <h4>📋 Requirements</h4>
@@ -477,7 +371,6 @@
         
         <div class="form-section">
           <h3>👤 Personal Information</h3>
-          
           <div class="form-row">
             <div class="form-group">
               <label for="firstName">First Name *</label>
@@ -488,7 +381,6 @@
               <input type="text" id="lastName" required>
             </div>
           </div>
-          
           <div class="form-row">
             <div class="form-group">
               <label for="email">Email *</label>
@@ -499,13 +391,11 @@
               <input type="tel" id="phone">
             </div>
           </div>
-          
-          <!-- Password for non-wallet users -->
           <div class="password-section">
             <div class="form-group">
               <label for="password">Create Password *</label>
               <input type="password" id="password" required minlength="8">
-              <p class="password-requirements">Minimum 8 characters. Used to log into your interpreter dashboard.</p>
+              <p class="password-requirements">Minimum 8 characters.</p>
             </div>
             <div class="form-group">
               <label for="confirmPassword">Confirm Password *</label>
@@ -514,14 +404,9 @@
           </div>
         </div>
         
-        <!-- Wallet Section - Optional -->
         <div class="wallet-section">
           <h4>🦊 Crypto Wallet (Optional)</h4>
-          <p style="color: #666; margin-bottom: 20px;">
-            Connect a wallet to receive <strong>$ASL token bonuses</strong> on top of your regular pay. 
-            You can also add this later.
-          </p>
-          
+          <p style="color: #666; margin-bottom: 20px;">Connect a wallet to receive <strong>$ASL token bonuses</strong>. You can also add this later.</p>
           <div id="walletOptions">
             <div class="wallet-options">
               <div class="wallet-option" id="optionConnect" onclick="selectWalletOption('connect')">
@@ -535,26 +420,20 @@
                 <p>Just use email login for now</p>
               </div>
             </div>
-            
-            <div id="walletConnectArea" class="hidden">
-              <button type="button" class="btn-connect-wallet" onclick="connectWallet()">
-                🦊 Connect MetaMask Wallet
-              </button>
+            <div id="walletConnectArea" style="display: none;">
+              <button type="button" class="btn-connect-wallet" onclick="connectWallet()">🦊 Connect MetaMask Wallet</button>
             </div>
-            
-            <div id="walletConnectedArea" class="hidden">
+            <div id="walletConnectedArea" style="display: none;">
               <div class="wallet-connected">
                 <span>✅</span>
                 <span class="address" id="walletAddress"></span>
                 <button type="button" class="btn-disconnect" onclick="disconnectWallet()">Disconnect</button>
               </div>
             </div>
-            
             <div id="walletLaterNote" class="wallet-later-note">
-              💡 <strong>No problem!</strong> You can add a wallet anytime from your dashboard to start earning $ASL tokens.
+              💡 <strong>No problem!</strong> You can add a wallet anytime from your dashboard.
             </div>
           </div>
-          
           <div class="wallet-benefits">
             <div class="wallet-benefit"><span class="check">✓</span> Earn $ASL tokens every session</div>
             <div class="wallet-benefit"><span class="check">✓</span> Instant crypto payouts available</div>
@@ -565,13 +444,11 @@
         
         <div class="form-section">
           <h3>📜 Certifications</h3>
-          
           <div class="checkbox-group">
             <input type="checkbox" id="ridCertified" onchange="toggleRidFields()">
             <label for="ridCertified">I am RID Certified</label>
           </div>
-          
-          <div id="ridFields" class="hidden">
+          <div id="ridFields" style="display: none;">
             <div class="form-row">
               <div class="form-group">
                 <label for="ridNumber">RID Number</label>
@@ -583,19 +460,16 @@
               </div>
             </div>
           </div>
-          
           <div class="checkbox-group">
             <input type="checkbox" id="nicCertified" onchange="toggleNicFields()">
             <label for="nicCertified">I am NIC Certified</label>
           </div>
-          
-          <div id="nicFields" class="hidden">
+          <div id="nicFields" style="display: none;">
             <div class="form-group">
               <label for="nicNumber">NIC Number</label>
               <input type="text" id="nicNumber">
             </div>
           </div>
-          
           <div class="form-row">
             <div class="form-group">
               <label for="stateLicense">State License (if applicable)</label>
@@ -610,7 +484,6 @@
         
         <div class="form-section">
           <h3>💼 Experience</h3>
-          
           <div class="form-group">
             <label for="yearsExperience">Years of Interpreting Experience *</label>
             <select id="yearsExperience" required>
@@ -622,58 +495,36 @@
               <option value="16">16+ years</option>
             </select>
           </div>
-          
           <div class="form-group">
             <label>Specializations (select all that apply) *</label>
             <div class="specializations">
-              <label class="spec-option">
-                <input type="checkbox" name="specialization" value="general" checked>
-                General
-              </label>
-              <label class="spec-option">
-                <input type="checkbox" name="specialization" value="medical">
-                Medical
-              </label>
-              <label class="spec-option">
-                <input type="checkbox" name="specialization" value="legal">
-                Legal
-              </label>
-              <label class="spec-option">
-                <input type="checkbox" name="specialization" value="educational">
-                Educational
-              </label>
-              <label class="spec-option">
-                <input type="checkbox" name="specialization" value="mental_health">
-                Mental Health
-              </label>
-              <label class="spec-option">
-                <input type="checkbox" name="specialization" value="vri">
-                VRI Experienced
-              </label>
+              <label class="spec-option"><input type="checkbox" name="specialization" value="general" checked> General</label>
+              <label class="spec-option"><input type="checkbox" name="specialization" value="medical"> Medical</label>
+              <label class="spec-option"><input type="checkbox" name="specialization" value="legal"> Legal</label>
+              <label class="spec-option"><input type="checkbox" name="specialization" value="educational"> Educational</label>
+              <label class="spec-option"><input type="checkbox" name="specialization" value="mental_health"> Mental Health</label>
+              <label class="spec-option"><input type="checkbox" name="specialization" value="vri"> VRI Experienced</label>
             </div>
           </div>
-          
           <div class="form-group">
             <label for="bio">Brief Bio (optional)</label>
-            <textarea id="bio" rows="3" placeholder="Tell us about yourself and your interpreting experience..."></textarea>
+            <textarea id="bio" rows="3" placeholder="Tell us about yourself..."></textarea>
           </div>
         </div>
         
-        <button type="submit" class="btn-submit" id="submitBtn">
-          Submit Application
-        </button>
+        <button type="submit" class="btn-submit" id="submitBtn">Submit Application</button>
       </form>
     </div>
   </div>
 
-  <!-- Success Modal -->
-  <div id="successModal" class="success-modal hidden">
+  <!-- Success Modal - HIDDEN with inline style -->
+  <div id="successModal" class="success-modal" style="display: none;">
     <div class="success-content">
       <div class="icon">🎉</div>
       <h2>Application Submitted!</h2>
-      <p>Thank you for applying to join americansignlanguage.eth! We'll review your application within 24-48 hours and notify you by email.</p>
-      <p id="walletNote" class="hidden" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-        💡 Remember: You can add a crypto wallet anytime from your dashboard to start earning $ASL tokens!
+      <p>Thank you for applying! We'll review your application within 24-48 hours.</p>
+      <p id="walletNote" style="display: none; background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        💡 Remember: You can add a crypto wallet anytime from your dashboard!
       </p>
       <a href="/interpreter">Go to Dashboard →</a>
     </div>
@@ -681,140 +532,99 @@
 
   <script>
     let userWallet = null;
-    let walletOption = 'later'; // 'connect' or 'later'
+    let walletOption = 'later';
     
     function selectWalletOption(option) {
       walletOption = option;
-      
       document.getElementById('optionConnect').classList.toggle('selected', option === 'connect');
       document.getElementById('optionLater').classList.toggle('selected', option === 'later');
-      
-      document.getElementById('walletConnectArea').classList.toggle('hidden', option !== 'connect' || userWallet);
-      document.getElementById('walletLaterNote').classList.toggle('hidden', option !== 'later');
-      
-      if (option === 'later') {
-        disconnectWallet();
-      }
+      document.getElementById('walletConnectArea').style.display = (option === 'connect' && !userWallet) ? 'block' : 'none';
+      document.getElementById('walletLaterNote').style.display = option === 'later' ? 'block' : 'none';
+      if (option === 'later') disconnectWallet();
     }
     
     async function connectWallet() {
       if (!window.ethereum) {
-        alert('MetaMask is not installed. You can:\n\n1. Install MetaMask from metamask.io\n2. Or select "Add Later" to continue without a wallet');
+        alert('MetaMask is not installed.');
         return;
       }
-      
       try {
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
         userWallet = accounts[0];
-        
         document.getElementById('walletAddress').textContent = userWallet;
-        document.getElementById('walletConnectArea').classList.add('hidden');
-        document.getElementById('walletConnectedArea').classList.remove('hidden');
-        document.getElementById('walletLaterNote').classList.add('hidden');
-        
+        document.getElementById('walletConnectArea').style.display = 'none';
+        document.getElementById('walletConnectedArea').style.display = 'flex';
+        document.getElementById('walletLaterNote').style.display = 'none';
       } catch (error) {
         console.error('Wallet connection error:', error);
-        alert('Failed to connect wallet. You can continue without one.');
+        alert('Failed to connect wallet.');
       }
     }
     
     function disconnectWallet() {
       userWallet = null;
-      document.getElementById('walletConnectedArea').classList.add('hidden');
-      
+      document.getElementById('walletConnectedArea').style.display = 'none';
       if (walletOption === 'connect') {
-        document.getElementById('walletConnectArea').classList.remove('hidden');
+        document.getElementById('walletConnectArea').style.display = 'block';
       }
     }
     
     async function checkStatus() {
       const email = document.getElementById('checkEmail').value.trim();
-      if (!email) {
-        alert('Please enter your email');
-        return;
-      }
-      
+      if (!email) { alert('Please enter your email'); return; }
       try {
-        const response = await fetch(`/api/interpreter/status-by-email/${encodeURIComponent(email)}`);
+        const response = await fetch('/api/interpreter/status-by-email/' + encodeURIComponent(email));
         const data = await response.json();
-        
         if (data.exists) {
           showStatus(data);
-          document.getElementById('applyForm').classList.add('hidden');
+          document.getElementById('applyForm').style.display = 'none';
         } else {
-          alert('No application found for this email. Please fill out the form below to apply.');
+          alert('No application found. Please fill out the form below.');
         }
       } catch (error) {
         console.error('Status check error:', error);
-        alert('Error checking status. Please try again.');
+        alert('Error checking status.');
       }
     }
     
     function showStatus(data) {
       const statusBox = document.getElementById('statusBox');
-      statusBox.classList.remove('hidden');
-      document.getElementById('checkStatusSection').classList.add('hidden');
+      statusBox.style.display = 'block';
+      document.getElementById('checkStatusSection').style.display = 'none';
       
       if (data.status === 'pending' || data.status === 'under_review') {
         statusBox.className = 'status-box pending';
-        statusBox.innerHTML = `
-          <h3>⏳ Application Under Review</h3>
-          <p>Hi ${data.firstName}! Your application was submitted on ${new Date(data.submittedAt).toLocaleDateString()}.</p>
-          <p>We're reviewing your credentials and will notify you by email within 24-48 hours.</p>
-          <p style="margin-top: 15px;"><a href="/interpreter">Go to Interpreter Dashboard →</a></p>
-        `;
+        statusBox.innerHTML = '<h3>⏳ Application Under Review</h3><p>Hi ' + data.firstName + '! We will notify you by email within 24-48 hours.</p><p style="margin-top: 15px;"><a href="/interpreter">Go to Dashboard →</a></p>';
       } else if (data.status === 'approved') {
         statusBox.className = 'status-box approved';
-        statusBox.innerHTML = `
-          <h3>✅ You're Approved!</h3>
-          <p>Congratulations ${data.firstName}! You can now log in and start earning.</p>
-          <p style="margin-top: 15px;"><a href="/interpreter" style="color: #155724; font-weight: bold;">Go to Interpreter Dashboard →</a></p>
-        `;
+        statusBox.innerHTML = '<h3>✅ You are Approved!</h3><p>Congratulations ' + data.firstName + '!</p><p style="margin-top: 15px;"><a href="/interpreter">Go to Dashboard →</a></p>';
       } else if (data.status === 'rejected') {
         statusBox.className = 'status-box rejected';
-        statusBox.innerHTML = `
-          <h3>❌ Application Not Approved</h3>
-          <p>We're sorry, but your application wasn't approved at this time.</p>
-          ${data.rejectionReason ? `<p><strong>Reason:</strong> ${data.rejectionReason}</p>` : ''}
-          <p style="margin-top: 15px;">If you believe this is an error, please contact support@americansignlanguage.xyz</p>
-        `;
+        statusBox.innerHTML = '<h3>❌ Application Not Approved</h3><p>Please contact support@americansignlanguage.xyz</p>';
       }
     }
     
     function toggleRidFields() {
-      const fields = document.getElementById('ridFields');
-      fields.classList.toggle('hidden', !document.getElementById('ridCertified').checked);
+      document.getElementById('ridFields').style.display = document.getElementById('ridCertified').checked ? 'block' : 'none';
     }
     
     function toggleNicFields() {
-      const fields = document.getElementById('nicFields');
-      fields.classList.toggle('hidden', !document.getElementById('nicCertified').checked);
+      document.getElementById('nicFields').style.display = document.getElementById('nicCertified').checked ? 'block' : 'none';
     }
     
     async function submitApplication(event) {
       event.preventDefault();
-      
-      // Validate passwords match
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
       
-      if (password !== confirmPassword) {
-        alert('Passwords do not match');
-        return;
-      }
-      
-      if (password.length < 8) {
-        alert('Password must be at least 8 characters');
-        return;
-      }
+      if (password !== confirmPassword) { alert('Passwords do not match'); return; }
+      if (password.length < 8) { alert('Password must be at least 8 characters'); return; }
       
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Submitting...';
       
-      const specializations = Array.from(document.querySelectorAll('input[name="specialization"]:checked'))
-        .map(cb => cb.value);
-      
+      const specializations = Array.from(document.querySelectorAll('input[name="specialization"]:checked')).map(cb => cb.value);
       if (specializations.length === 0) {
         alert('Please select at least one specialization');
         submitBtn.disabled = false;
@@ -823,18 +633,13 @@
       }
       
       const data = {
-        // Account info
         email: document.getElementById('email').value,
         password: password,
-        wallet: userWallet || null, // Optional
-        
-        // Personal info
+        wallet: userWallet || null,
         firstName: document.getElementById('firstName').value,
         lastName: document.getElementById('lastName').value,
         phone: document.getElementById('phone').value,
         bio: document.getElementById('bio').value,
-        
-        // Certifications
         ridCertified: document.getElementById('ridCertified').checked,
         ridNumber: document.getElementById('ridNumber').value,
         ridExpiration: document.getElementById('ridExpiration').value,
@@ -842,8 +647,6 @@
         nicNumber: document.getElementById('nicNumber').value,
         stateLicense: document.getElementById('stateLicense').value,
         stateLicenseNumber: document.getElementById('stateLicenseNumber').value,
-        
-        // Experience
         yearsExperience: document.getElementById('yearsExperience').value,
         specializations
       };
@@ -854,16 +657,12 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
-        
         const result = await response.json();
         
         if (result.success) {
-          // Show success modal
-          document.getElementById('successModal').classList.remove('hidden');
-          
-          // Show wallet note if they didn't connect one
+          document.getElementById('successModal').style.display = 'flex';
           if (!userWallet) {
-            document.getElementById('walletNote').classList.remove('hidden');
+            document.getElementById('walletNote').style.display = 'block';
           }
         } else {
           alert(result.error || 'Failed to submit application');
@@ -872,7 +671,7 @@
         }
       } catch (error) {
         console.error('Submit error:', error);
-        alert('Failed to submit application. Please try again.');
+        alert('Failed to submit application.');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Submit Application';
       }
