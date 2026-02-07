@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
@@ -1517,15 +1518,33 @@ app.post('/api/admin/interpreter/:id/suspend', async (req, res) => {
 // STATIC FILE SERVING
 // ============================================
 
-app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
+const path = require('path');
+
+// Serve static files (CSS, JS, images) from public folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve manifest.json for PWA
+app.get('/manifest.json', (req, res) => res.sendFile(path.join(__dirname, 'public', 'manifest.json')));
+
+// Main pages
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.get('/session', (req, res) => res.sendFile(path.join(__dirname, 'public', 'session.html')));
+
+// VRI & Interpreter pages (keep existing for now, will migrate later)
 app.get('/vri', (req, res) => res.sendFile(__dirname + '/vri-business.html'));
 app.get('/interpreter', (req, res) => res.sendFile(__dirname + '/interpreter-dashboard.html'));
 app.get('/interpreter/apply', (req, res) => res.sendFile(__dirname + '/interpreter-apply.html'));
 app.get('/interpreter/stripe-refresh', (req, res) => res.sendFile(__dirname + '/interpreter-stripe-refresh.html'));
 app.get('/interpreter/stripe-complete', (req, res) => res.sendFile(__dirname + '/interpreter-stripe-complete.html'));
+
+// Admin & Auth pages
 app.get('/admin', (req, res) => res.sendFile(__dirname + '/admin-dashboard.html'));
 app.get('/signup', (req, res) => res.sendFile(__dirname + '/user-signup.html'));
 app.get('/login', (req, res) => res.sendFile(__dirname + '/user-login.html'));
+
+// Dashboard pages (will create these next)
+app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
+app.get('/dashboard/*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
 
 // ============================================
 // SERVER START
