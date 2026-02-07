@@ -237,8 +237,10 @@ class Navigation {
               <div class="footer-social">
                 <a href="https://instagram.com/americansignlanguage.eth" target="_blank" aria-label="Instagram">📸</a>
                 <a href="https://x.com/aslnfts" target="_blank" aria-label="Twitter">🐦</a>
-                <a href="https://youtube.com/@deafhustle" target="_blank" aria-label="YouTube">📺</a>
               </div>
+              <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 12px;">
+                Questions? <a href="/contact" style="color: white; text-decoration: underline;">Contact Us</a>
+              </p>
             </div>
           </div>
           
