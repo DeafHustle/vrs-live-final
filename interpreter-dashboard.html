@@ -4,437 +4,514 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Interpreter Dashboard | americansignlanguage.eth</title>
-  <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       padding: 20px;
     }
-    
-    .dashboard {
-      max-width: 1400px;
+    .container {
+      max-width: 1200px;
       margin: 0 auto;
     }
-    
     .header {
       background: white;
-      border-radius: 15px;
+      border-radius: 20px;
       padding: 30px;
       margin-bottom: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
     }
-    
-    .header h1 {
-      color: #11998e;
-      font-size: 2.5rem;
-      margin-bottom: 10px;
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
     }
-    
-    .header p {
-      color: #666;
-      font-size: 1.2rem;
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #667eea;
     }
-    
+    .interpreter-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .interpreter-name {
+      font-weight: 600;
+      color: #333;
+    }
+    .interpreter-status {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .status-approved {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status-offline {
+      background: #f8f9fa;
+      color: #6c757d;
+    }
+    .status-online {
+      background: #28a745;
+      color: white;
+    }
+    .logout-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
     }
-    
     .stat-card {
-      background: white;
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 12px;
       text-align: center;
     }
-    
-    .stat-card h3 {
-      color: #666;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-    
-    .stat-card .value {
-      color: #11998e;
-      font-size: 2.5rem;
+    .stat-value {
+      font-size: 28px;
       font-weight: bold;
-      margin-bottom: 5px;
+      color: #667eea;
     }
-    
-    .stat-card .label {
-      color: #999;
-      font-size: 0.9rem;
+    .stat-label {
+      color: #6c757d;
+      font-size: 14px;
+      margin-top: 5px;
     }
-    
     .main-content {
       display: grid;
-      grid-template-columns: 1fr 2fr;
+      grid-template-columns: 1fr 350px;
       gap: 20px;
     }
-    
-    .sidebar {
-      background: white;
-      border-radius: 15px;
-      padding: 30px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    @media (max-width: 900px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
     }
-    
     .video-section {
       background: white;
-      border-radius: 15px;
-      padding: 30px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
     }
-    
-    .status-indicator {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 8px;
-    }
-    
-    .status-indicator.online {
-      background: #4CAF50;
-      box-shadow: 0 0 10px #4CAF50;
-    }
-    
-    .status-indicator.offline {
-      background: #f44336;
-    }
-    
-    .status-indicator.busy {
-      background: #ff9800;
-      box-shadow: 0 0 10px #ff9800;
-    }
-    
-    button {
-      width: 100%;
-      padding: 15px;
-      margin: 10px 0;
-      font-size: 1.1rem;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-weight: bold;
-    }
-    
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-    
-    .btn-success { background: #4CAF50; color: white; }
-    .btn-danger { background: #f44336; color: white; }
-    .btn-primary { background: #2196F3; color: white; }
-    .btn-warning { background: #ff9800; color: white; }
-    
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    
     .video-container {
-      display: none;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin: 20px 0;
-    }
-    
-    .video-container.active {
-      display: grid;
-    }
-    
-    .video-box {
-      background: #000;
-      border-radius: 10px;
-      overflow: hidden;
       position: relative;
+      background: #1a1a2e;
+      border-radius: 16px;
+      overflow: hidden;
       aspect-ratio: 16/9;
+      margin-bottom: 20px;
     }
-    
-    .video-box video {
+    .video-container video {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    
-    .video-label {
+    .local-video {
       position: absolute;
-      top: 10px;
-      left: 10px;
-      background: rgba(0,0,0,0.7);
+      bottom: 20px;
+      right: 20px;
+      width: 180px;
+      height: 120px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 3px solid white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .local-video video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .video-placeholder {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       color: white;
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-size: 0.9rem;
     }
-    
-    .waiting-users {
-      background: #fff3cd;
-      padding: 15px;
-      border-radius: 10px;
-      margin: 15px 0;
-      text-align: center;
-      font-weight: bold;
-      color: #856404;
+    .video-placeholder-icon {
+      font-size: 64px;
+      margin-bottom: 15px;
     }
-    
-    .session-info {
-      background: #e3f2fd;
-      padding: 20px;
-      border-radius: 10px;
-      margin: 15px 0;
+    .video-placeholder-text {
+      font-size: 18px;
+      opacity: 0.8;
     }
-    
-    .session-info h4 {
-      color: #1976d2;
-      margin-bottom: 10px;
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
     }
-    
-    .session-info p {
-      margin: 5px 0;
+    .control-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .control-btn:hover {
+      transform: scale(1.1);
+    }
+    .control-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-online {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+    }
+    .btn-offline {
+      background: #6c757d;
+      color: white;
+    }
+    .btn-mute {
+      background: #f8f9fa;
       color: #333;
     }
-    
-    .earnings-highlight {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    .btn-mute.active {
+      background: #dc3545;
       color: white;
+    }
+    .btn-video {
+      background: #f8f9fa;
+      color: #333;
+    }
+    .btn-video.active {
+      background: #dc3545;
+      color: white;
+    }
+    .btn-end {
+      background: #dc3545;
+      color: white;
+      width: 70px;
+      height: 70px;
+    }
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .sidebar-card {
+      background: white;
+      border-radius: 20px;
       padding: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+    .sidebar-card h3 {
+      margin-bottom: 15px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .queue-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: #f8f9fa;
       border-radius: 10px;
-      margin: 15px 0;
+      margin-bottom: 10px;
+    }
+    .queue-item:last-child {
+      margin-bottom: 0;
+    }
+    .queue-empty {
+      text-align: center;
+      color: #6c757d;
+      padding: 20px;
+    }
+    .call-timer {
+      font-size: 32px;
+      font-weight: bold;
+      text-align: center;
+      color: #667eea;
+      margin-bottom: 10px;
+      font-variant-numeric: tabular-nums;
+    }
+    .call-info {
+      text-align: center;
+      color: #6c757d;
+    }
+    .earnings-today {
+      font-size: 24px;
+      font-weight: bold;
+      color: #28a745;
       text-align: center;
     }
-    
-    .earnings-highlight .amount {
-      font-size: 2rem;
-      font-weight: bold;
-      margin: 10px 0;
+    /* Login Modal */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
     }
-    
-    .wallet-info {
-      background: #f5f5f5;
-      padding: 15px;
-      border-radius: 8px;
-      margin: 15px 0;
-      font-family: monospace;
-      font-size: 0.9rem;
-      word-break: break-all;
-    }
-    
-    .chat-container {
-      margin-top: 20px;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      overflow: hidden;
+    .modal-backdrop.hidden {
       display: none;
     }
-    
-    .chat-container.active {
+    .modal {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    .modal h2 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+    .modal p {
+      color: #6c757d;
+      margin-bottom: 25px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+    .login-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .apply-link {
+      margin-top: 20px;
+      color: #6c757d;
+    }
+    .apply-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .error-message {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .error-message.show {
       display: block;
     }
-    
-    .chat-messages {
-      height: 150px;
-      overflow-y: auto;
-      padding: 15px;
-      background: #f8f9fa;
-    }
-    
-    .chat-message {
-      margin-bottom: 10px;
-      padding: 8px 12px;
+    .back-home {
+      position: fixed;
+      top: 20px;
+      left: 20px;
       background: white;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .chat-message strong {
-      color: #11998e;
-    }
-    
-    .chat-input-container {
-      display: flex;
-      padding: 10px;
-      background: white;
-      border-top: 2px solid #ddd;
-    }
-    
-    .chat-input-container input {
-      flex: 1;
-      padding: 10px;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      font-size: 1rem;
-    }
-    
-    .chat-input-container button {
-      margin: 0 0 0 10px;
       padding: 10px 20px;
-      width: auto;
-    }
-    
-    @media (max-width: 1024px) {
-      .main-content {
-        grid-template-columns: 1fr;
-      }
-      
-      .video-container {
-        grid-template-columns: 1fr;
-      }
+      border-radius: 10px;
+      text-decoration: none;
+      color: #667eea;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <div class="header">
-      <h1>🎤 Interpreter Dashboard</h1>
-      <p>americansignlanguage.eth — Earn $ASL Tokens</p>
-    </div>
-    
-    <div class="stats-grid">
-      <div class="stat-card">
-        <h3>Total Earned</h3>
-        <div class="value" id="totalEarned">0</div>
-        <div class="label">$ASL Tokens</div>
-      </div>
-      <div class="stat-card">
-        <h3>Sessions Today</h3>
-        <div class="value" id="sessionsToday">0</div>
-        <div class="label">Calls Completed</div>
-      </div>
-      <div class="stat-card">
-        <h3>Minutes Interpreted</h3>
-        <div class="value" id="totalMinutes">0</div>
-        <div class="label">Total Time</div>
-      </div>
-      <div class="stat-card">
-        <h3>Current Rate</h3>
-        <div class="value">9</div>
-        <div class="label">$ASL per minute</div>
-      </div>
-    </div>
-    
-    <div class="main-content">
-      <div class="sidebar">
-        <h2 style="margin-bottom: 20px;">
-          <span class="status-indicator offline" id="statusIndicator"></span>
-          <span id="statusText">Offline</span>
-        </h2>
-        
-        <button id="connectBtn" class="btn-success" onclick="connectWallet()">
-          Connect MetaMask
-        </button>
-        
-        <button id="goOnlineBtn" class="btn-primary" onclick="goOnline()" disabled>
-          Go Online (Available)
-        </button>
-        
-        <button id="goOfflineBtn" class="btn-danger" onclick="goOffline()" style="display:none;">
-          Go Offline
-        </button>
-        
-        <div id="waitingUsers" class="waiting-users" style="display:none;">
-          ⏳ <span id="waitingCount">0</span> users waiting
-        </div>
-        
-        <div id="sessionInfo" class="session-info" style="display:none;">
-          <h4>Current Session</h4>
-          <p><strong>Client:</strong> <span id="clientName">-</span></p>
-          <p><strong>Duration:</strong> <span id="sessionDuration">0:00</span></p>
-          <p><strong>Earning:</strong> <span id="currentEarning">0</span> $ASL</p>
-        </div>
-        
-        <button id="endSessionBtn" class="btn-danger" onclick="endSession()" style="display:none;">
-          End Session
-        </button>
-        
-        <div id="earningsHighlight" class="earnings-highlight" style="display:none;">
-          <h4>Session Complete! 🎉</h4>
-          <div class="amount" id="sessionEarned">0 $ASL</div>
-          <button class="btn-warning" onclick="mintTokens()">Mint Tokens</button>
-        </div>
-        
-        <div id="walletInfo" class="wallet-info" style="display:none;"></div>
-      </div>
+  <a href="/" class="back-home">← Home</a>
+
+  <!-- Login Modal -->
+  <div class="modal-backdrop" id="loginModal">
+    <div class="modal">
+      <h2>🎤 Interpreter Login</h2>
+      <p>Sign in to access your dashboard</p>
       
-      <div class="video-section">
-        <h2 style="margin-bottom: 20px;">Video Call</h2>
-        
-        <div id="videoContainer" class="video-container">
-          <div class="video-box">
-            <video id="localVideo" autoplay muted playsinline></video>
-            <div class="video-label">You (Interpreter)</div>
-          </div>
-          <div class="video-box">
-            <video id="remoteVideo" autoplay playsinline></video>
-            <div class="video-label">Client (Deaf User)</div>
-          </div>
+      <div class="error-message" id="loginError"></div>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="loginEmail" required placeholder="your@email.com">
         </div>
-        
-        <div id="noCallMessage" style="text-align:center; padding:60px; color:#999;">
-          <h3>📹 No Active Call</h3>
-          <p>Go online to accept VRI requests</p>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••">
         </div>
-        
-        <div id="chatContainer" class="chat-container">
-          <div class="chat-messages" id="chatMessages"></div>
-          <div class="chat-input-container">
-            <input type="text" id="chatInput" placeholder="Type a message...">
-            <button class="btn-primary" onclick="sendMessage()">Send</button>
-          </div>
+        <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+      </form>
+      
+      <p class="apply-link">
+        Not an interpreter yet? <a href="/interpreter/apply">Apply here</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <div class="header-top">
+        <div class="logo">🤟 americansignlanguage.eth</div>
+        <div class="interpreter-info">
+          <span class="interpreter-name" id="interpreterName">Interpreter</span>
+          <span class="interpreter-status status-approved" id="accountStatus">Approved</span>
+          <span class="interpreter-status status-offline" id="onlineStatus">Offline</span>
+          <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="totalSessions">0</div>
+          <div class="stat-label">Total Sessions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="totalMinutes">0</div>
+          <div class="stat-label">Minutes Today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="totalEarnings">$0</div>
+          <div class="stat-label">Earnings Today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="avgRating">⭐ 5.0</div>
+          <div class="stat-label">Rating</div>
         </div>
       </div>
     </div>
-    
-    <div style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 30px; text-align: center; margin-top: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
-      <h4 style="margin-bottom: 15px;">Connect With Us</h4>
-      <div style="display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; margin-bottom: 15px;">
-        <a href="https://www.instagram.com/americansignlanguage.eth/" target="_blank" style="color: white; text-decoration: none; font-size: 1rem;">📸 Instagram</a>
-        <a href="https://x.com/aslnfts" target="_blank" style="color: white; text-decoration: none; font-size: 1rem;">🐦 X (Twitter)</a>
-        <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank" style="color: white; text-decoration: none; font-size: 1rem;">🎨 Mint NFTs</a>
+
+    <div class="main-content">
+      <div class="video-section">
+        <div class="video-container">
+          <video id="remoteVideo" autoplay playsinline></video>
+          <div class="video-placeholder" id="videoPlaceholder">
+            <div class="video-placeholder-icon">📹</div>
+            <div class="video-placeholder-text" id="placeholderText">Go online to receive calls</div>
+          </div>
+          <div class="local-video">
+            <video id="localVideo" autoplay playsinline muted></video>
+          </div>
+        </div>
+        
+        <div class="controls">
+          <button class="control-btn btn-online" id="onlineBtn" onclick="toggleOnline()">
+            🟢
+          </button>
+          <button class="control-btn btn-mute" id="muteBtn" onclick="toggleMute()" disabled>
+            🎤
+          </button>
+          <button class="control-btn btn-video" id="videoBtn" onclick="toggleVideo()" disabled>
+            📹
+          </button>
+          <button class="control-btn btn-end" id="endBtn" onclick="endCall()" disabled>
+            📞
+          </button>
+        </div>
       </div>
-      <div style="opacity: 0.8; font-size: 0.85rem;">
-        <p>americansignlanguage.eth</p>
-        <p>Empowering ASL Interpreters</p>
-        <p>© 2025 All Rights Reserved</p>
+
+      <div class="sidebar">
+        <div class="sidebar-card">
+          <h3>⏱️ Current Call</h3>
+          <div class="call-timer" id="callTimer">0:00</div>
+          <div class="call-info" id="callInfo">No active call</div>
+        </div>
+        
+        <div class="sidebar-card">
+          <h3>📋 Queue</h3>
+          <div id="queueList">
+            <div class="queue-empty">No users waiting</div>
+          </div>
+        </div>
+        
+        <div class="sidebar-card">
+          <h3>💰 Today's Earnings</h3>
+          <div class="earnings-today" id="earningsDisplay">$0.00</div>
+          <p style="text-align: center; color: #6c757d; margin-top: 10px; font-size: 14px;">
+            + <span id="tokensEarned">0</span> $ASL tokens
+          </p>
+        </div>
       </div>
     </div>
   </div>
 
+  <script src="/socket.io/socket.io.js"></script>
   <script>
-    const socket = io();
+    // ============================================
+    // STATE
+    // ============================================
+    let socket = null;
     let localStream = null;
-    let remoteStream = null;
     let peerConnection = null;
-    let userWallet = null;
     let partnerId = null;
-    let sessionStartTime = null;
-    let sessionTimer = null;
-    let mintData = null;
+    let isOnline = false;
+    let isMuted = false;
+    let isVideoOff = false;
+    let callStartTime = null;
+    let timerInterval = null;
+    let totalMinutesToday = 0;
+    let totalEarningsToday = 0;
+    let totalTokensToday = 0;
     
-    const TOKEN_CONTRACT = '0x9627175C472412C5D84d781Abe950A798200316F';
-    const OWNER_WALLET = '0x72683ef02989930042e4C727F26cF4DF110d6b9A';
+    // Interpreter info (from login)
+    let interpreterData = null;
     
-    // ICE servers with TURN for cross-network connectivity
+    // ICE Servers with TURN
     const iceServers = {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
-        { urls: 'stun:stun3.l.google.com:19302' },
-        { urls: 'stun:stun4.l.google.com:19302' },
-        // Free TURN servers from OpenRelay
         {
           urls: 'turn:openrelay.metered.ca:80',
           username: 'openrelayproject',
@@ -450,332 +527,446 @@
           username: 'openrelayproject',
           credential: 'openrelayproject'
         }
-      ],
-      iceCandidatePoolSize: 10
+      ]
     };
     
-    function updateStatus(text, status) {
-      document.getElementById('statusText').textContent = text;
-      var indicator = document.getElementById('statusIndicator');
-      indicator.className = 'status-indicator ' + status;
-    }
+    // ============================================
+    // INITIALIZATION
+    // ============================================
     
-    async function connectWallet() {
-      if (!window.ethereum) {
-        alert('Please install MetaMask!');
-        return;
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if already logged in
+      const savedInterpreter = localStorage.getItem('interpreterData');
+      if (savedInterpreter) {
+        interpreterData = JSON.parse(savedInterpreter);
+        if (interpreterData.status === 'approved') {
+          showDashboard();
+        } else {
+          showLoginError('Your application is still ' + interpreterData.status + '. Please wait for approval.');
+        }
       }
       
+      // Login form handler
+      document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    });
+    
+    // ============================================
+    // LOGIN
+    // ============================================
+    
+    async function handleLogin(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('loginBtn');
+      
+      btn.disabled = true;
+      btn.textContent = 'Signing in...';
+      hideLoginError();
+      
       try {
-        var accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-        userWallet = accounts[0];
+        const response = await fetch('/api/interpreter/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
         
-        document.getElementById('connectBtn').style.display = 'none';
-        document.getElementById('goOnlineBtn').disabled = false;
+        const data = await response.json();
         
-        document.getElementById('walletInfo').style.display = 'block';
-        document.getElementById('walletInfo').innerHTML = '<strong>Your Wallet:</strong><br>' + userWallet;
+        if (!response.ok) {
+          throw new Error(data.error || 'Login failed');
+        }
         
-        loadEarnings();
-        updateStatus('Connected - Ready to work', 'offline');
+        if (data.interpreter.status !== 'approved') {
+          throw new Error('Your application is ' + data.interpreter.status + '. Please wait for approval.');
+        }
+        
+        // Save interpreter data
+        interpreterData = data.interpreter;
+        localStorage.setItem('interpreterData', JSON.stringify(interpreterData));
+        localStorage.setItem('interpreterEmail', interpreterData.email);
+        localStorage.setItem('interpreterId', interpreterData.id);
+        localStorage.setItem('interpreterName', `${interpreterData.firstName} ${interpreterData.lastName}`);
+        
+        showDashboard();
+        
       } catch (error) {
-        alert('Failed to connect wallet');
-        console.error(error);
+        showLoginError(error.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
       }
     }
     
-    async function loadEarnings() {
-      try {
-        var response = await fetch('/api/interpreter-earnings/' + userWallet);
-        var data = await response.json();
+    function showLoginError(message) {
+      const errorEl = document.getElementById('loginError');
+      errorEl.textContent = message;
+      errorEl.classList.add('show');
+    }
+    
+    function hideLoginError() {
+      document.getElementById('loginError').classList.remove('show');
+    }
+    
+    function showDashboard() {
+      document.getElementById('loginModal').classList.add('hidden');
+      document.getElementById('interpreterName').textContent = 
+        `${interpreterData.firstName} ${interpreterData.lastName}`;
+      
+      // Update stats from saved data
+      if (interpreterData.stats) {
+        document.getElementById('totalSessions').textContent = interpreterData.stats.totalSessions || 0;
+      }
+      
+      // Initialize socket connection
+      initSocket();
+    }
+    
+    function logout() {
+      localStorage.removeItem('interpreterData');
+      localStorage.removeItem('interpreterEmail');
+      localStorage.removeItem('interpreterId');
+      localStorage.removeItem('interpreterName');
+      
+      if (isOnline) {
+        goOffline();
+      }
+      
+      window.location.reload();
+    }
+    
+    // ============================================
+    // SOCKET CONNECTION
+    // ============================================
+    
+    function initSocket() {
+      socket = io();
+      
+      socket.on('connect', () => {
+        console.log('✅ Socket connected:', socket.id);
+      });
+      
+      socket.on('error', (data) => {
+        console.error('Socket error:', data);
+        alert(data.message || 'An error occurred');
         
-        document.getElementById('totalEarned').textContent = Math.floor(data.totalTokens * 0.45) || 0;
-        document.getElementById('sessionsToday').textContent = data.sessionCount || 0;
-        document.getElementById('totalMinutes').textContent = data.totalMinutes || 0;
-      } catch (error) {
-        console.error('Failed to load earnings:', error);
+        if (data.code === 'NOT_APPROVED') {
+          goOffline();
+        }
+      });
+      
+      socket.on('waiting-users', (data) => {
+        updateQueue(data.count);
+      });
+      
+      socket.on('match-found', async (data) => {
+        console.log('🎯 Match found:', data);
+        partnerId = data.partnerId;
+        
+        document.getElementById('placeholderText').textContent = 'Connecting...';
+        document.getElementById('callInfo').textContent = `Connected to ${data.partnerName || 'Client'}`;
+        
+        await createPeerConnection();
+        
+        // Create and send offer
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        socket.emit('webrtc-offer', { offer, to: partnerId });
+      });
+      
+      socket.on('webrtc-offer', async (data) => {
+        console.log('📨 Received offer');
+        partnerId = data.from;
+        
+        await createPeerConnection();
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+        
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        socket.emit('webrtc-answer', { answer, to: partnerId });
+      });
+      
+      socket.on('webrtc-answer', async (data) => {
+        console.log('📨 Received answer');
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+      });
+      
+      socket.on('webrtc-ice-candidate', async (data) => {
+        if (peerConnection && data.candidate) {
+          try {
+            await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+          } catch (err) {
+            console.error('ICE candidate error:', err);
+          }
+        }
+      });
+      
+      socket.on('partner-ended-call', () => {
+        console.log('Partner ended the call');
+        handleCallEnded();
+      });
+      
+      socket.on('mint-request', (data) => {
+        console.log('💰 Session earnings:', data);
+        totalMinutesToday += data.minutes;
+        totalEarningsToday += (data.minutes * 2.50 * 0.45); // 45% interpreter share
+        totalTokensToday += data.interpreter;
+        
+        updateEarningsDisplay();
+      });
+    }
+    
+    // ============================================
+    // WEBRTC
+    // ============================================
+    
+    async function createPeerConnection() {
+      peerConnection = new RTCPeerConnection(iceServers);
+      
+      // Add local tracks
+      if (localStream) {
+        localStream.getTracks().forEach(track => {
+          peerConnection.addTrack(track, localStream);
+        });
+      }
+      
+      // Handle remote tracks
+      peerConnection.ontrack = (event) => {
+        console.log('📹 Received remote track');
+        document.getElementById('remoteVideo').srcObject = event.streams[0];
+        document.getElementById('videoPlaceholder').style.display = 'none';
+      };
+      
+      // Handle ICE candidates
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate && partnerId) {
+          socket.emit('webrtc-ice-candidate', { candidate: event.candidate, to: partnerId });
+        }
+      };
+      
+      // Handle connection state
+      peerConnection.onconnectionstatechange = () => {
+        console.log('Connection state:', peerConnection.connectionState);
+        
+        if (peerConnection.connectionState === 'connected') {
+          startCallTimer();
+          enableCallControls();
+        } else if (peerConnection.connectionState === 'disconnected' || 
+                   peerConnection.connectionState === 'failed') {
+          handleCallEnded();
+        }
+      };
+      
+      // Handle ICE connection state
+      peerConnection.oniceconnectionstatechange = () => {
+        console.log('ICE state:', peerConnection.iceConnectionState);
+        
+        if (peerConnection.iceConnectionState === 'failed') {
+          peerConnection.restartIce();
+        }
+      };
+    }
+    
+    // ============================================
+    // ONLINE/OFFLINE
+    // ============================================
+    
+    async function toggleOnline() {
+      if (isOnline) {
+        goOffline();
+      } else {
+        await goOnline();
       }
     }
     
     async function goOnline() {
       try {
-        localStream = await navigator.mediaDevices.getUserMedia({ 
-          video: { width: { ideal: 1280 }, height: { ideal: 720 } }, 
-          audio: true 
+        // Get camera/mic
+        localStream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: true
         });
         
         document.getElementById('localVideo').srcObject = localStream;
         
+        // CRITICAL: Pass the email when joining room
+        const interpreterEmail = localStorage.getItem('interpreterEmail');
+        const interpreterName = localStorage.getItem('interpreterName');
+        
+        if (!interpreterEmail) {
+          throw new Error('Please log in again');
+        }
+        
         socket.emit('join-room', {
           room: 'vri',
           role: 'interpreter',
-          wallet: userWallet,
-          userName: 'ASL Interpreter'
+          email: interpreterEmail,  // <-- THIS IS THE FIX
+          userName: interpreterName || 'Interpreter'
         });
         
-        document.getElementById('goOnlineBtn').style.display = 'none';
-        document.getElementById('goOfflineBtn').style.display = 'block';
-        document.getElementById('waitingUsers').style.display = 'block';
+        isOnline = true;
+        document.getElementById('onlineBtn').innerHTML = '🔴';
+        document.getElementById('onlineBtn').classList.remove('btn-online');
+        document.getElementById('onlineBtn').classList.add('btn-offline');
+        document.getElementById('onlineStatus').textContent = 'Online';
+        document.getElementById('onlineStatus').classList.remove('status-offline');
+        document.getElementById('onlineStatus').classList.add('status-online');
+        document.getElementById('placeholderText').textContent = 'Waiting for clients...';
         
-        updateStatus('Online - Waiting for calls', 'online');
+        console.log('✅ Now online as:', interpreterEmail);
         
       } catch (error) {
-        alert('Camera/mic access denied');
-        console.error(error);
+        console.error('Error going online:', error);
+        alert('Could not access camera/microphone: ' + error.message);
       }
     }
     
     function goOffline() {
+      isOnline = false;
+      
+      // End any active call
+      if (partnerId) {
+        endCall();
+      }
+      
+      // Stop local media
       if (localStream) {
-        localStream.getTracks().forEach(function(track) { track.stop(); });
+        localStream.getTracks().forEach(track => track.stop());
         localStream = null;
       }
       
-      document.getElementById('goOnlineBtn').style.display = 'block';
-      document.getElementById('goOfflineBtn').style.display = 'none';
-      document.getElementById('waitingUsers').style.display = 'none';
-      
-      updateStatus('Offline', 'offline');
-      
-      socket.disconnect();
-      setTimeout(function() { socket.connect(); }, 100);
+      document.getElementById('onlineBtn').innerHTML = '🟢';
+      document.getElementById('onlineBtn').classList.add('btn-online');
+      document.getElementById('onlineBtn').classList.remove('btn-offline');
+      document.getElementById('onlineStatus').textContent = 'Offline';
+      document.getElementById('onlineStatus').classList.add('status-offline');
+      document.getElementById('onlineStatus').classList.remove('status-online');
+      document.getElementById('placeholderText').textContent = 'Go online to receive calls';
+      document.getElementById('videoPlaceholder').style.display = 'flex';
     }
     
-    async function createPeerConnection() {
-      peerConnection = new RTCPeerConnection(iceServers);
+    // ============================================
+    // CALL CONTROLS
+    // ============================================
+    
+    function toggleMute() {
+      if (!localStream) return;
       
-      localStream.getTracks().forEach(function(track) {
-        peerConnection.addTrack(track, localStream);
+      isMuted = !isMuted;
+      localStream.getAudioTracks().forEach(track => {
+        track.enabled = !isMuted;
       });
       
-      peerConnection.ontrack = function(event) {
-        console.log('📹 Received remote track:', event.track.kind);
-        if (!remoteStream) {
-          remoteStream = new MediaStream();
-          document.getElementById('remoteVideo').srcObject = remoteStream;
-        }
-        remoteStream.addTrack(event.track);
-      };
-      
-      peerConnection.onicecandidate = function(event) {
-        if (event.candidate && partnerId) {
-          console.log('🧊 Sending ICE candidate');
-          socket.emit('webrtc-ice-candidate', {
-            candidate: event.candidate,
-            to: partnerId
-          });
-        }
-      };
-      
-      peerConnection.oniceconnectionstatechange = function() {
-        console.log('🧊 ICE state:', peerConnection.iceConnectionState);
-        if (peerConnection.iceConnectionState === 'failed') {
-          console.error('ICE connection failed - restarting');
-          peerConnection.restartIce();
-        }
-      };
-      
-      peerConnection.onconnectionstatechange = function() {
-        console.log('🔗 Connection state:', peerConnection.connectionState);
-        if (peerConnection.connectionState === 'connected') {
-          document.getElementById('videoContainer').classList.add('active');
-          document.getElementById('noCallMessage').style.display = 'none';
-          document.getElementById('chatContainer').classList.add('active');
-          startSessionTimer();
-        } else if (peerConnection.connectionState === 'failed') {
-          updateStatus('Connection failed - try again', 'offline');
-        }
-      };
+      const btn = document.getElementById('muteBtn');
+      btn.classList.toggle('active', isMuted);
+      btn.innerHTML = isMuted ? '🔇' : '🎤';
     }
     
-    function startSessionTimer() {
-      sessionStartTime = Date.now();
-      document.getElementById('sessionInfo').style.display = 'block';
-      document.getElementById('endSessionBtn').style.display = 'block';
-      updateStatus('In Call - Earning', 'busy');
+    function toggleVideo() {
+      if (!localStream) return;
       
-      sessionTimer = setInterval(function() {
-        var elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
-        var minutes = Math.floor(elapsed / 60);
-        var seconds = elapsed % 60;
-        
-        document.getElementById('sessionDuration').textContent = 
-          minutes + ':' + seconds.toString().padStart(2, '0');
-        
-        document.getElementById('currentEarning').textContent = 
-          Math.floor(minutes * 9);
-      }, 1000);
-    }
-    
-    socket.on('waiting-users', function(data) {
-      document.getElementById('waitingCount').textContent = data.count;
-    });
-    
-    socket.on('match-found', async function(data) {
-      partnerId = data.partnerId;
-      document.getElementById('clientName').textContent = data.partnerName;
-      console.log('🎯 Match found, partner:', partnerId);
-      updateStatus('Call incoming...', 'busy');
-      
-      await createPeerConnection();
-    });
-    
-    socket.on('webrtc-offer', async function(data) {
-      partnerId = data.from;
-      console.log('📨 Received offer from:', data.from);
-      
-      await createPeerConnection();
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-      
-      var answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
-      
-      socket.emit('webrtc-answer', {
-        answer: answer,
-        to: partnerId
+      isVideoOff = !isVideoOff;
+      localStream.getVideoTracks().forEach(track => {
+        track.enabled = !isVideoOff;
       });
-    });
+      
+      const btn = document.getElementById('videoBtn');
+      btn.classList.toggle('active', isVideoOff);
+      btn.innerHTML = isVideoOff ? '📷' : '📹';
+    }
     
-    socket.on('webrtc-answer', async function(data) {
-      console.log('📨 Received answer');
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-    });
-    
-    socket.on('webrtc-ice-candidate', async function(data) {
-      try {
-        if (peerConnection && data.candidate) {
-          console.log('🧊 Adding ICE candidate');
-          await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-        }
-      } catch (error) {
-        console.error('Error adding ICE candidate:', error);
+    function endCall() {
+      console.log('Ending call...');
+      
+      // Notify partner
+      if (partnerId && socket) {
+        socket.emit('end-session', { to: partnerId });
       }
-    });
-    
-    socket.on('chat-message', function(data) {
-      var chatMessages = document.getElementById('chatMessages');
-      var messageDiv = document.createElement('div');
-      messageDiv.className = 'chat-message';
-      messageDiv.innerHTML = '<strong>' + data.from + ':</strong> ' + data.message;
-      chatMessages.appendChild(messageDiv);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    });
-    
-    socket.on('mint-request', function(data) {
-      mintData = data;
       
-      clearInterval(sessionTimer);
-      document.getElementById('sessionInfo').style.display = 'none';
-      document.getElementById('endSessionBtn').style.display = 'none';
+      handleCallEnded();
+    }
+    
+    function handleCallEnded() {
+      // Stop timer
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
       
-      var interpreterEarning = Math.floor(data.interpreter);
-      document.getElementById('sessionEarned').textContent = interpreterEarning + ' $ASL';
-      document.getElementById('earningsHighlight').style.display = 'block';
-      
-      loadEarnings();
-    });
-    
-    socket.on('error', function(data) {
-      alert('Error: ' + data.message);
-      console.error('Socket error:', data);
-    });
-    
-    socket.on('partner-ended-call', function() {
-      updateStatus('Client ended call', 'online');
-      cleanupCall();
-    });
-    
-    function cleanupCall() {
+      // Close peer connection
       if (peerConnection) {
         peerConnection.close();
         peerConnection = null;
       }
-      if (remoteStream) {
-        remoteStream = null;
-      }
       
       partnerId = null;
-      clearInterval(sessionTimer);
       
-      document.getElementById('videoContainer').classList.remove('active');
-      document.getElementById('noCallMessage').style.display = 'block';
-      document.getElementById('chatContainer').classList.remove('active');
-      document.getElementById('sessionInfo').style.display = 'none';
-      document.getElementById('endSessionBtn').style.display = 'none';
-    }
-    
-    function sendMessage() {
-      var input = document.getElementById('chatInput');
-      var message = input.value.trim();
-      if (message && partnerId) {
-        socket.emit('chat-message', { message: message, to: partnerId });
+      // Reset UI
+      document.getElementById('remoteVideo').srcObject = null;
+      document.getElementById('videoPlaceholder').style.display = 'flex';
+      document.getElementById('placeholderText').textContent = isOnline ? 'Waiting for clients...' : 'Go online to receive calls';
+      document.getElementById('callTimer').textContent = '0:00';
+      document.getElementById('callInfo').textContent = 'No active call';
+      
+      disableCallControls();
+      
+      // If still online, re-join the queue
+      if (isOnline && socket) {
+        const interpreterEmail = localStorage.getItem('interpreterEmail');
+        const interpreterName = localStorage.getItem('interpreterName');
         
-        var chatMessages = document.getElementById('chatMessages');
-        var messageDiv = document.createElement('div');
-        messageDiv.className = 'chat-message';
-        messageDiv.innerHTML = '<strong>You:</strong> ' + message;
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        
-        input.value = '';
+        socket.emit('join-room', {
+          room: 'vri',
+          role: 'interpreter',
+          email: interpreterEmail,
+          userName: interpreterName || 'Interpreter'
+        });
       }
     }
     
-    document.getElementById('chatInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') sendMessage();
-    });
-    
-    function endSession() {
-      socket.emit('end-session');
-      cleanupCall();
-      updateStatus('Online - Waiting for calls', 'online');
+    function enableCallControls() {
+      document.getElementById('muteBtn').disabled = false;
+      document.getElementById('videoBtn').disabled = false;
+      document.getElementById('endBtn').disabled = false;
     }
     
-    async function mintTokens() {
-      if (!mintData) return;
+    function disableCallControls() {
+      document.getElementById('muteBtn').disabled = true;
+      document.getElementById('videoBtn').disabled = true;
+      document.getElementById('endBtn').disabled = true;
+    }
+    
+    // ============================================
+    // TIMER & UI UPDATES
+    // ============================================
+    
+    function startCallTimer() {
+      callStartTime = Date.now();
       
-      try {
-        var interpreter = mintData.interpreter;
-        var dev = mintData.dev;
-        var user = mintData.user;
-        var interpreterWallet = mintData.interpreterWallet;
-        var userWalletAddr = mintData.userWallet;
-        
-        var abi = ["function mintRewards(address to, uint256 amount) public"];
-        var provider = new ethers.providers.Web3Provider(window.ethereum);
-        var signer = provider.getSigner();
-        var contract = new ethers.Contract(TOKEN_CONTRACT, abi, signer);
-        
-        updateStatus('Minting tokens...', 'busy');
-        
-        var tx = await contract.mintRewards(
-          interpreterWallet, 
-          ethers.utils.parseUnits(interpreter.toString(), 18)
-        );
-        await tx.wait();
-        
-        tx = await contract.mintRewards(
-          OWNER_WALLET, 
-          ethers.utils.parseUnits(dev.toString(), 18)
-        );
-        await tx.wait();
-        
-        tx = await contract.mintRewards(
-          userWalletAddr, 
-          ethers.utils.parseUnits(user.toString(), 18)
-        );
-        await tx.wait();
-        
-        document.getElementById('earningsHighlight').style.display = 'none';
-        alert('✅ Tokens minted successfully!');
-        
-        updateStatus('Online - Waiting for calls', 'online');
-        loadEarnings();
-        
-      } catch (error) {
-        alert('❌ Minting failed: ' + error.message);
-        console.error(error);
+      timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - callStartTime) / 1000);
+        const mins = Math.floor(elapsed / 60);
+        const secs = elapsed % 60;
+        document.getElementById('callTimer').textContent = 
+          `${mins}:${secs.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+    
+    function updateQueue(count) {
+      const queueList = document.getElementById('queueList');
+      if (count === 0) {
+        queueList.innerHTML = '<div class="queue-empty">No users waiting</div>';
+      } else {
+        queueList.innerHTML = `<div class="queue-item"><span>👤 ${count} user${count > 1 ? 's' : ''} waiting</span></div>`;
       }
+    }
+    
+    function updateEarningsDisplay() {
+      document.getElementById('totalMinutes').textContent = totalMinutesToday;
+      document.getElementById('totalEarnings').textContent = '$' + totalEarningsToday.toFixed(2);
+      document.getElementById('earningsDisplay').textContent = '$' + totalEarningsToday.toFixed(2);
+      document.getElementById('tokensEarned').textContent = totalTokensToday;
     }
   </script>
 </body>
