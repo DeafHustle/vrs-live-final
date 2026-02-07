@@ -134,25 +134,10 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
     
-    .btn-success {
-      background: #4CAF50;
-      color: white;
-    }
-    
-    .btn-danger {
-      background: #f44336;
-      color: white;
-    }
-    
-    .btn-primary {
-      background: #2196F3;
-      color: white;
-    }
-    
-    .btn-warning {
-      background: #ff9800;
-      color: white;
-    }
+    .btn-success { background: #4CAF50; color: white; }
+    .btn-danger { background: #f44336; color: white; }
+    .btn-primary { background: #2196F3; color: white; }
+    .btn-warning { background: #ff9800; color: white; }
     
     button:disabled {
       opacity: 0.5;
@@ -388,11 +373,11 @@
         
         <div id="videoContainer" class="video-container">
           <div class="video-box">
-            <video id="localVideo" autoplay muted></video>
+            <video id="localVideo" autoplay muted playsinline></video>
             <div class="video-label">You (Interpreter)</div>
           </div>
           <div class="video-box">
-            <video id="remoteVideo" autoplay></video>
+            <video id="remoteVideo" autoplay playsinline></video>
             <div class="video-label">Client (Deaf User)</div>
           </div>
         </div>
@@ -415,15 +400,9 @@
     <div style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 30px; text-align: center; margin-top: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
       <h4 style="margin-bottom: 15px;">Connect With Us</h4>
       <div style="display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; margin-bottom: 15px;">
-        <a href="https://www.instagram.com/americansignlanguage.eth/" target="_blank" style="color: white; text-decoration: none; font-size: 1rem; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
-          📸 Instagram
-        </a>
-        <a href="https://x.com/aslnfts" target="_blank" style="color: white; text-decoration: none; font-size: 1rem; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
-          🐦 X (Twitter)
-        </a>
-        <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank" style="color: white; text-decoration: none; font-size: 1rem; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
-          🎨 Mint NFTs
-        </a>
+        <a href="https://www.instagram.com/americansignlanguage.eth/" target="_blank" style="color: white; text-decoration: none; font-size: 1rem;">📸 Instagram</a>
+        <a href="https://x.com/aslnfts" target="_blank" style="color: white; text-decoration: none; font-size: 1rem;">🐦 X (Twitter)</a>
+        <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank" style="color: white; text-decoration: none; font-size: 1rem;">🎨 Mint NFTs</a>
       </div>
       <div style="opacity: 0.8; font-size: 0.85rem;">
         <p>americansignlanguage.eth</p>
@@ -447,17 +426,38 @@
     const TOKEN_CONTRACT = '0x9627175C472412C5D84d781Abe950A798200316F';
     const OWNER_WALLET = '0x72683ef02989930042e4C727F26cF4DF110d6b9A';
     
+    // ICE servers with TURN for cross-network connectivity
     const iceServers = {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' }
-      ]
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        { urls: 'stun:stun3.l.google.com:19302' },
+        { urls: 'stun:stun4.l.google.com:19302' },
+        // Free TURN servers from OpenRelay
+        {
+          urls: 'turn:openrelay.metered.ca:80',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        },
+        {
+          urls: 'turn:openrelay.metered.ca:443',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        },
+        {
+          urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        }
+      ],
+      iceCandidatePoolSize: 10
     };
     
     function updateStatus(text, status) {
       document.getElementById('statusText').textContent = text;
-      const indicator = document.getElementById('statusIndicator');
-      indicator.className = `status-indicator ${status}`;
+      var indicator = document.getElementById('statusIndicator');
+      indicator.className = 'status-indicator ' + status;
     }
     
     async function connectWallet() {
@@ -467,20 +467,16 @@
       }
       
       try {
-        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        var accounts = await ethereum.request({ method: 'eth_requestAccounts' });
         userWallet = accounts[0];
         
         document.getElementById('connectBtn').style.display = 'none';
         document.getElementById('goOnlineBtn').disabled = false;
         
         document.getElementById('walletInfo').style.display = 'block';
-        document.getElementById('walletInfo').innerHTML = `
-          <strong>Your Wallet:</strong><br>${userWallet}
-        `;
+        document.getElementById('walletInfo').innerHTML = '<strong>Your Wallet:</strong><br>' + userWallet;
         
-        // Load earnings
         loadEarnings();
-        
         updateStatus('Connected - Ready to work', 'offline');
       } catch (error) {
         alert('Failed to connect wallet');
@@ -490,8 +486,8 @@
     
     async function loadEarnings() {
       try {
-        const response = await fetch(`/api/interpreter-earnings/${userWallet}`);
-        const data = await response.json();
+        var response = await fetch('/api/interpreter-earnings/' + userWallet);
+        var data = await response.json();
         
         document.getElementById('totalEarned').textContent = Math.floor(data.totalTokens * 0.45) || 0;
         document.getElementById('sessionsToday').textContent = data.sessionCount || 0;
@@ -503,15 +499,13 @@
     
     async function goOnline() {
       try {
-        // Get camera/mic
         localStream = await navigator.mediaDevices.getUserMedia({ 
-          video: true, 
+          video: { width: { ideal: 1280 }, height: { ideal: 720 } }, 
           audio: true 
         });
         
         document.getElementById('localVideo').srcObject = localStream;
         
-        // Join as interpreter
         socket.emit('join-room', {
           room: 'vri',
           role: 'interpreter',
@@ -533,7 +527,8 @@
     
     function goOffline() {
       if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
+        localStream.getTracks().forEach(function(track) { track.stop(); });
+        localStream = null;
       }
       
       document.getElementById('goOnlineBtn').style.display = 'block';
@@ -543,17 +538,18 @@
       updateStatus('Offline', 'offline');
       
       socket.disconnect();
-      setTimeout(() => socket.connect(), 100);
+      setTimeout(function() { socket.connect(); }, 100);
     }
     
     async function createPeerConnection() {
       peerConnection = new RTCPeerConnection(iceServers);
       
-      localStream.getTracks().forEach(track => {
+      localStream.getTracks().forEach(function(track) {
         peerConnection.addTrack(track, localStream);
       });
       
-      peerConnection.ontrack = (event) => {
+      peerConnection.ontrack = function(event) {
+        console.log('📹 Received remote track:', event.track.kind);
         if (!remoteStream) {
           remoteStream = new MediaStream();
           document.getElementById('remoteVideo').srcObject = remoteStream;
@@ -561,8 +557,9 @@
         remoteStream.addTrack(event.track);
       };
       
-      peerConnection.onicecandidate = (event) => {
+      peerConnection.onicecandidate = function(event) {
         if (event.candidate && partnerId) {
+          console.log('🧊 Sending ICE candidate');
           socket.emit('webrtc-ice-candidate', {
             candidate: event.candidate,
             to: partnerId
@@ -570,13 +567,23 @@
         }
       };
       
-      peerConnection.onconnectionstatechange = () => {
-        console.log('Connection state:', peerConnection.connectionState);
+      peerConnection.oniceconnectionstatechange = function() {
+        console.log('🧊 ICE state:', peerConnection.iceConnectionState);
+        if (peerConnection.iceConnectionState === 'failed') {
+          console.error('ICE connection failed - restarting');
+          peerConnection.restartIce();
+        }
+      };
+      
+      peerConnection.onconnectionstatechange = function() {
+        console.log('🔗 Connection state:', peerConnection.connectionState);
         if (peerConnection.connectionState === 'connected') {
           document.getElementById('videoContainer').classList.add('active');
           document.getElementById('noCallMessage').style.display = 'none';
           document.getElementById('chatContainer').classList.add('active');
           startSessionTimer();
+        } else if (peerConnection.connectionState === 'failed') {
+          updateStatus('Connection failed - try again', 'offline');
         }
       };
     }
@@ -587,37 +594,40 @@
       document.getElementById('endSessionBtn').style.display = 'block';
       updateStatus('In Call - Earning', 'busy');
       
-      sessionTimer = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
-        const minutes = Math.floor(elapsed / 60);
-        const seconds = elapsed % 60;
+      sessionTimer = setInterval(function() {
+        var elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
+        var minutes = Math.floor(elapsed / 60);
+        var seconds = elapsed % 60;
         
         document.getElementById('sessionDuration').textContent = 
-          `${minutes}:${seconds.toString().padStart(2, '0')}`;
+          minutes + ':' + seconds.toString().padStart(2, '0');
         
         document.getElementById('currentEarning').textContent = 
-          Math.floor(minutes * 9); // 9 $ASL per minute (45% of 20)
+          Math.floor(minutes * 9);
       }, 1000);
     }
     
-    socket.on('waiting-users', ({ count }) => {
-      document.getElementById('waitingCount').textContent = count;
+    socket.on('waiting-users', function(data) {
+      document.getElementById('waitingCount').textContent = data.count;
     });
     
-    socket.on('match-found', async (data) => {
+    socket.on('match-found', async function(data) {
       partnerId = data.partnerId;
       document.getElementById('clientName').textContent = data.partnerName;
+      console.log('🎯 Match found, partner:', partnerId);
       updateStatus('Call incoming...', 'busy');
       
       await createPeerConnection();
     });
     
-    socket.on('webrtc-offer', async ({ offer, from }) => {
-      partnerId = from;
-      await createPeerConnection();
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+    socket.on('webrtc-offer', async function(data) {
+      partnerId = data.from;
+      console.log('📨 Received offer from:', data.from);
       
-      const answer = await peerConnection.createAnswer();
+      await createPeerConnection();
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+      
+      var answer = await peerConnection.createAnswer();
       await peerConnection.setLocalDescription(answer);
       
       socket.emit('webrtc-answer', {
@@ -626,52 +636,84 @@
       });
     });
     
-    socket.on('webrtc-answer', async ({ answer }) => {
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+    socket.on('webrtc-answer', async function(data) {
+      console.log('📨 Received answer');
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
     });
     
-    socket.on('webrtc-ice-candidate', async ({ candidate }) => {
+    socket.on('webrtc-ice-candidate', async function(data) {
       try {
-        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        if (peerConnection && data.candidate) {
+          console.log('🧊 Adding ICE candidate');
+          await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+        }
       } catch (error) {
         console.error('Error adding ICE candidate:', error);
       }
     });
     
-    socket.on('chat-message', ({ message, from, timestamp }) => {
-      const chatMessages = document.getElementById('chatMessages');
-      const messageDiv = document.createElement('div');
+    socket.on('chat-message', function(data) {
+      var chatMessages = document.getElementById('chatMessages');
+      var messageDiv = document.createElement('div');
       messageDiv.className = 'chat-message';
-      messageDiv.innerHTML = `<strong>${from}:</strong> ${message}`;
+      messageDiv.innerHTML = '<strong>' + data.from + ':</strong> ' + data.message;
       chatMessages.appendChild(messageDiv);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     });
     
-    socket.on('mint-request', (data) => {
+    socket.on('mint-request', function(data) {
       mintData = data;
       
       clearInterval(sessionTimer);
       document.getElementById('sessionInfo').style.display = 'none';
       document.getElementById('endSessionBtn').style.display = 'none';
       
-      const interpreterEarning = Math.floor(data.interpreter);
-      document.getElementById('sessionEarned').textContent = `${interpreterEarning} $ASL`;
+      var interpreterEarning = Math.floor(data.interpreter);
+      document.getElementById('sessionEarned').textContent = interpreterEarning + ' $ASL';
       document.getElementById('earningsHighlight').style.display = 'block';
       
-      // Update stats
       loadEarnings();
     });
     
+    socket.on('error', function(data) {
+      alert('Error: ' + data.message);
+      console.error('Socket error:', data);
+    });
+    
+    socket.on('partner-ended-call', function() {
+      updateStatus('Client ended call', 'online');
+      cleanupCall();
+    });
+    
+    function cleanupCall() {
+      if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+      }
+      if (remoteStream) {
+        remoteStream = null;
+      }
+      
+      partnerId = null;
+      clearInterval(sessionTimer);
+      
+      document.getElementById('videoContainer').classList.remove('active');
+      document.getElementById('noCallMessage').style.display = 'block';
+      document.getElementById('chatContainer').classList.remove('active');
+      document.getElementById('sessionInfo').style.display = 'none';
+      document.getElementById('endSessionBtn').style.display = 'none';
+    }
+    
     function sendMessage() {
-      const input = document.getElementById('chatInput');
-      const message = input.value.trim();
+      var input = document.getElementById('chatInput');
+      var message = input.value.trim();
       if (message && partnerId) {
-        socket.emit('chat-message', { message, to: partnerId });
+        socket.emit('chat-message', { message: message, to: partnerId });
         
-        const chatMessages = document.getElementById('chatMessages');
-        const messageDiv = document.createElement('div');
+        var chatMessages = document.getElementById('chatMessages');
+        var messageDiv = document.createElement('div');
         messageDiv.className = 'chat-message';
-        messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
+        messageDiv.innerHTML = '<strong>You:</strong> ' + message;
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
         
@@ -679,25 +721,13 @@
       }
     }
     
-    document.getElementById('chatInput').addEventListener('keypress', (e) => {
+    document.getElementById('chatInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') sendMessage();
     });
     
     function endSession() {
       socket.emit('end-session');
-      
-      if (peerConnection) {
-        peerConnection.close();
-        peerConnection = null;
-      }
-      
-      document.getElementById('videoContainer').classList.remove('active');
-      document.getElementById('noCallMessage').style.display = 'block';
-      document.getElementById('chatContainer').classList.remove('active');
-      
-      partnerId = null;
-      clearInterval(sessionTimer);
-      
+      cleanupCall();
       updateStatus('Online - Waiting for calls', 'online');
     }
     
@@ -705,15 +735,20 @@
       if (!mintData) return;
       
       try {
-        const { interpreter, dev, user, interpreterWallet, userWallet } = mintData;
-        const abi = ["function mintRewards(address to, uint256 amount) public"];
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const contract = new ethers.Contract(TOKEN_CONTRACT, abi, signer);
+        var interpreter = mintData.interpreter;
+        var dev = mintData.dev;
+        var user = mintData.user;
+        var interpreterWallet = mintData.interpreterWallet;
+        var userWalletAddr = mintData.userWallet;
+        
+        var abi = ["function mintRewards(address to, uint256 amount) public"];
+        var provider = new ethers.providers.Web3Provider(window.ethereum);
+        var signer = provider.getSigner();
+        var contract = new ethers.Contract(TOKEN_CONTRACT, abi, signer);
         
         updateStatus('Minting tokens...', 'busy');
         
-        let tx = await contract.mintRewards(
+        var tx = await contract.mintRewards(
           interpreterWallet, 
           ethers.utils.parseUnits(interpreter.toString(), 18)
         );
@@ -726,7 +761,7 @@
         await tx.wait();
         
         tx = await contract.mintRewards(
-          userWallet, 
+          userWalletAddr, 
           ethers.utils.parseUnits(user.toString(), 18)
         );
         await tx.wait();
