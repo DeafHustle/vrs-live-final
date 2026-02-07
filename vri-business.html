@@ -289,11 +289,11 @@
       
       <div id="videoContainer" class="video-container">
         <div class="video-box">
-          <video id="localVideo" autoplay muted></video>
+          <video id="localVideo" autoplay muted playsinline></video>
           <div class="video-label">You (Business/Patient)</div>
         </div>
         <div class="video-box">
-          <video id="remoteVideo" autoplay></video>
+          <video id="remoteVideo" autoplay playsinline></video>
           <div class="video-label">ASL Interpreter</div>
         </div>
       </div>
@@ -312,13 +312,13 @@
     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; margin-top: 20px;">
       <h4 style="margin-bottom: 15px;">Connect With Us</h4>
       <div style="display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; margin-bottom: 15px;">
-        <a href="https://www.instagram.com/americansignlanguage.eth/" target="_blank" style="color: white; text-decoration: none; font-size: 1rem; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+        <a href="https://www.instagram.com/americansignlanguage.eth/" target="_blank" style="color: white; text-decoration: none; font-size: 1rem;">
           📸 Instagram
         </a>
-        <a href="https://x.com/aslnfts" target="_blank" style="color: white; text-decoration: none; font-size: 1rem; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+        <a href="https://x.com/aslnfts" target="_blank" style="color: white; text-decoration: none; font-size: 1rem;">
           🐦 X (Twitter)
         </a>
-        <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank" style="color: white; text-decoration: none; font-size: 1rem; transition: opacity 0.3s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+        <a href="https://bueno.art/uc3v2njixystwxprxgyj/americansignlanguageeth" target="_blank" style="color: white; text-decoration: none; font-size: 1rem;">
           🎨 Mint NFTs
         </a>
       </div>
@@ -343,17 +343,38 @@
     const OWNER_WALLET = '0x72683ef02989930042e4C727F26cF4DF110d6b9A';
     const TOKEN_CONTRACT = '0x9627175C472412C5D84d781Abe950A798200316F';
     
+    // ICE servers with TURN for cross-network connectivity
     const iceServers = {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' }
-      ]
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        { urls: 'stun:stun3.l.google.com:19302' },
+        { urls: 'stun:stun4.l.google.com:19302' },
+        // Free TURN servers from OpenRelay
+        {
+          urls: 'turn:openrelay.metered.ca:80',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        },
+        {
+          urls: 'turn:openrelay.metered.ca:443',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        },
+        {
+          urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        }
+      ],
+      iceCandidatePoolSize: 10
     };
     
     function updateStatus(message, type = 'waiting') {
       const status = document.getElementById('status');
       status.textContent = message;
-      status.className = `status ${type}`;
+      status.className = 'status ' + type;
     }
     
     async function connectWallet() {
@@ -369,13 +390,12 @@
         document.getElementById('connectBtn').disabled = true;
         document.getElementById('requestBtn').disabled = false;
         
-        updateStatus(`✅ Connected: ${userWallet.substring(0, 6)}...${userWallet.slice(-4)}`, 'connected');
+        updateStatus('✅ Connected: ' + userWallet.substring(0, 6) + '...' + userWallet.slice(-4), 'connected');
         
         document.getElementById('walletInfo').style.display = 'block';
-        document.getElementById('walletInfo').innerHTML = `
-          <strong>Your Wallet:</strong> ${userWallet}<br>
-          <strong>Token Contract:</strong> ${TOKEN_CONTRACT}
-        `;
+        document.getElementById('walletInfo').innerHTML = 
+          '<strong>Your Wallet:</strong> ' + userWallet + '<br>' +
+          '<strong>Token Contract:</strong> ' + TOKEN_CONTRACT;
       } catch (error) {
         updateStatus('❌ Failed to connect wallet', 'error');
         console.error(error);
@@ -388,7 +408,7 @@
         
         // Get user's camera/mic
         localStream = await navigator.mediaDevices.getUserMedia({ 
-          video: true, 
+          video: { width: { ideal: 1280 }, height: { ideal: 720 } }, 
           audio: true 
         });
         
@@ -416,12 +436,13 @@
       peerConnection = new RTCPeerConnection(iceServers);
       
       // Add local stream tracks
-      localStream.getTracks().forEach(track => {
+      localStream.getTracks().forEach(function(track) {
         peerConnection.addTrack(track, localStream);
       });
       
       // Handle incoming tracks
-      peerConnection.ontrack = (event) => {
+      peerConnection.ontrack = function(event) {
+        console.log('📹 Received remote track:', event.track.kind);
         if (!remoteStream) {
           remoteStream = new MediaStream();
           document.getElementById('remoteVideo').srcObject = remoteStream;
@@ -430,8 +451,9 @@
       };
       
       // Handle ICE candidates
-      peerConnection.onicecandidate = (event) => {
+      peerConnection.onicecandidate = function(event) {
         if (event.candidate && partnerId) {
+          console.log('🧊 Sending ICE candidate');
           socket.emit('webrtc-ice-candidate', {
             candidate: event.candidate,
             to: partnerId
@@ -439,21 +461,33 @@
         }
       };
       
+      // ICE connection state
+      peerConnection.oniceconnectionstatechange = function() {
+        console.log('🧊 ICE state:', peerConnection.iceConnectionState);
+        if (peerConnection.iceConnectionState === 'failed') {
+          console.error('ICE connection failed - restarting');
+          peerConnection.restartIce();
+        }
+      };
+      
       // Connection state
-      peerConnection.onconnectionstatechange = () => {
-        console.log('Connection state:', peerConnection.connectionState);
+      peerConnection.onconnectionstatechange = function() {
+        console.log('🔗 Connection state:', peerConnection.connectionState);
         if (peerConnection.connectionState === 'connected') {
           updateStatus('✅ Connected to interpreter! Earning 20 $ASL/min', 'connected');
           document.getElementById('endBtn').style.display = 'inline-block';
           document.getElementById('shareBtn').style.display = 'inline-block';
           document.getElementById('chatContainer').style.display = 'block';
+        } else if (peerConnection.connectionState === 'failed') {
+          updateStatus('❌ Connection failed. Please try again.', 'error');
         }
       };
     }
     
     // Socket events
-    socket.on('match-found', async (data) => {
+    socket.on('match-found', async function(data) {
       partnerId = data.partnerId;
+      console.log('🎯 Match found, partner:', partnerId);
       updateStatus('🎯 Interpreter found! Connecting video...', 'waiting');
       
       await createPeerConnection();
@@ -468,65 +502,99 @@
       });
     });
     
-    socket.on('webrtc-answer', async ({ answer }) => {
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+    socket.on('webrtc-offer', async function(data) {
+      console.log('📨 Received offer from:', data.from);
+      partnerId = data.from;
+      
+      await createPeerConnection();
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+      
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+      
+      socket.emit('webrtc-answer', {
+        answer: answer,
+        to: partnerId
+      });
     });
     
-    socket.on('webrtc-ice-candidate', async ({ candidate }) => {
+    socket.on('webrtc-answer', async function(data) {
+      console.log('📨 Received answer');
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+    });
+    
+    socket.on('webrtc-ice-candidate', async function(data) {
       try {
-        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        if (peerConnection && data.candidate) {
+          console.log('🧊 Adding ICE candidate');
+          await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+        }
       } catch (error) {
         console.error('Error adding ICE candidate:', error);
       }
     });
     
-    socket.on('chat-message', ({ message, from, timestamp }) => {
-      const chatMessages = document.getElementById('chatMessages');
-      const messageDiv = document.createElement('div');
+    socket.on('chat-message', function(data) {
+      var chatMessages = document.getElementById('chatMessages');
+      var messageDiv = document.createElement('div');
       messageDiv.className = 'chat-message';
-      messageDiv.innerHTML = `<strong>${from}:</strong> ${message}`;
+      messageDiv.innerHTML = '<strong>' + data.from + ':</strong> ' + data.message;
       chatMessages.appendChild(messageDiv);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     });
     
-    socket.on('mint-request', (data) => {
+    socket.on('mint-request', function(data) {
       mintData = data;
       document.getElementById('mintBtn').style.display = 'inline-block';
-      updateStatus(`💰 Session ended! ${data.total} $ASL tokens earned. Click to mint!`, 'connected');
+      updateStatus('💰 Session ended! ' + data.total + ' $ASL tokens earned. Click to mint!', 'connected');
     });
     
-    socket.on('partner-ended-call', () => {
+    socket.on('partner-ended-call', function() {
       updateStatus('📞 Interpreter ended the session', 'waiting');
-      if (peerConnection) {
-        peerConnection.close();
-      }
-      if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-      }
-      document.getElementById('videoContainer').classList.remove('active');
-      document.getElementById('endBtn').style.display = 'none';
-      document.getElementById('shareBtn').style.display = 'none';
+      cleanupCall();
     });
     
-    socket.on('call-ended', () => {
-      // Clean up call UI
+    socket.on('call-ended', function() {
+      cleanupCall();
+    });
+    
+    socket.on('error', function(data) {
+      updateStatus('❌ ' + data.message, 'error');
+      console.error('Socket error:', data);
+    });
+    
+    function cleanupCall() {
       if (peerConnection) {
         peerConnection.close();
         peerConnection = null;
       }
-    });
+      if (localStream) {
+        localStream.getTracks().forEach(function(track) { track.stop(); });
+        localStream = null;
+      }
+      if (screenStream) {
+        screenStream.getTracks().forEach(function(track) { track.stop(); });
+        screenStream = null;
+      }
+      remoteStream = null;
+      partnerId = null;
+      document.getElementById('videoContainer').classList.remove('active');
+      document.getElementById('endBtn').style.display = 'none';
+      document.getElementById('shareBtn').style.display = 'none';
+      document.getElementById('chatContainer').style.display = 'none';
+      document.getElementById('requestBtn').style.display = 'inline-block';
+    }
     
     function sendMessage() {
-      const input = document.getElementById('chatInput');
-      const message = input.value.trim();
+      var input = document.getElementById('chatInput');
+      var message = input.value.trim();
       if (message && partnerId) {
-        socket.emit('chat-message', { message, to: partnerId });
+        socket.emit('chat-message', { message: message, to: partnerId });
         
-        // Show own message
-        const chatMessages = document.getElementById('chatMessages');
-        const messageDiv = document.createElement('div');
+        var chatMessages = document.getElementById('chatMessages');
+        var messageDiv = document.createElement('div');
         messageDiv.className = 'chat-message';
-        messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
+        messageDiv.innerHTML = '<strong>You:</strong> ' + message;
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
         
@@ -534,7 +602,7 @@
       }
     }
     
-    document.getElementById('chatInput').addEventListener('keypress', (e) => {
+    document.getElementById('chatInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') sendMessage();
     });
     
@@ -543,14 +611,16 @@
         try {
           screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
           
-          const videoTrack = screenStream.getVideoTracks()[0];
-          const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
-          sender.replaceTrack(videoTrack);
+          var videoTrack = screenStream.getVideoTracks()[0];
+          var sender = peerConnection.getSenders().find(function(s) { 
+            return s.track && s.track.kind === 'video'; 
+          });
+          if (sender) sender.replaceTrack(videoTrack);
           
           document.getElementById('shareBtn').textContent = 'Stop Sharing';
           socket.emit('screen-share-started', { to: partnerId });
           
-          videoTrack.onended = () => {
+          videoTrack.onended = function() {
             stopScreenShare();
           };
         } catch (error) {
@@ -563,11 +633,13 @@
     
     function stopScreenShare() {
       if (screenStream) {
-        screenStream.getTracks().forEach(track => track.stop());
+        screenStream.getTracks().forEach(function(track) { track.stop(); });
         
-        const videoTrack = localStream.getVideoTracks()[0];
-        const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
-        sender.replaceTrack(videoTrack);
+        var videoTrack = localStream.getVideoTracks()[0];
+        var sender = peerConnection.getSenders().find(function(s) { 
+          return s.track && s.track.kind === 'video'; 
+        });
+        if (sender) sender.replaceTrack(videoTrack);
         
         screenStream = null;
         document.getElementById('shareBtn').textContent = 'Share Screen';
@@ -577,22 +649,7 @@
     
     function endSession() {
       socket.emit('end-session');
-      
-      if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-      }
-      if (peerConnection) {
-        peerConnection.close();
-      }
-      if (screenStream) {
-        screenStream.getTracks().forEach(track => track.stop());
-      }
-      
-      document.getElementById('videoContainer').classList.remove('active');
-      document.getElementById('endBtn').style.display = 'none';
-      document.getElementById('shareBtn').style.display = 'none';
-      document.getElementById('requestBtn').style.display = 'inline-block';
-      
+      cleanupCall();
       updateStatus('📞 Session ended. Request new interpreter?', 'waiting');
     }
     
@@ -602,14 +659,19 @@
       try {
         updateStatus('⏳ Minting tokens on blockchain...', 'waiting');
         
-        const { interpreter, dev, user, interpreterWallet, userWallet } = mintData;
-        const abi = ["function mintRewards(address to, uint256 amount) public"];
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const contract = new ethers.Contract(TOKEN_CONTRACT, abi, signer);
+        var interpreter = mintData.interpreter;
+        var dev = mintData.dev;
+        var user = mintData.user;
+        var interpreterWallet = mintData.interpreterWallet;
+        var userWalletAddr = mintData.userWallet;
+        
+        var abi = ["function mintRewards(address to, uint256 amount) public"];
+        var provider = new ethers.providers.Web3Provider(window.ethereum);
+        var signer = provider.getSigner();
+        var contract = new ethers.Contract(TOKEN_CONTRACT, abi, signer);
         
         // Mint to interpreter
-        let tx = await contract.mintRewards(
+        var tx = await contract.mintRewards(
           interpreterWallet, 
           ethers.utils.parseUnits(interpreter.toString(), 18)
         );
@@ -622,9 +684,9 @@
         );
         await tx.wait();
         
-        // Mint to user (you!)
+        // Mint to user
         tx = await contract.mintRewards(
-          userWallet, 
+          userWalletAddr, 
           ethers.utils.parseUnits(user.toString(), 18)
         );
         await tx.wait();
