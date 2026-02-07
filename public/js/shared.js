@@ -86,9 +86,9 @@ class Navigation {
       // Public navigation
       return `
         <li><a href="/" class="navbar-link" data-page="home">Home</a></li>
-        <li><a href="/about" class="navbar-link" data-page="about">About</a></li>
-        <li><a href="/pricing" class="navbar-link" data-page="pricing">Pricing</a></li>
+        <li><a href="/token" class="navbar-link" data-page="token">$ASL Token</a></li>
         <li><a href="/interpreter/apply" class="navbar-link" data-page="interpreter-apply">Become Interpreter</a></li>
+        <li><a href="/contact" class="navbar-link" data-page="contact">Contact</a></li>
       `;
     }
 
