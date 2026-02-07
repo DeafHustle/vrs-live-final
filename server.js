@@ -180,7 +180,23 @@ const adminSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 const Admin = mongoose.model('Admin', adminSchema);
+// Contact Schema
 
+const contactSchema = new mongoose.Schema({
+  type: { type: String, enum: ['subscribe', 'business'], required: true },
+  email: { type: String, required: true, lowercase: true },
+  firstName: String,
+  lastName: String,
+  company: String,
+  industry: String,
+  volume: String,
+  message: String,
+  hearingStatus: String,
+  interest: String,
+  submittedAt: { type: Date, default: Date.now },
+  status: { type: String, enum: ['new', 'contacted', 'converted'], default: 'new' }
+});
+const Contact = mongoose.model('Contact', contactSchema);
 // ============================================
 // ROOM CONFIGURATION
 // ============================================
@@ -781,6 +797,88 @@ app.post('/api/stripe/cancel-session-payment', async (req, res) => {
     
   } catch (error) {
     console.error('Cancel payment error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================
+// Contact form submission subscribe + business inquiries
+// ============================================
+
+app.post('/api/contact/submit', async (req, res) => {
+  try {
+    const { type, email, firstName, lastName, company, industry, volume, message, hearingStatus, interest } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+    
+    // Check for duplicate subscription
+    if (type === 'subscribe') {
+      const existing = await Contact.findOne({ email: email.toLowerCase(), type: 'subscribe' });
+      if (existing) {
+        return res.status(400).json({ error: 'This email is already subscribed' });
+      }
+    }
+    
+    const contact = new Contact({
+      type,
+      email: email.toLowerCase(),
+      firstName,
+      lastName,
+      company,
+      industry,
+      volume,
+      message,
+      hearingStatus,
+      interest
+    });
+    
+    await contact.save();
+    
+    console.log(`📬 NEW ${type.toUpperCase()}: ${email}${company ? ` (${company})` : ''}`);
+    
+    res.json({ 
+      success: true, 
+      message: type === 'subscribe' 
+        ? 'Successfully subscribed!' 
+        : 'Inquiry received! We\'ll be in touch soon.'
+    });
+    
+  } catch (error) {
+    console.error('Contact submission error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get all contacts (admin only)
+app.get('/api/admin/contacts', async (req, res) => {
+  try {
+    const adminWallet = req.headers['x-admin-wallet']?.toLowerCase();
+    
+    const admin = await Admin.findOne({ wallet: adminWallet });
+    if (!admin) {
+      return res.status(403).json({ error: 'Not authorized' });
+    }
+    
+    const { type, status, page = 1, limit = 50 } = req.query;
+    const query = {};
+    if (type) query.type = type;
+    if (status) query.status = status;
+    
+    const contacts = await Contact.find(query)
+      .sort({ submittedAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+    
+    const total = await Contact.countDocuments(query);
+    
+    res.json({ 
+      contacts,
+      pagination: { page: parseInt(page), limit: parseInt(limit), total }
+    });
+    
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
@@ -1519,30 +1617,34 @@ app.post('/api/admin/interpreter/:id/suspend', async (req, res) => {
 // ============================================
 
 // Serve static files (CSS, JS, images) from public folder
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
-// Serve manifest.json for PWA
-app.get('/manifest.json', (req, res) => res.sendFile(path.join(__dirname, 'public', 'manifest.json')));
+// Main pages (from public folder)
+app.get('/', (req, res) => res.sendFile(__dirname + '/public/index.html'));
+app.get('/session', (req, res) => res.sendFile(__dirname + '/public/session.html'));
+app.get('/contact', (req, res) => res.sendFile(__dirname + '/public/contact.html'));
+app.get('/token', (req, res) => res.sendFile(__dirname + '/public/token.html'));
 
-// Main pages
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
-app.get('/session', (req, res) => res.sendFile(path.join(__dirname, 'public', 'session.html')));
-
-// VRI & Interpreter pages (keep existing for now, will migrate later)
+// VRI & Interpreter pages (existing files in root)
 app.get('/vri', (req, res) => res.sendFile(__dirname + '/vri-business.html'));
 app.get('/interpreter', (req, res) => res.sendFile(__dirname + '/interpreter-dashboard.html'));
 app.get('/interpreter/apply', (req, res) => res.sendFile(__dirname + '/interpreter-apply.html'));
 app.get('/interpreter/stripe-refresh', (req, res) => res.sendFile(__dirname + '/interpreter-stripe-refresh.html'));
 app.get('/interpreter/stripe-complete', (req, res) => res.sendFile(__dirname + '/interpreter-stripe-complete.html'));
 
-// Admin & Auth pages
+// Admin & Auth pages (existing files in root)
 app.get('/admin', (req, res) => res.sendFile(__dirname + '/admin-dashboard.html'));
 app.get('/signup', (req, res) => res.sendFile(__dirname + '/user-signup.html'));
 app.get('/login', (req, res) => res.sendFile(__dirname + '/user-login.html'));
 
-// Dashboard pages (will create these next)
-app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
-app.get('/dashboard/*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
+// Dashboard (will create later)
+app.get('/dashboard', (req, res) => res.sendFile(__dirname + '/public/dashboard.html'));
+app.get('/dashboard/*', (req, res) => res.sendFile(__dirname + '/public/dashboard.html'));
+
+// Pricing, About pages (will create later - redirect to home for now)
+app.get('/pricing', (req, res) => res.redirect('/'));
+app.get('/about', (req, res) => res.redirect('/'));
+
 
 // ============================================
 // SERVER START
