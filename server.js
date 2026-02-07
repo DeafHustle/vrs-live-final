@@ -1518,8 +1518,6 @@ app.post('/api/admin/interpreter/:id/suspend', async (req, res) => {
 // STATIC FILE SERVING
 // ============================================
 
-const path = require('path');
-
 // Serve static files (CSS, JS, images) from public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
