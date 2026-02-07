@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="$ASL Token - Earn rewards for using Video Remote Interpreting services. Learn about our tokenomics on Base chain.">
+  <title>$ASL Token | americansignlanguage.eth</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <style>
+    .token-hero {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: white;
+      padding: var(--space-3xl) 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .token-hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2311998e' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+    
+    .token-hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .token-hero h1 {
+      color: white;
+      font-size: 3.5rem;
+      margin-bottom: var(--space-md);
+    }
+    
+    .token-symbol {
+      color: var(--primary-light);
+    }
+    
+    .token-hero p {
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto var(--space-xl);
+      font-size: var(--font-size-lg);
+    }
+    
+    .token-hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-2xl);
+      flex-wrap: wrap;
+    }
+    
+    .token-hero-stat {
+      text-align: center;
+    }
+    
+    .token-hero-stat-value {
+      font-size: var(--font-size-3xl);
+      font-weight: 700;
+      color: var(--primary-light);
+    }
+    
+    .token-hero-stat-label {
+      opacity: 0.7;
+      font-size: var(--font-size-sm);
+      margin-top: var(--space-xs);
+    }
+    
+    .chain-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      background: rgba(255,255,255,0.1);
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: var(--radius-full);
+      margin-top: var(--space-xl);
+      font-size: var(--font-size-sm);
+    }
+    
+    .chain-badge img {
+      width: 20px;
+      height: 20px;
+    }
+    
+    /* Allocation Section */
+    .allocation-section {
+      padding: var(--space-3xl) 0;
+      background: white;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+    
+    .section-header h2 {
+      margin-bottom: var(--space-md);
+    }
+    
+    .section-header p {
+      color: var(--gray-500);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .allocation-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-lg);
+    }
+    
+    .allocation-card {
+      background: var(--gray-50);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      border-left: 4px solid var(--primary);
+      transition: all var(--transition-base);
+    }
+    
+    .allocation-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .allocation-card.community { border-left-color: #10b981; }
+    .allocation-card.liquidity { border-left-color: #3b82f6; }
+    .allocation-card.team { border-left-color: #8b5cf6; }
+    .allocation-card.marketing { border-left-color: #f59e0b; }
+    .allocation-card.dao { border-left-color: #ec4899; }
+    
+    .allocation-percent {
+      font-size: var(--font-size-3xl);
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+    
+    .allocation-title {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      margin: var(--space-sm) 0;
+    }
+    
+    .allocation-amount {
+      color: var(--gray-500);
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--space-md);
+    }
+    
+    .allocation-details {
+      color: var(--gray-600);
+      font-size: var(--font-size-sm);
+      line-height: 1.6;
+    }
+    
+    /* Rewards Section */
+    .rewards-section {
+      padding: var(--space-3xl) 0;
+      background: var(--gray-50);
+    }
+    
+    .rewards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-xl);
+    }
+    
+    .reward-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      text-align: center;
+      box-shadow: var(--shadow-md);
+    }
+    
+    .reward-icon {
+      font-size: 3rem;
+      margin-bottom: var(--space-md);
+    }
+    
+    .reward-amount {
+      font-size: var(--font-size-2xl);
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: var(--space-sm);
+    }
+    
+    .reward-label {
+      color: var(--gray-600);
+      font-size: var(--font-size-sm);
+    }
+    
+    /* Utility Section */
+    .utility-section {
+      padding: var(--space-3xl) 0;
+      background: white;
+    }
+    
+    .utility-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--space-xl);
+    }
+    
+    .utility-item {
+      display: flex;
+      gap: var(--space-lg);
+      align-items: flex-start;
+    }
+    
+    .utility-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+    
+    .utility-content h3 {
+      margin-bottom: var(--space-sm);
+    }
+    
+    .utility-content p {
+      color: var(--gray-500);
+      margin: 0;
+    }
+    
+    /* Vesting Section */
+    .vesting-section {
+      padding: var(--space-3xl) 0;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+    }
+    
+    .vesting-section h2 {
+      color: white;
+      text-align: center;
+      margin-bottom: var(--space-xl);
+    }
+    
+    .vesting-timeline {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .vesting-item {
+      display: flex;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+      position: relative;
+    }
+    
+    .vesting-item::before {
+      content: "";
+      position: absolute;
+      left: 20px;
+      top: 50px;
+      bottom: -30px;
+      width: 2px;
+      background: rgba(255,255,255,0.3);
+    }
+    
+    .vesting-item:last-child::before {
+      display: none;
+    }
+    
+    .vesting-dot {
+      width: 42px;
+      height: 42px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    
+    .vesting-content h4 {
+      margin-bottom: var(--space-xs);
+    }
+    
+    .vesting-content p {
+      opacity: 0.8;
+      margin: 0;
+      font-size: var(--font-size-sm);
+    }
+    
+    /* CTA Section */
+    .token-cta {
+      padding: var(--space-3xl) 0;
+      text-align: center;
+      background: var(--gray-900);
+      color: white;
+    }
+    
+    .token-cta h2 {
+      color: white;
+      margin-bottom: var(--space-md);
+    }
+    
+    .token-cta p {
+      color: var(--gray-400);
+      max-width: 500px;
+      margin: 0 auto var(--space-xl);
+    }
+    
+    .cta-buttons {
+      display: flex;
+      gap: var(--space-md);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    @media (max-width: 768px) {
+      .token-hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .token-hero-stats {
+        gap: var(--space-lg);
+      }
+      
+      .allocation-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation injected by shared.js -->
+  
+  <main>
+    <!-- Hero -->
+    <section class="token-hero">
+      <div class="container token-hero-content">
+        <h1><span class="token-symbol">$ASL</span> Token</h1>
+        <p>Earn rewards every time you use Video Remote Interpreting. The first VRI platform with blockchain-powered incentives for the Deaf community.</p>
+        
+        <div class="token-hero-stats">
+          <div class="token-hero-stat">
+            <div class="token-hero-stat-value">1B</div>
+            <div class="token-hero-stat-label">Total Supply</div>
+          </div>
+          <div class="token-hero-stat">
+            <div class="token-hero-stat-value">50%</div>
+            <div class="token-hero-stat-label">Community Rewards</div>
+          </div>
+          <div class="token-hero-stat">
+            <div class="token-hero-stat-value">$0</div>
+            <div class="token-hero-stat-label">Pre-sale / VC</div>
+          </div>
+          <div class="token-hero-stat">
+            <div class="token-hero-stat-value">4yr</div>
+            <div class="token-hero-stat-label">Team Vesting</div>
+          </div>
+        </div>
+        
+        <div class="chain-badge">
+          🔵 Deployed on Base Chain (Ethereum L2)
+        </div>
+      </div>
+    </section>
+    
+    <!-- Allocation -->
+    <section class="allocation-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Token Allocation</h2>
+          <p>Fair launch with no pre-sale. 50% goes directly to community rewards.</p>
+        </div>
+        
+        <div class="allocation-grid">
+          <div class="allocation-card community">
+            <div class="allocation-percent">50%</div>
+            <div class="allocation-title">Community Rewards</div>
+            <div class="allocation-amount">500,000,000 $ASL</div>
+            <div class="allocation-details">
+              Session rewards, referral bonuses, airdrops. Distributed automatically when you use VRI services.
+            </div>
+          </div>
+          
+          <div class="allocation-card liquidity">
+            <div class="allocation-percent">20%</div>
+            <div class="allocation-title">Liquidity Pool</div>
+            <div class="allocation-amount">200,000,000 $ASL</div>
+            <div class="allocation-details">
+              Locked in DEX liquidity for 2+ years. Ensures you can always trade $ASL tokens.
+            </div>
+          </div>
+          
+          <div class="allocation-card team">
+            <div class="allocation-percent">15%</div>
+            <div class="allocation-title">Interpreters & Team</div>
+            <div class="allocation-amount">150,000,000 $ASL</div>
+            <div class="allocation-details">
+              80% for interpreter bonuses, 20% for team. 4-year vesting with 6-month cliff.
+            </div>
+          </div>
+          
+          <div class="allocation-card marketing">
+            <div class="allocation-percent">10%</div>
+            <div class="allocation-title">Marketing & Partnerships</div>
+            <div class="allocation-amount">100,000,000 $ASL</div>
+            <div class="allocation-details">
+              Controlled by multisig. Used for Deaf org partnerships, events, and community growth.
+            </div>
+          </div>
+          
+          <div class="allocation-card dao">
+            <div class="allocation-percent">5%</div>
+            <div class="allocation-title">DAO Treasury</div>
+            <div class="allocation-amount">50,000,000 $ASL</div>
+            <div class="allocation-details">
+              Community-governed fund for future development, grants, and platform improvements.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Rewards -->
+    <section class="rewards-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Earn $ASL Rewards</h2>
+          <p>Every VRI session earns you tokens. Here's how:</p>
+        </div>
+        
+        <div class="rewards-grid">
+          <div class="reward-card">
+            <div class="reward-icon">👤</div>
+            <div class="reward-amount">1 $ASL</div>
+            <div class="reward-label">Per minute for users</div>
+          </div>
+          
+          <div class="reward-card">
+            <div class="reward-icon">🎤</div>
+            <div class="reward-amount">2 $ASL</div>
+            <div class="reward-label">Per minute for interpreters</div>
+          </div>
+          
+          <div class="reward-card">
+            <div class="reward-icon">🤝</div>
+            <div class="reward-amount">50 $ASL</div>
+            <div class="reward-label">Referral bonus</div>
+          </div>
+          
+          <div class="reward-card">
+            <div class="reward-icon">🎁</div>
+            <div class="reward-amount">1,000 $ASL</div>
+            <div class="reward-label">Max airdrop per wallet</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Utility -->
+    <section class="utility-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Token Utility</h2>
+          <p>$ASL isn't just a reward — it has real utility in our ecosystem.</p>
+        </div>
+        
+        <div class="utility-grid">
+          <div class="utility-item">
+            <div class="utility-icon">💰</div>
+            <div class="utility-content">
+              <h3>Pay for VRI Sessions</h3>
+              <p>Use $ASL to pay for interpreting services at a discount.</p>
+            </div>
+          </div>
+          
+          <div class="utility-item">
+            <div class="utility-icon">🗳️</div>
+            <div class="utility-content">
+              <h3>Governance Voting</h3>
+              <p>Vote on platform decisions, feature requests, and community grants.</p>
+            </div>
+          </div>
+          
+          <div class="utility-item">
+            <div class="utility-icon">⭐</div>
+            <div class="utility-content">
+              <h3>Premium Features</h3>
+              <p>Access priority matching, preferred interpreters, and exclusive features.</p>
+            </div>
+          </div>
+          
+          <div class="utility-item">
+            <div class="utility-icon">🎨</div>
+            <div class="utility-content">
+              <h3>NFT Access</h3>
+              <p>Mint exclusive ASL alphabet NFTs and community collectibles.</p>
+            </div>
+          </div>
+          
+          <div class="utility-item">
+            <div class="utility-icon">💱</div>
+            <div class="utility-content">
+              <h3>Trade on DEX</h3>
+              <p>Swap $ASL for USDC or ETH on Aerodrome and other Base DEXs.</p>
+            </div>
+          </div>
+          
+          <div class="utility-item">
+            <div class="utility-icon">🏆</div>
+            <div class="utility-content">
+              <h3>Interpreter Staking</h3>
+              <p>Interpreters can stake $ASL for higher visibility and premium rates.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Vesting -->
+    <section class="vesting-section">
+      <div class="container">
+        <h2>Team Vesting Schedule</h2>
+        <p class="text-center mb-xl" style="opacity: 0.8;">No early dumps. Team tokens are locked and vest over 4 years.</p>
+        
+        <div class="vesting-timeline">
+          <div class="vesting-item">
+            <div class="vesting-dot">🔒</div>
+            <div class="vesting-content">
+              <h4>Months 0-6: Cliff Period</h4>
+              <p>No team tokens can be accessed. 100% locked.</p>
+            </div>
+          </div>
+          
+          <div class="vesting-item">
+            <div class="vesting-dot">📅</div>
+            <div class="vesting-content">
+              <h4>Month 6: First Unlock</h4>
+              <p>12.5% of team allocation unlocks. Linear vesting begins.</p>
+            </div>
+          </div>
+          
+          <div class="vesting-item">
+            <div class="vesting-dot">📈</div>
+            <div class="vesting-content">
+              <h4>Months 6-48: Linear Vesting</h4>
+              <p>Remaining tokens vest linearly over 42 months.</p>
+            </div>
+          </div>
+          
+          <div class="vesting-item">
+            <div class="vesting-dot">✅</div>
+            <div class="vesting-content">
+              <h4>Month 48: Fully Vested</h4>
+              <p>All team tokens are fully vested after 4 years.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- CTA -->
+    <section class="token-cta">
+      <div class="container">
+        <h2>Ready to Earn $ASL?</h2>
+        <p>Sign up for americansignlanguage.eth and start earning tokens with every VRI session.</p>
+        
+        <div class="cta-buttons">
+          <a href="/signup" class="btn btn-primary btn-lg">Sign Up Free</a>
+          <a href="/contact" class="btn btn-secondary btn-lg" style="border-color: white; color: white;">Get Updates</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <!-- Footer injected by shared.js -->
+  
+  <script src="/js/shared.js"></script>
+</body>
+</html>
