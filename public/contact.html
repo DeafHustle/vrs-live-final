@@ -276,7 +276,7 @@
           <div class="quick-contact-item">
             <div class="quick-contact-icon">📧</div>
             <h3>Email Us</h3>
-            <p><a href="mailto:hello@americansignlanguage.xyz">hello@americansignlanguage.xyz</a></p>
+            <p><a href="/cdn-cgi/l/email-protection#6b030e0707042b0a060e1902080a0518020c05070a050c1e0a0c0e45131211"><span class="__cf_email__" data-cfemail="ff979a939390bf9e929a8d969c9e918c969891939e91988a9e989ad1878685">[email&#160;protected]</span></a></p>
           </div>
           
           <div class="quick-contact-item">
@@ -303,7 +303,7 @@
   
   <!-- Footer injected by shared.js -->
   
-  <script src="/js/shared.js"></script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/js/shared.js"></script>
   <script>
     // Subscribe Form
     document.getElementById('subscribeForm').addEventListener('submit', async (e) => {
@@ -355,13 +355,4 @@
           form.style.display = 'none';
           document.getElementById('businessSuccess').classList.add('show');
         } else {
-          const error = await response.json();
-          Utils.showToast(error.message || 'Something went wrong', 'error');
-        }
-      } catch (error) {
-        Utils.showToast('Failed to submit. Please try again.', 'error');
-      }
-    });
-  </script>
-</body>
-</html>
+          
