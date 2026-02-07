@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#111827">
+  <title>VRI Session | americansignlanguage.eth</title>
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --primary: #11998e;
+      --primary-light: #38ef7d;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+    }
+    
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--gray-900);
+      color: white;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* Session Container */
+    .session-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+    }
+    
+    /* Header */
+    .session-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: rgba(0,0,0,0.5);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+    
+    .session-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .session-logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary-light);
+    }
+    
+    .session-logo-short {
+      display: none;
+    }
+    
+    .session-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: rgba(16, 185, 129, 0.2);
+      border-radius: 20px;
+      font-size: 0.875rem;
+    }
+    
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    .status-dot.connecting {
+      background: var(--warning);
+    }
+    
+    .status-dot.error {
+      background: var(--error);
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .session-timer {
+      font-size: 1.25rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    
+    .connection-quality {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .quality-bar {
+      width: 4px;
+      background: var(--success);
+      border-radius: 2px;
+    }
+    
+    .quality-bar:nth-child(1) { height: 8px; }
+    .quality-bar:nth-child(2) { height: 12px; }
+    .quality-bar:nth-child(3) { height: 16px; }
+    .quality-bar:nth-child(4) { height: 20px; }
+    
+    .quality-bar.weak { background: var(--error); }
+    .quality-bar.medium { background: var(--warning); }
+    
+    /* Video Grid */
+    .video-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 60px 4px 100px;
+      background: var(--gray-900);
+    }
+    
+    .video-box {
+      position: relative;
+      background: var(--gray-800);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    .video-box video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .video-label {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: rgba(0,0,0,0.7);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .video-muted-indicator {
+      color: var(--error);
+    }
+    
+    .video-placeholder {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--gray-800);
+    }
+    
+    .video-placeholder-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+    
+    .video-placeholder-text {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.875rem;
+    }
+    
+    /* Controls */
+    .session-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      z-index: 100;
+    }
+    
+    .control-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      transition: all 0.2s;
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+    
+    .control-btn:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.05);
+    }
+    
+    .control-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .control-btn.active {
+      background: var(--error);
+    }
+    
+    .control-btn.end-call {
+      background: var(--error);
+      width: 64px;
+      height: 64px;
+    }
+    
+    .control-btn.end-call:hover {
+      background: #dc2626;
+    }
+    
+    .control-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    /* Chat Panel */
+    .chat-panel {
+      position: absolute;
+      bottom: 100px;
+      right: 16px;
+      width: 320px;
+      max-height: 400px;
+      background: rgba(0,0,0,0.9);
+      border-radius: 12px;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .chat-panel.open {
+      display: flex;
+    }
+    
+    .chat-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .chat-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+    
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 200px;
+    }
+    
+    .chat-message {
+      padding: 8px 12px;
+      border-radius: 8px;
+      max-width: 80%;
+      font-size: 0.875rem;
+    }
+    
+    .chat-message.sent {
+      background: var(--primary);
+      align-self: flex-end;
+    }
+    
+    .chat-message.received {
+      background: rgba(255,255,255,0.1);
+      align-self: flex-start;
+    }
+    
+    .chat-input-container {
+      display: flex;
+      padding: 12px;
+      gap: 8px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .chat-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 0.875rem;
+    }
+    
+    .chat-input::placeholder {
+      color: rgba(255,255,255,0.5);
+    }
+    
+    .chat-send {
+      padding: 10px 16px;
+      background: var(--primary);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    /* Connecting State */
+    .connecting-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--gray-900);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+    
+    .connecting-overlay.hidden {
+      display: none;
+    }
+    
+    .connecting-spinner {
+      width: 64px;
+      height: 64px;
+      border: 4px solid rgba(255,255,255,0.1);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 24px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .connecting-text {
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+    }
+    
+    .connecting-subtext {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.875rem;
+    }
+    
+    .cancel-btn {
+      margin-top: 32px;
+      padding: 12px 32px;
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    
+    .cancel-btn:hover {
+      border-color: var(--error);
+      color: var(--error);
+    }
+    
+    /* End Call Modal */
+    .end-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      padding: 16px;
+    }
+    
+    .end-modal.open {
+      display: flex;
+    }
+    
+    .end-modal-content {
+      background: var(--gray-800);
+      padding: 32px;
+      border-radius: 16px;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+    
+    .end-modal-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+    
+    .end-modal h2 {
+      margin-bottom: 8px;
+    }
+    
+    .end-modal p {
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 24px;
+    }
+    
+    .end-modal-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .end-stat {
+      background: rgba(255,255,255,0.05);
+      padding: 16px;
+      border-radius: 8px;
+    }
+    
+    .end-stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-light);
+    }
+    
+    .end-stat-label {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 4px;
+    }
+    
+    .end-modal-actions {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .end-modal-actions button {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    .btn-back {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-feedback {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .video-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+      
+      .session-timer {
+        font-size: 1rem;
+      }
+      
+      .session-logo-full {
+        display: none;
+      }
+      
+      .session-logo-short {
+        display: inline;
+      }
+      
+      .control-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 1.25rem;
+      }
+      
+      .control-btn.end-call {
+        width: 56px;
+        height: 56px;
+      }
+      
+      .chat-panel {
+        width: calc(100% - 32px);
+        left: 16px;
+        bottom: 90px;
+        max-height: 300px;
+      }
+      
+      .connection-quality {
+        display: none;
+      }
+      
+      .end-modal-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Landscape Mobile */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .video-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+        padding: 50px 4px 70px;
+      }
+      
+      .session-controls {
+        padding: 8px;
+      }
+      
+      .control-btn {
+        width: 44px;
+        height: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Connecting Overlay -->
+  <div class="connecting-overlay" id="connectingOverlay">
+    <div class="connecting-spinner"></div>
+    <div class="connecting-text">Finding an interpreter...</div>
+    <div class="connecting-subtext">This usually takes less than 30 seconds</div>
+    <button class="cancel-btn" onclick="cancelCall()">Cancel</button>
+  </div>
+  
+  <!-- Main Session Container -->
+  <div class="session-container">
+    <!-- Header -->
+    <div class="session-header">
+      <div class="session-info">
+        <div class="session-logo">
+          <span class="session-logo-full">🤟 americansignlanguage.eth</span>
+          <span class="session-logo-short">🤟 ASL</span>
+        </div>
+        <div class="session-status">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">Connecting...</span>
+        </div>
+      </div>
+      
+      <div class="session-timer" id="sessionTimer">0:00</div>
+      
+      <div class="connection-quality" id="connectionQuality">
+        <div class="quality-bar"></div>
+        <div class="quality-bar"></div>
+        <div class="quality-bar"></div>
+        <div class="quality-bar"></div>
+      </div>
+    </div>
+    
+    <!-- Video Grid -->
+    <div class="video-grid">
+      <!-- Remote Video (Interpreter/User) -->
+      <div class="video-box">
+        <video id="remoteVideo" autoplay playsinline></video>
+        <div class="video-placeholder" id="remotePlaceholder">
+          <div class="video-placeholder-icon">👤</div>
+          <div class="video-placeholder-text">Waiting for connection...</div>
+        </div>
+        <div class="video-label">
+          <span id="remoteLabel">Interpreter</span>
+          <span class="video-muted-indicator" id="remoteMuted" style="display:none;">🔇</span>
+        </div>
+      </div>
+      
+      <!-- Local Video (You) -->
+      <div class="video-box">
+        <video id="localVideo" autoplay playsinline muted></video>
+        <div class="video-placeholder" id="localPlaceholder" style="display:none;">
+          <div class="video-placeholder-icon">📷</div>
+          <div class="video-placeholder-text">Camera off</div>
+        </div>
+        <div class="video-label">
+          <span>You</span>
+          <span class="video-muted-indicator" id="localMuted" style="display:none;">🔇</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Controls - Available to BOTH user and interpreter -->
+    <div class="session-controls">
+      <button class="control-btn" id="muteBtn" onclick="toggleMute()" title="Mute/Unmute">
+        🎤
+      </button>
+      <button class="control-btn" id="videoBtn" onclick="toggleVideo()" title="Camera On/Off">
+        📹
+      </button>
+      <button class="control-btn end-call" onclick="endCall()" title="End Call">
+        📞
+      </button>
+      <button class="control-btn" id="chatBtn" onclick="toggleChat()" title="Chat">
+        💬
+      </button>
+      <button class="control-btn" id="fullscreenBtn" onclick="toggleFullscreen()" title="Fullscreen">
+        ⛶
+      </button>
+    </div>
+    
+    <!-- Chat Panel -->
+    <div class="chat-panel" id="chatPanel">
+      <div class="chat-header">
+        <span>Chat</span>
+        <button class="chat-close" onclick="toggleChat()">×</button>
+      </div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-container">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." onkeypress="handleChatKeypress(event)">
+        <button class="chat-send" onclick="sendChatMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- End Call Modal -->
+  <div class="end-modal" id="endModal">
+    <div class="end-modal-content">
+      <div class="end-modal-icon">✅</div>
+      <h2>Session Complete</h2>
+      <p>Thank you for using americansignlanguage.eth</p>
+      
+      <div class="end-modal-stats">
+        <div class="end-stat">
+          <div class="end-stat-value" id="finalDuration">0:00</div>
+          <div class="end-stat-label">Duration</div>
+        </div>
+        <div class="end-stat">
+          <div class="end-stat-value" id="finalCost">$0.00</div>
+          <div class="end-stat-label">Total Cost</div>
+        </div>
+        <div class="end-stat">
+          <div class="end-stat-value" id="tokensEarned">0</div>
+          <div class="end-stat-label">$ASL Earned</div>
+        </div>
+        <div class="end-stat">
+          <div class="end-stat-value" id="ratingStars">⭐⭐⭐⭐⭐</div>
+          <div class="end-stat-label">Rate Session</div>
+        </div>
+      </div>
+      
+      <div class="end-modal-actions">
+        <button class="btn-feedback" onclick="goToDashboard()">Back to Dashboard</button>
+        <button class="btn-back" onclick="startNewCall()">New Call</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // ============================================
+    // VRI SESSION - WEBRTC + SOCKET.IO
+    // ============================================
+    
+    const socket = io();
+    
+    // State
+    let localStream = null;
+    let remoteStream = null;
+    let peerConnection = null;
+    let partnerId = null;
+    let isAudioMuted = false;
+    let isVideoOff = false;
+    let sessionStartTime = null;
+    let timerInterval = null;
+    let totalSeconds = 0;
+    
+    // Get user info from URL or localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    const userRole = urlParams.get('role') || localStorage.getItem('userType') || 'user';
+    const userName = localStorage.getItem('userName') || 'User';
+    const userWallet = localStorage.getItem('userWallet') || null;
+    
+    // Rate per minute
+    const RATE_PER_MINUTE = 2.50;
+    const TOKENS_PER_MINUTE_USER = 1;
+    const TOKENS_PER_MINUTE_INTERPRETER = 2;
+    
+    // ICE Servers with TURN for cross-network connectivity
+    const iceServers = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        { urls: 'stun:stun3.l.google.com:19302' },
+        { urls: 'stun:stun4.l.google.com:19302' },
+        {
+          urls: 'turn:openrelay.metered.ca:80',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        },
+        {
+          urls: 'turn:openrelay.metered.ca:443',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        },
+        {
+          urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        }
+      ],
+      iceCandidatePoolSize: 10
+    };
+    
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+    
+    async function init() {
+      try {
+        // Get local media
+        localStream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
+          audio: true
+        });
+        
+        document.getElementById('localVideo').srcObject = localStream;
+        
+        // Set remote label based on role
+        document.getElementById('remoteLabel').textContent = 
+          userRole === 'interpreter' ? 'Client' : 'Interpreter';
+        
+        // Update connecting text based on role
+        if (userRole === 'interpreter') {
+          document.querySelector('.connecting-text').textContent = 'Waiting for client...';
+          document.querySelector('.connecting-subtext').textContent = 'You will be connected when a client requests an interpreter';
+        }
+        
+        // Join the VRI room
+        socket.emit('join-room', {
+          room: 'vri',
+          role: userRole,
+          wallet: userWallet,
+          userName: userName
+        });
+        
+      } catch (error) {
+        console.error('Failed to get media:', error);
+        alert('Camera/microphone access is required for VRI calls.');
+        goToDashboard();
+      }
+    }
+    
+    // ============================================
+    // WEBRTC FUNCTIONS
+    // ============================================
+    
+    async function createPeerConnection() {
+      peerConnection = new RTCPeerConnection(iceServers);
+      
+      // Add local tracks
+      localStream.getTracks().forEach(track => {
+        peerConnection.addTrack(track, localStream);
+      });
+      
+      // Handle remote tracks
+      peerConnection.ontrack = (event) => {
+        console.log('📹 Received remote track:', event.track.kind);
+        
+        if (!remoteStream) {
+          remoteStream = new MediaStream();
+          document.getElementById('remoteVideo').srcObject = remoteStream;
+        }
+        remoteStream.addTrack(event.track);
+        
+        // Hide placeholder
+        document.getElementById('remotePlaceholder').style.display = 'none';
+      };
+      
+      // Handle ICE candidates
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate && partnerId) {
+          socket.emit('webrtc-ice-candidate', {
+            candidate: event.candidate,
+            to: partnerId
+          });
+        }
+      };
+      
+      // Handle ICE connection state
+      peerConnection.oniceconnectionstatechange = () => {
+        console.log('🧊 ICE state:', peerConnection.iceConnectionState);
+        updateConnectionQuality(peerConnection.iceConnectionState);
+        
+        if (peerConnection.iceConnectionState === 'failed') {
+          console.log('ICE failed, restarting...');
+          peerConnection.restartIce();
+        }
+      };
+      
+      // Handle connection state
+      peerConnection.onconnectionstatechange = () => {
+        console.log('🔗 Connection state:', peerConnection.connectionState);
+        
+        if (peerConnection.connectionState === 'connected') {
+          document.getElementById('connectingOverlay').classList.add('hidden');
+          document.getElementById('statusText').textContent = 'Connected';
+          document.getElementById('statusDot').classList.remove('connecting');
+          startTimer();
+        } else if (peerConnection.connectionState === 'disconnected') {
+          document.getElementById('statusText').textContent = 'Reconnecting...';
+          document.getElementById('statusDot').classList.add('connecting');
+        } else if (peerConnection.connectionState === 'failed') {
+          document.getElementById('statusText').textContent = 'Connection lost';
+          document.getElementById('statusDot').classList.add('error');
+        }
+      };
+    }
+    
+    function updateConnectionQuality(state) {
+      const bars = document.querySelectorAll('.quality-bar');
+      bars.forEach(bar => bar.classList.remove('weak', 'medium'));
+      
+      if (state === 'connected' || state === 'completed') {
+        // Good connection - all bars green
+      } else if (state === 'checking' || state === 'new') {
+        bars[2].classList.add('medium');
+        bars[3].classList.add('medium');
+      } else {
+        bars.forEach(bar => bar.classList.add('weak'));
+      }
+    }
+    
+    // ============================================
+    // TIMER & BILLING
+    // ============================================
+    
+    function startTimer() {
+      sessionStartTime = Date.now();
+      timerInterval = setInterval(() => {
+        totalSeconds++;
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+        document.getElementById('sessionTimer').textContent = 
+          `${mins}:${secs.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+    
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+    
+    function calculateSessionStats() {
+      const minutes = Math.ceil(totalSeconds / 60);
+      const cost = (minutes * RATE_PER_MINUTE).toFixed(2);
+      const tokens = userRole === 'interpreter' 
+        ? minutes * TOKENS_PER_MINUTE_INTERPRETER 
+        : minutes * TOKENS_PER_MINUTE_USER;
+      
+      return { minutes, cost, tokens };
+    }
+    
+    // ============================================
+    // MEDIA CONTROLS
+    // ============================================
+    
+    function toggleMute() {
+      if (!localStream) return;
+      
+      isAudioMuted = !isAudioMuted;
+      localStream.getAudioTracks().forEach(track => {
+        track.enabled = !isAudioMuted;
+      });
+      
+      const btn = document.getElementById('muteBtn');
+      btn.classList.toggle('active', isAudioMuted);
+      btn.textContent = isAudioMuted ? '🔇' : '🎤';
+      
+      document.getElementById('localMuted').style.display = isAudioMuted ? 'inline' : 'none';
+      
+      // Notify partner
+      if (partnerId) {
+        socket.emit('media-state', { to: partnerId, audioMuted: isAudioMuted });
+      }
+    }
+    
+    function toggleVideo() {
+      if (!localStream) return;
+      
+      isVideoOff = !isVideoOff;
+      localStream.getVideoTracks().forEach(track => {
+        track.enabled = !isVideoOff;
+      });
+      
+      const btn = document.getElementById('videoBtn');
+      btn.classList.toggle('active', isVideoOff);
+      btn.textContent = isVideoOff ? '📷' : '📹';
+      
+      document.getElementById('localPlaceholder').style.display = isVideoOff ? 'flex' : 'none';
+      
+      // Notify partner
+      if (partnerId) {
+        socket.emit('media-state', { to: partnerId, videoOff: isVideoOff });
+      }
+    }
+    
+    function toggleChat() {
+      const panel = document.getElementById('chatPanel');
+      panel.classList.toggle('open');
+      
+      const btn = document.getElementById('chatBtn');
+      btn.classList.toggle('active', panel.classList.contains('open'));
+    }
+    
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log('Fullscreen error:', err);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    
+    // ============================================
+    // CHAT
+    // ============================================
+    
+    function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      
+      if (message && partnerId) {
+        socket.emit('chat-message', { message, to: partnerId });
+        addChatMessage(message, 'You', true);
+        input.value = '';
+      }
+    }
+    
+    function handleChatKeypress(event) {
+      if (event.key === 'Enter') {
+        sendChatMessage();
+      }
+    }
+    
+    function addChatMessage(message, from, isSent) {
+      const container = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = `chat-message ${isSent ? 'sent' : 'received'}`;
+      div.textContent = message;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+    
+    // ============================================
+    // CALL MANAGEMENT
+    // ============================================
+    
+    function cancelCall() {
+      cleanup();
+      goToDashboard();
+    }
+    
+    function endCall() {
+      stopTimer();
+      
+      // Notify partner
+      if (partnerId) {
+        socket.emit('end-session', { to: partnerId });
+      }
+      
+      // Show end modal with stats
+      const stats = calculateSessionStats();
+      const mins = Math.floor(totalSeconds / 60);
+      const secs = totalSeconds % 60;
+      
+      document.getElementById('finalDuration').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+      document.getElementById('finalCost').textContent = `$${stats.cost}`;
+      document.getElementById('tokensEarned').textContent = `${stats.tokens} $ASL`;
+      
+      document.getElementById('endModal').classList.add('open');
+      
+      cleanup();
+    }
+    
+    function cleanup() {
+      // Stop all tracks
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+      }
+      
+      // Close peer connection
+      if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+      }
+      
+      partnerId = null;
+      remoteStream = null;
+    }
+    
+    function goToDashboard() {
+      const dashboardUrl = userRole === 'interpreter' ? '/interpreter' : '/dashboard';
+      window.location.href = dashboardUrl;
+    }
+    
+    function startNewCall() {
+      window.location.reload();
+    }
+    
+    // ============================================
+    // SOCKET EVENTS
+    // ============================================
+    
+    socket.on('match-found', async (data) => {
+      partnerId = data.partnerId;
+      console.log('🎯 Match found:', partnerId);
+      
+      await createPeerConnection();
+      
+      // Create and send offer (initiator)
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+      
+      socket.emit('webrtc-offer', {
+        offer: offer,
+        to: partnerId
+      });
+    });
+    
+    socket.on('webrtc-offer', async (data) => {
+      partnerId = data.from;
+      console.log('📨 Received offer from:', data.from);
+      
+      await createPeerConnection();
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+      
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+      
+      socket.emit('webrtc-answer', {
+        answer: answer,
+        to: partnerId
+      });
+    });
+    
+    socket.on('webrtc-answer', async (data) => {
+      console.log('📨 Received answer');
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+    });
+    
+    socket.on('webrtc-ice-candidate', async (data) => {
+      if (peerConnection && data.candidate) {
+        try {
+          await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+        } catch (error) {
+          console.error('Error adding ICE candidate:', error);
+        }
+      }
+    });
+    
+    socket.on('chat-message', (data) => {
+      addChatMessage(data.message, data.from, false);
+    });
+    
+    socket.on('media-state', (data) => {
+      if (data.audioMuted !== undefined) {
+        document.getElementById('remoteMuted').style.display = data.audioMuted ? 'inline' : 'none';
+      }
+    });
+    
+    socket.on('partner-ended-call', () => {
+      stopTimer();
+      
+      const stats = calculateSessionStats();
+      const mins = Math.floor(totalSeconds / 60);
+      const secs = totalSeconds % 60;
+      
+      document.getElementById('finalDuration').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+      document.getElementById('finalCost').textContent = `$${stats.cost}`;
+      document.getElementById('tokensEarned').textContent = `${stats.tokens} $ASL`;
+      
+      document.getElementById('endModal').classList.add('open');
+      
+      cleanup();
+    });
+    
+    socket.on('error', (data) => {
+      alert('Error: ' + data.message);
+      console.error('Socket error:', data);
+    });
+    
+    // Handle page unload
+    window.addEventListener('beforeunload', () => {
+      if (partnerId) {
+        socket.emit('end-session', { to: partnerId });
+      }
+      cleanup();
+    });
+    
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
