@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Terms of Service - americansignlanguage.eth VRI Platform">
+  <title>Terms of Service | americansignlanguage.eth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-dark: #0d47a1;
+      --accent: #11998e;
+      --accent-light: #38ef7d;
+      --bg: #fafbfc;
+      --surface: #ffffff;
+      --text: #1a1a2e;
+      --text-secondary: #5a5a7a;
+      --border: #e2e8f0;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --radius: 12px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.1rem; }
+    .nav-logo .icon { font-size: 1.5rem; }
+    .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--text-secondary); padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+    .nav-links a:hover { background: #f1f5f9; color: var(--text); }
+    .nav-links a.active { background: var(--primary); color: white; }
+    .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 8px; }
+
+    .page-hero {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2d1b69 100%);
+      padding: 60px 24px 50px;
+      text-align: center;
+      color: white;
+    }
+    .page-hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; font-weight: 700; margin-bottom: 12px; }
+    .page-hero .subtitle { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+    .page-hero .last-updated { margin-top: 16px; font-size: 0.85rem; opacity: 0.7; background: rgba(255,255,255,0.15); display: inline-block; padding: 4px 16px; border-radius: 20px; }
+
+    .content-wrapper { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; display: grid; grid-template-columns: 220px 1fr; gap: 40px; }
+
+    .toc { position: sticky; top: 88px; align-self: start; }
+    .toc h3 { font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-secondary); margin-bottom: 16px; }
+    .toc ul { list-style: none; }
+    .toc li { margin-bottom: 2px; }
+    .toc a { display: block; padding: 6px 12px; text-decoration: none; color: var(--text-secondary); font-size: 0.85rem; border-radius: 6px; border-left: 3px solid transparent; transition: all 0.2s; }
+    .toc a:hover { color: var(--primary); background: #f1f5f9; border-left-color: var(--primary); }
+
+    .policy-content section { margin-bottom: 40px; }
+    .policy-content h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--border); scroll-margin-top: 80px; }
+    .policy-content h3 { font-size: 1.05rem; font-weight: 600; color: var(--text); margin: 20px 0 10px; }
+    .policy-content p { margin-bottom: 14px; color: var(--text-secondary); font-size: 0.95rem; }
+    .policy-content ul { margin: 10px 0 20px 20px; color: var(--text-secondary); font-size: 0.95rem; }
+    .policy-content li { margin-bottom: 8px; padding-left: 4px; }
+
+    .callout { padding: 20px 24px; border-radius: var(--radius); margin: 20px 0; font-size: 0.92rem; }
+    .callout-info { background: #e8f4fd; border-left: 4px solid var(--primary); color: #1a5276; }
+    .callout-warning { background: #fef9e7; border-left: 4px solid var(--warning); color: #7d6608; }
+    .callout-accessibility { background: #e8f8f5; border-left: 4px solid var(--accent); color: #0e6655; }
+    .callout-danger { background: #fdeaea; border-left: 4px solid var(--danger); color: #922b21; }
+    .callout strong { display: block; margin-bottom: 6px; font-size: 0.95rem; }
+
+    .contact-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); padding: 24px; margin-top: 30px; }
+    .contact-card h3 { font-family: 'Space Grotesk', sans-serif; margin-bottom: 12px; }
+    .contact-card a { color: var(--primary); text-decoration: none; font-weight: 500; }
+    .contact-card a:hover { text-decoration: underline; }
+
+    .footer { background: var(--text); color: #cbd5e1; padding: 50px 24px 30px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+    .footer h4 { color: white; font-family: 'Space Grotesk', sans-serif; margin-bottom: 16px; font-size: 0.95rem; }
+    .footer p { font-size: 0.85rem; line-height: 1.6; }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 8px; }
+    .footer-links a { color: #94a3b8; text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .footer-links a:hover { color: white; }
+    .footer-links a.current { color: var(--accent-light); font-weight: 600; }
+    .footer-bottom { max-width: 1200px; margin: 30px auto 0; padding-top: 20px; border-top: 1px solid #334155; text-align: center; font-size: 0.8rem; }
+    .footer-social { display: flex; gap: 16px; }
+    .footer-social a { font-size: 1.3rem; text-decoration: none; transition: transform 0.2s; }
+    .footer-social a:hover { transform: scale(1.2); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: block; }
+      .content-wrapper { grid-template-columns: 1fr; padding: 24px 16px 60px; gap: 0; }
+      .toc { position: relative; top: 0; background: var(--surface); padding: 16px; border-radius: var(--radius); margin-bottom: 24px; box-shadow: var(--shadow); }
+      .page-hero h1 { font-size: 1.8rem; }
+      .page-hero { padding: 40px 16px 36px; }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 30px; }
+    }
+    @media (max-width: 480px) { .footer-inner { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo"><span class="icon">🤟</span> americansignlanguage.eth</a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/pricing">Pricing</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/help" class="active">Help</a></li>
+        <li><a href="/login">Login</a></li>
+      </ul>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle menu">☰</button>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <h1>📜 Terms of Service</h1>
+    <p class="subtitle">Please read these terms carefully before using the americansignlanguage.eth VRI platform and $ASL token system.</p>
+    <span class="last-updated">Last updated: February 8, 2026</span>
+  </div>
+
+  <div class="content-wrapper">
+    <aside class="toc">
+      <h3>On This Page</h3>
+      <ul>
+        <li><a href="#acceptance">Acceptance of Terms</a></li>
+        <li><a href="#eligibility">Eligibility</a></li>
+        <li><a href="#accounts">User Accounts</a></li>
+        <li><a href="#vri-services">VRI Services</a></li>
+        <li><a href="#asl-token">$ASL Token</a></li>
+        <li><a href="#metamask">MetaMask & Wallets</a></li>
+        <li><a href="#interpreter-terms">Interpreter Terms</a></li>
+        <li><a href="#payments">Payments & Billing</a></li>
+        <li><a href="#conduct">Code of Conduct</a></li>
+        <li><a href="#ip">Intellectual Property</a></li>
+        <li><a href="#disclaimers">Disclaimers</a></li>
+        <li><a href="#liability">Limitation of Liability</a></li>
+        <li><a href="#termination">Termination</a></li>
+        <li><a href="#disputes">Dispute Resolution</a></li>
+        <li><a href="#accessibility-terms">Accessibility</a></li>
+        <li><a href="#changes-terms">Changes to Terms</a></li>
+        <li><a href="#contact-terms">Contact</a></li>
+      </ul>
+    </aside>
+
+    <main class="policy-content">
+
+      <section id="acceptance">
+        <h2>1. Acceptance of Terms</h2>
+        <p>By accessing or using the americansignlanguage.eth platform ("Platform"), operated at americansignlanguage.xyz, you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not use the Platform.</p>
+        <p>"Platform" refers to the americansignlanguage.xyz website, Video Remote Interpreting (VRI) services, $ASL token system, mobile applications, and all related services provided by americansignlanguage.eth.</p>
+
+        <div class="callout callout-accessibility">
+          <strong>♿ Accessible Format Available</strong>
+          These Terms are available in ASL video summary format upon request. Contact <a href="mailto:support@americansignlanguage.xyz">support@americansignlanguage.xyz</a> for accessible versions.
+        </div>
+      </section>
+
+      <section id="eligibility">
+        <h2>2. Eligibility</h2>
+        <p>To use the Platform, you must:</p>
+        <ul>
+          <li>Be at least 18 years of age, or at least 13 with parental/guardian consent</li>
+          <li>Have a valid MetaMask or compatible Ethereum wallet to use token-based features</li>
+          <li>Have the legal capacity to enter into a binding agreement</li>
+          <li>Not be prohibited from using the Platform under applicable law</li>
+        </ul>
+
+        <h3>Interpreter Eligibility</h3>
+        <p>To provide interpreting services through the Platform, you must additionally:</p>
+        <ul>
+          <li>Hold a valid interpreter certification (RID, NIC, BEI, or state equivalent)</li>
+          <li>Maintain current state licensure where required</li>
+          <li>Pass a background check</li>
+          <li>Complete our onboarding and orientation process</li>
+          <li>Maintain professional liability insurance (recommended)</li>
+        </ul>
+      </section>
+
+      <section id="accounts">
+        <h2>3. User Accounts</h2>
+
+        <h3>3.1 Account Types</h3>
+        <ul>
+          <li><strong>Deaf/HoH User:</strong> Individuals who are Deaf or Hard of Hearing seeking VRI services</li>
+          <li><strong>Hearing User (Business/Patient):</strong> Hearing individuals or organizations requesting interpreter services to communicate with Deaf/HoH individuals</li>
+          <li><strong>Interpreter:</strong> Certified ASL interpreters providing VRI services through the Platform</li>
+        </ul>
+
+        <h3>3.2 Account Responsibilities</h3>
+        <p>You are responsible for:</p>
+        <ul>
+          <li>Maintaining the confidentiality of your account credentials</li>
+          <li>Securing your MetaMask wallet and private keys</li>
+          <li>All activity that occurs under your account</li>
+          <li>Promptly notifying us of any unauthorized access</li>
+          <li>Keeping your profile information accurate and up to date</li>
+        </ul>
+
+        <div class="callout callout-warning">
+          <strong>⚠️ Wallet Security</strong>
+          You are solely responsible for the security of your MetaMask wallet, including your seed phrase and private keys. americansignlanguage.eth cannot recover lost wallets or reverse blockchain transactions. Lost tokens due to wallet compromise cannot be replaced.
+        </div>
+      </section>
+
+      <section id="vri-services">
+        <h2>4. VRI Services</h2>
+
+        <h3>4.1 Service Description</h3>
+        <p>The Platform connects users with certified ASL interpreters for real-time Video Remote Interpreting sessions. Sessions are facilitated through WebRTC video technology with end-to-end encryption.</p>
+
+        <h3>4.2 Service Availability</h3>
+        <ul>
+          <li>VRI services are available based on interpreter availability</li>
+          <li>We strive for 24/7 availability but cannot guarantee it, especially during our initial launch phase</li>
+          <li>Emergency situations requiring immediate on-site interpreting should use local emergency services or 911 Video Relay Service</li>
+        </ul>
+
+        <h3>4.3 Session Guidelines</h3>
+        <ul>
+          <li>Both users and interpreters may end a session at any time</li>
+          <li>Sessions are billed by the minute, with a minimum of 1 minute per session</li>
+          <li>Users must have a stable internet connection and working camera/microphone</li>
+          <li>Recording sessions is prohibited unless both parties provide written consent</li>
+        </ul>
+
+        <h3>4.4 Service Limitations</h3>
+        <p>The Platform is not intended to replace:</p>
+        <ul>
+          <li>Emergency 911 services or Telecommunications Relay Services (TRS)</li>
+          <li>In-person interpreting for medical procedures, legal proceedings, or other situations requiring physical presence</li>
+          <li>Certified Deaf Interpreters (CDI) for specialized communication needs</li>
+        </ul>
+      </section>
+
+      <section id="asl-token">
+        <h2>5. $ASL Token</h2>
+
+        <h3>5.1 Token Purpose</h3>
+        <p>The $ASL token is a utility token used within the Platform for:</p>
+        <ul>
+          <li>Session payments between users and interpreters</li>
+          <li>Reward distribution for platform participation</li>
+          <li>Governance participation (future feature)</li>
+          <li>Platform loyalty benefits</li>
+        </ul>
+
+        <h3>5.2 Token Distribution</h3>
+        <p>Per VRI session, $ASL tokens are distributed at a rate of 20 $ASL per minute:</p>
+        <ul>
+          <li><strong>45%</strong> — Interpreter compensation</li>
+          <li><strong>45%</strong> — Platform operations and development</li>
+          <li><strong>10%</strong> — User reward (returned to the requesting user)</li>
+        </ul>
+
+        <h3>5.3 Token Disclaimers</h3>
+
+        <div class="callout callout-danger">
+          <strong>🚫 Important Token Disclaimers</strong>
+          $ASL tokens are NOT securities, investments, or financial instruments. They are utility tokens for use within the americansignlanguage.eth platform only. We make no promises regarding the future value of $ASL tokens. Token value may fluctuate and tokens may lose all value. Do not purchase $ASL tokens as an investment.
+        </div>
+
+        <ul>
+          <li>$ASL tokens have no guaranteed monetary value outside the Platform</li>
+          <li>Token minting is subject to blockchain network conditions and gas fees</li>
+          <li>We reserve the right to modify token economics with 30 days notice</li>
+          <li>Tokens sent to incorrect wallet addresses cannot be recovered</li>
+        </ul>
+      </section>
+
+      <section id="metamask">
+        <h2>6. MetaMask & Wallet Requirements</h2>
+
+        <h3>6.1 Wallet Requirement</h3>
+        <p>A MetaMask wallet (or compatible Ethereum/Base wallet) is required to:</p>
+        <ul>
+          <li>Mint and receive $ASL tokens</li>
+          <li>Pay for VRI sessions using tokens</li>
+          <li>Receive interpreter compensation</li>
+          <li>Participate in platform governance (future)</li>
+        </ul>
+
+        <h3>6.2 Your Wallet Responsibilities</h3>
+        <ul>
+          <li>You are solely responsible for your wallet security</li>
+          <li>Never share your seed phrase or private keys with anyone, including our team</li>
+          <li>We are not responsible for lost, stolen, or compromised wallets</li>
+          <li>Blockchain transactions are irreversible — verify all details before confirming</li>
+          <li>You are responsible for any gas fees associated with transactions on the Base/Ethereum network</li>
+        </ul>
+
+        <h3>6.3 Network</h3>
+        <p>$ASL tokens operate on the Base network (Ethereum L2). You must configure your MetaMask wallet for the Base network to interact with $ASL tokens. We provide setup instructions in our <a href="/faq">FAQ</a> and <a href="/help">Help Center</a>.</p>
+      </section>
+
+      <section id="interpreter-terms">
+        <h2>7. Interpreter-Specific Terms</h2>
+
+        <h3>7.1 Independent Contractor Status</h3>
+        <p>Interpreters on the Platform are independent contractors, not employees. You are responsible for your own taxes, insurance, and business expenses.</p>
+
+        <h3>7.2 Professional Standards</h3>
+        <p>Interpreters must at all times:</p>
+        <ul>
+          <li>Adhere to the RID Code of Professional Conduct (CPC)</li>
+          <li>Maintain strict confidentiality of all session content</li>
+          <li>Provide accurate and unbiased interpretation</li>
+          <li>Decline sessions outside their competency area</li>
+          <li>Report any ethical concerns to the Platform</li>
+          <li>Maintain a professional appearance and environment during video sessions</li>
+        </ul>
+
+        <h3>7.3 Compensation</h3>
+        <ul>
+          <li>Interpreters receive 45% of session $ASL tokens (9 $ASL per minute)</li>
+          <li>Additional USD compensation available via Stripe for business clients</li>
+          <li>Payout schedules and minimums are outlined in the Interpreter Agreement</li>
+          <li>Interpreters are responsible for reporting income for tax purposes</li>
+        </ul>
+      </section>
+
+      <section id="payments">
+        <h2>8. Payments & Billing</h2>
+
+        <h3>8.1 Pricing</h3>
+        <p>Current VRI session rates are displayed on our <a href="/pricing">Pricing page</a>. We reserve the right to modify pricing with 14 days advance notice.</p>
+
+        <h3>8.2 Payment Methods</h3>
+        <ul>
+          <li><strong>$ASL Tokens:</strong> Primary payment method within the Platform</li>
+          <li><strong>Credit/Debit Cards:</strong> Via Stripe for business accounts (coming soon)</li>
+          <li><strong>Invoicing:</strong> Available for enterprise and institutional clients</li>
+        </ul>
+
+        <h3>8.3 Refunds</h3>
+        <ul>
+          <li>Sessions under 1 minute due to technical issues: Full refund</li>
+          <li>Interpreter no-show: Full refund plus bonus tokens</li>
+          <li>Service quality complaints: Reviewed on a case-by-case basis within 7 days</li>
+          <li>Token refunds are processed back to the originating wallet</li>
+          <li>Blockchain transaction (gas) fees are non-refundable</li>
+        </ul>
+      </section>
+
+      <section id="conduct">
+        <h2>9. Code of Conduct</h2>
+        <p>All users must:</p>
+        <ul>
+          <li>Treat all participants with respect and dignity</li>
+          <li>Not use the Platform for illegal activities</li>
+          <li>Not harass, abuse, or threaten other users or interpreters</li>
+          <li>Not attempt to manipulate the $ASL token system</li>
+          <li>Not impersonate other users or interpreters</li>
+          <li>Not share, record, or distribute session content without consent</li>
+          <li>Not use automated tools or bots to interact with the Platform</li>
+          <li>Not attempt to circumvent platform security measures</li>
+          <li>Report any abuse or safety concerns immediately</li>
+        </ul>
+
+        <p>Violations may result in account suspension, permanent ban, and/or forfeiture of $ASL tokens.</p>
+      </section>
+
+      <section id="ip">
+        <h2>10. Intellectual Property</h2>
+        <p>The americansignlanguage.eth name, logo, $ASL token design, platform interface, and all related materials are the intellectual property of americansignlanguage.eth. You may not reproduce, distribute, or create derivative works without written permission.</p>
+        <p>User-generated content (such as profile information) remains your property, but you grant us a license to use it for operating the Platform.</p>
+      </section>
+
+      <section id="disclaimers">
+        <h2>11. Disclaimers</h2>
+        <p>THE PLATFORM IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED. WE DO NOT WARRANT THAT:</p>
+        <ul>
+          <li>The Platform will be available at all times without interruption</li>
+          <li>Video quality will meet specific standards (dependent on your internet connection)</li>
+          <li>Interpreters will be available at all times</li>
+          <li>$ASL tokens will maintain any specific value</li>
+          <li>Blockchain transactions will process within any specific timeframe</li>
+        </ul>
+      </section>
+
+      <section id="liability">
+        <h2>12. Limitation of Liability</h2>
+        <p>To the maximum extent permitted by law, americansignlanguage.eth shall not be liable for:</p>
+        <ul>
+          <li>Indirect, incidental, special, or consequential damages</li>
+          <li>Loss of $ASL tokens due to wallet compromise, user error, or blockchain issues</li>
+          <li>Interpreter errors or omissions during sessions</li>
+          <li>Service interruptions due to technical issues, network outages, or force majeure</li>
+          <li>Loss of business or opportunities arising from service unavailability</li>
+        </ul>
+        <p>Our total liability for any claim shall not exceed the amount you paid to us in the 12 months preceding the claim.</p>
+      </section>
+
+      <section id="termination">
+        <h2>13. Termination</h2>
+        <p>You may close your account at any time by contacting support. Upon termination:</p>
+        <ul>
+          <li>Your access to the Platform will cease</li>
+          <li>$ASL tokens in your wallet remain yours (they exist on the blockchain independent of your account)</li>
+          <li>Session history will be retained for 90 days then deleted</li>
+          <li>We may retain certain information as required by law</li>
+        </ul>
+        <p>We reserve the right to suspend or terminate accounts that violate these Terms, with notice provided in an accessible format.</p>
+      </section>
+
+      <section id="disputes">
+        <h2>14. Dispute Resolution</h2>
+        <p>Any disputes arising from these Terms or use of the Platform shall be resolved through:</p>
+        <ul>
+          <li><strong>Step 1 — Direct Communication:</strong> Contact us first at <a href="mailto:disputes@americansignlanguage.xyz">disputes@americansignlanguage.xyz</a> (ASL video communication available)</li>
+          <li><strong>Step 2 — Mediation:</strong> If unresolved within 30 days, either party may request mediation</li>
+          <li><strong>Step 3 — Arbitration:</strong> Binding arbitration under the rules of the American Arbitration Association, with accommodations for Deaf/HoH participants including qualified interpreters</li>
+        </ul>
+        <p>These Terms are governed by the laws of the State in which americansignlanguage.eth operates, without regard to conflict of law principles.</p>
+      </section>
+
+      <section id="accessibility-terms">
+        <h2>15. Accessibility Commitment</h2>
+        <p>We are committed to making every aspect of our platform accessible:</p>
+        <ul>
+          <li>All legal communications will be available in ASL video format upon request</li>
+          <li>Customer support is available via text, email, and video call (ASL)</li>
+          <li>The Platform is designed to meet WCAG 2.1 AA standards</li>
+          <li>Dispute resolution processes include interpreter accommodations at no cost to Deaf/HoH parties</li>
+          <li>All notification methods include visual alternatives (no audio-only alerts)</li>
+        </ul>
+      </section>
+
+      <section id="changes-terms">
+        <h2>16. Changes to These Terms</h2>
+        <p>We may modify these Terms at any time. When we do:</p>
+        <ul>
+          <li>We will provide at least 14 days notice before changes take effect</li>
+          <li>Notice will be given via email, platform notification, and/or ASL video summary</li>
+          <li>Continued use of the Platform after the effective date constitutes acceptance</li>
+          <li>If you disagree with changes, you may close your account before the effective date</li>
+        </ul>
+      </section>
+
+      <section id="contact-terms">
+        <h2>17. Contact Us</h2>
+        <div class="contact-card">
+          <h3>Questions About These Terms</h3>
+          <ul>
+            <li><strong>Email:</strong> <a href="mailto:legal@americansignlanguage.xyz">legal@americansignlanguage.xyz</a></li>
+            <li><strong>Support:</strong> <a href="mailto:support@americansignlanguage.xyz">support@americansignlanguage.xyz</a></li>
+            <li><strong>Videophone:</strong> Available upon request for ASL communication</li>
+            <li><strong>Help Center:</strong> <a href="/help">americansignlanguage.xyz/help</a></li>
+            <li><strong>FAQ:</strong> <a href="/faq">americansignlanguage.xyz/faq</a></li>
+          </ul>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <h4>🤟 americansignlanguage.eth</h4>
+        <p>The first Deaf-owned Video Remote Interpreting service powered by blockchain technology. Deaf-founded. Deaf-led. Deaf-owned.</p>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <ul class="footer-links">
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/interpreter/apply">Become an Interpreter</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <ul class="footer-links">
+          <li><a href="/help">Help Center</a></li>
+          <li><a href="/faq">FAQ</a></li>
+          <li><a href="/terms" class="current">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/accessibility">Accessibility</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <div class="footer-social">
+          <a href="https://instagram.com/americansignlanguage.eth" target="_blank" aria-label="Instagram">📸</a>
+          <a href="https://x.com/aslnfts" target="_blank" aria-label="Twitter/X">🐦</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>americansignlanguage.eth &copy; 2026 All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMobileMenu() {
+      const links = document.querySelector('.nav-links');
+      links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+      if (links.style.display === 'flex') {
+        links.style.flexDirection = 'column'; links.style.position = 'absolute'; links.style.top = '64px'; links.style.left = '0'; links.style.right = '0'; links.style.background = 'white'; links.style.padding = '16px'; links.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+      }
+    }
+  </script>
+</body>
+</html>
