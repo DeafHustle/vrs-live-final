@@ -1625,6 +1625,12 @@ app.get('/session', (req, res) => res.sendFile(__dirname + '/public/session.html
 app.get('/contact', (req, res) => res.sendFile(__dirname + '/public/contact.html'));
 app.get('/token', (req, res) => res.sendFile(__dirname + '/public/token.html'));
 
+// Help, FAQ, Legal pages (from public folder)
+app.get('/help', (req, res) => res.sendFile(__dirname + '/public/help.html'));
+app.get('/faq', (req, res) => res.sendFile(__dirname + '/public/faq.html'));
+app.get('/privacy', (req, res) => res.sendFile(__dirname + '/public/privacy.html'));
+app.get('/terms', (req, res) => res.sendFile(__dirname + '/public/terms.html'));
+
 // VRI & Interpreter pages (existing files in root)
 app.get('/vri', (req, res) => res.sendFile(__dirname + '/vri-business.html'));
 app.get('/interpreter', (req, res) => res.sendFile(__dirname + '/interpreter-dashboard.html'));
@@ -1660,6 +1666,10 @@ server.listen(PORT, () => {
   console.log('   📝 Interpreter Apply: /interpreter/apply');
   console.log('   👑 Admin Dashboard: /admin');
   console.log('   👤 User Signup: /signup');
+  console.log('   📚 Help Center: /help');
+  console.log('   ❓ FAQ: /faq');
+  console.log('   🔒 Privacy: /privacy');
+  console.log('   📜 Terms: /terms');
   console.log('   💳 Rate: $' + (PLATFORM_CONFIG.ratePerMinute/100).toFixed(2) + '/min');
   console.log('═══════════════════════════════════════════════════════');
 });
