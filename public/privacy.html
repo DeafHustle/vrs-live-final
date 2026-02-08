@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Privacy Policy - americansignlanguage.eth VRI Platform">
+  <title>Privacy Policy | americansignlanguage.eth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-dark: #0d47a1;
+      --accent: #11998e;
+      --accent-light: #38ef7d;
+      --bg: #fafbfc;
+      --surface: #ffffff;
+      --text: #1a1a2e;
+      --text-secondary: #5a5a7a;
+      --border: #e2e8f0;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --radius: 12px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── NAVIGATION ─── */
+    .nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .nav-logo .icon { font-size: 1.5rem; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-links a:hover { background: #f1f5f9; color: var(--text); }
+    .nav-links a.active { background: var(--primary); color: white; }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    /* ─── HERO BANNER ─── */
+    .page-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      padding: 60px 24px 50px;
+      text-align: center;
+      color: white;
+    }
+
+    .page-hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .page-hero .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .page-hero .last-updated {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      opacity: 0.7;
+      background: rgba(255,255,255,0.15);
+      display: inline-block;
+      padding: 4px 16px;
+      border-radius: 20px;
+    }
+
+    /* ─── CONTENT LAYOUT ─── */
+    .content-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 40px;
+    }
+
+    /* ─── TABLE OF CONTENTS ─── */
+    .toc {
+      position: sticky;
+      top: 88px;
+      align-self: start;
+    }
+
+    .toc h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .toc ul {
+      list-style: none;
+    }
+
+    .toc li {
+      margin-bottom: 2px;
+    }
+
+    .toc a {
+      display: block;
+      padding: 6px 12px;
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      border-radius: 6px;
+      border-left: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .toc a:hover {
+      color: var(--primary);
+      background: #f1f5f9;
+      border-left-color: var(--primary);
+    }
+
+    /* ─── SECTIONS ─── */
+    .policy-content section {
+      margin-bottom: 40px;
+    }
+
+    .policy-content h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+      scroll-margin-top: 80px;
+    }
+
+    .policy-content h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 20px 0 10px;
+    }
+
+    .policy-content p {
+      margin-bottom: 14px;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .policy-content ul {
+      margin: 10px 0 20px 20px;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .policy-content li {
+      margin-bottom: 8px;
+      padding-left: 4px;
+    }
+
+    /* ─── CALLOUT BOXES ─── */
+    .callout {
+      padding: 20px 24px;
+      border-radius: var(--radius);
+      margin: 20px 0;
+      font-size: 0.92rem;
+    }
+
+    .callout-info {
+      background: #e8f4fd;
+      border-left: 4px solid var(--primary);
+      color: #1a5276;
+    }
+
+    .callout-warning {
+      background: #fef9e7;
+      border-left: 4px solid var(--warning);
+      color: #7d6608;
+    }
+
+    .callout-accessibility {
+      background: #e8f8f5;
+      border-left: 4px solid var(--accent);
+      color: #0e6655;
+    }
+
+    .callout-icon {
+      font-size: 1.2rem;
+      margin-right: 8px;
+    }
+
+    .callout strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    /* ─── CONTACT CARD ─── */
+    .contact-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 30px;
+    }
+
+    .contact-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 12px;
+    }
+
+    .contact-card a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .contact-card a:hover {
+      text-decoration: underline;
+    }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      background: var(--text);
+      color: #cbd5e1;
+      padding: 50px 24px 30px;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+    }
+
+    .footer h4 {
+      color: white;
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 16px;
+      font-size: 0.95rem;
+    }
+
+    .footer p { font-size: 0.85rem; line-height: 1.6; }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li { margin-bottom: 8px; }
+
+    .footer-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: white; }
+    .footer-links a.current { color: var(--accent-light); font-weight: 600; }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 30px auto 0;
+      padding-top: 20px;
+      border-top: 1px solid #334155;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 16px;
+    }
+
+    .footer-social a {
+      font-size: 1.3rem;
+      text-decoration: none;
+      transition: transform 0.2s;
+    }
+
+    .footer-social a:hover { transform: scale(1.2); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: block; }
+
+      .content-wrapper {
+        grid-template-columns: 1fr;
+        padding: 24px 16px 60px;
+        gap: 0;
+      }
+
+      .toc {
+        position: relative;
+        top: 0;
+        background: var(--surface);
+        padding: 16px;
+        border-radius: var(--radius);
+        margin-bottom: 24px;
+        box-shadow: var(--shadow);
+      }
+
+      .page-hero h1 { font-size: 1.8rem; }
+      .page-hero { padding: 40px 16px 36px; }
+
+      .footer-inner {
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .footer-inner { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAVIGATION ─── -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <span class="icon">🤟</span>
+        americansignlanguage.eth
+      </a>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/pricing">Pricing</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/help" class="active">Help</a></li>
+        <li><a href="/login">Login</a></li>
+      </ul>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle menu">☰</button>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <div class="page-hero">
+    <h1>🔒 Privacy Policy</h1>
+    <p class="subtitle">Your privacy matters to us. This policy explains how americansignlanguage.eth collects, uses, and protects your information.</p>
+    <span class="last-updated">Last updated: February 8, 2026</span>
+  </div>
+
+  <!-- ─── CONTENT ─── -->
+  <div class="content-wrapper">
+
+    <!-- Table of Contents -->
+    <aside class="toc">
+      <h3>On This Page</h3>
+      <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#info-collected">Information We Collect</a></li>
+        <li><a href="#wallet-data">Wallet & Blockchain Data</a></li>
+        <li><a href="#video-sessions">Video Session Privacy</a></li>
+        <li><a href="#how-we-use">How We Use Information</a></li>
+        <li><a href="#sharing">Information Sharing</a></li>
+        <li><a href="#security">Security Measures</a></li>
+        <li><a href="#accessibility-privacy">Accessibility & Privacy</a></li>
+        <li><a href="#your-rights">Your Rights</a></li>
+        <li><a href="#cookies">Cookies & Tracking</a></li>
+        <li><a href="#children">Children's Privacy</a></li>
+        <li><a href="#changes">Policy Changes</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+      </ul>
+    </aside>
+
+    <!-- Policy Content -->
+    <main class="policy-content">
+
+      <section id="overview">
+        <h2>1. Overview</h2>
+        <p>americansignlanguage.eth ("we," "us," or "our") operates the Video Remote Interpreting (VRI) platform at americansignlanguage.xyz. We are the first Deaf-owned, Deaf-led, Deaf-founded VRI service powered by blockchain technology.</p>
+        <p>This Privacy Policy describes how we collect, use, store, and share your personal information when you use our platform, including our website, VRI services, $ASL token system, and related services.</p>
+
+        <div class="callout callout-accessibility">
+          <strong><span class="callout-icon">♿</span> Accessibility Commitment</strong>
+          This policy is written in plain, clear language. If you need this policy in ASL video format, large print, or any other accessible format, please contact us at <a href="mailto:privacy@americansignlanguage.xyz">privacy@americansignlanguage.xyz</a>.
+        </div>
+      </section>
+
+      <section id="info-collected">
+        <h2>2. Information We Collect</h2>
+
+        <h3>2.1 Account Information</h3>
+        <p>When you create an account, we collect:</p>
+        <ul>
+          <li><strong>For Deaf/HoH Users:</strong> Name, email address, preferred communication method, MetaMask wallet address</li>
+          <li><strong>For Hearing Users (Businesses/Patients):</strong> Name, email address, organization name, billing contact information, MetaMask wallet address</li>
+          <li><strong>For Interpreters:</strong> Name, email address, RID/NIC certification details, state licensure information, professional references, availability schedule, MetaMask wallet address, Stripe payout information</li>
+        </ul>
+
+        <h3>2.2 Usage Information</h3>
+        <p>We automatically collect:</p>
+        <ul>
+          <li>Session duration and timestamps</li>
+          <li>Device type, browser, and operating system</li>
+          <li>IP address and approximate location (city-level only)</li>
+          <li>Feature usage and navigation patterns</li>
+          <li>Connection quality metrics (for improving video performance)</li>
+        </ul>
+
+        <h3>2.3 Interpreter Verification Data</h3>
+        <p>For interpreter applicants, we collect and verify:</p>
+        <ul>
+          <li>Professional certifications (RID, NIC, BEI, etc.)</li>
+          <li>State interpreter licenses</li>
+          <li>Background check authorization</li>
+          <li>Professional references</li>
+        </ul>
+      </section>
+
+      <section id="wallet-data">
+        <h2>3. Wallet & Blockchain Data</h2>
+
+        <div class="callout callout-info">
+          <strong><span class="callout-icon">ℹ️</span> Important: Blockchain Transparency</strong>
+          Blockchain transactions are public by design. When you mint or transfer $ASL tokens, those transactions are recorded on the Base/Ethereum blockchain and are publicly visible. We cannot delete blockchain transaction records.
+        </div>
+
+        <h3>3.1 What We Collect</h3>
+        <ul>
+          <li><strong>Wallet Address:</strong> Your MetaMask public wallet address (never your private key or seed phrase)</li>
+          <li><strong>Token Balances:</strong> Your $ASL token balance for platform functionality</li>
+          <li><strong>Transaction History:</strong> Session-related token minting and transfers</li>
+        </ul>
+
+        <h3>3.2 What We Never Collect</h3>
+        <ul>
+          <li>Your MetaMask password or seed phrase</li>
+          <li>Your private keys</li>
+          <li>Balances of tokens/crypto not related to $ASL</li>
+          <li>Access to other assets in your wallet</li>
+        </ul>
+
+        <div class="callout callout-warning">
+          <strong><span class="callout-icon">⚠️</span> Never Share Your Seed Phrase</strong>
+          americansignlanguage.eth will NEVER ask for your MetaMask seed phrase, private keys, or wallet password. If anyone claiming to be from our platform asks for this information, it is a scam. Report it immediately to <a href="mailto:security@americansignlanguage.xyz">security@americansignlanguage.xyz</a>.
+        </div>
+      </section>
+
+      <section id="video-sessions">
+        <h2>4. Video Session Privacy</h2>
+
+        <h3>4.1 Live VRI Sessions</h3>
+        <p>Your VRI video sessions are private. We implement the following protections:</p>
+        <ul>
+          <li><strong>End-to-End Encryption:</strong> All video and audio streams are encrypted using WebRTC SRTP encryption</li>
+          <li><strong>No Recording by Default:</strong> We do not record video sessions unless explicitly requested by both parties and with written consent</li>
+          <li><strong>In-Session Chat:</strong> Text chat during sessions is encrypted and not stored after the session ends unless both parties consent</li>
+          <li><strong>No Third-Party Access:</strong> No one outside the session participants can access the live video feed</li>
+        </ul>
+
+        <h3>4.2 Session Metadata</h3>
+        <p>We do retain session metadata for billing, quality assurance, and dispute resolution:</p>
+        <ul>
+          <li>Session start and end times</li>
+          <li>Duration of the session</li>
+          <li>Interpreter and user identifiers</li>
+          <li>Connection quality ratings</li>
+          <li>$ASL tokens minted per session</li>
+        </ul>
+
+        <h3>4.3 Interpreter Confidentiality</h3>
+        <p>All interpreters on our platform are bound by the Registry of Interpreters for the Deaf (RID) Code of Professional Conduct, which mandates strict confidentiality. Interpreters may not disclose any information about sessions to third parties.</p>
+      </section>
+
+      <section id="how-we-use">
+        <h2>5. How We Use Your Information</h2>
+        <p>We use your information to:</p>
+        <ul>
+          <li><strong>Provide VRI Services:</strong> Match you with qualified interpreters, facilitate video calls, and process session tokens</li>
+          <li><strong>Manage Your Account:</strong> Maintain your profile, preferences, and session history</li>
+          <li><strong>Process Payments:</strong> Handle $ASL token minting, distribution, and interpreter payouts via Stripe</li>
+          <li><strong>Improve Our Platform:</strong> Analyze usage patterns to enhance video quality, reduce connection issues, and improve user experience</li>
+          <li><strong>Ensure Safety:</strong> Verify interpreter credentials, prevent fraud, and maintain platform integrity</li>
+          <li><strong>Communicate:</strong> Send service updates, session confirmations, and (with your consent) newsletter updates</li>
+          <li><strong>Comply with Law:</strong> Meet legal obligations and respond to lawful requests from authorities</li>
+        </ul>
+      </section>
+
+      <section id="sharing">
+        <h2>6. Information Sharing</h2>
+
+        <h3>6.1 We Share Information With:</h3>
+        <ul>
+          <li><strong>Your Interpreter/User:</strong> Limited profile information necessary for the VRI session (name and communication preferences)</li>
+          <li><strong>Stripe:</strong> Payment processing for interpreter payouts (Stripe's own privacy policy applies)</li>
+          <li><strong>Cloud Infrastructure:</strong> Our hosting providers (data is encrypted at rest and in transit)</li>
+          <li><strong>TURN Servers:</strong> For WebRTC video relay (only encrypted streams pass through, no content is accessible)</li>
+        </ul>
+
+        <h3>6.2 We Never Sell Your Data</h3>
+        <p>We do not sell, rent, or trade your personal information to third parties for marketing or advertising purposes. Period.</p>
+
+        <h3>6.3 Legal Requirements</h3>
+        <p>We may disclose information if required by law, court order, or government regulation, or if we believe disclosure is necessary to protect the safety of our users or the public.</p>
+      </section>
+
+      <section id="security">
+        <h2>7. Security Measures</h2>
+        <p>We take the security of your data seriously and implement:</p>
+        <ul>
+          <li><strong>Encryption:</strong> All data is encrypted in transit (TLS 1.3) and at rest (AES-256)</li>
+          <li><strong>Access Controls:</strong> Role-based access with multi-factor authentication for admin systems</li>
+          <li><strong>Regular Audits:</strong> Periodic security reviews and vulnerability assessments</li>
+          <li><strong>Secure Infrastructure:</strong> Hosted on enterprise-grade cloud platforms with SOC 2 compliance</li>
+          <li><strong>Incident Response:</strong> Documented procedures for responding to data breaches, with notification to affected users within 72 hours</li>
+        </ul>
+      </section>
+
+      <section id="accessibility-privacy">
+        <h2>8. Accessibility & Privacy</h2>
+
+        <div class="callout callout-accessibility">
+          <strong><span class="callout-icon">🤟</span> Deaf Community-Specific Protections</strong>
+          We understand the unique privacy needs of the Deaf and Hard of Hearing community and have built specific protections.
+        </div>
+
+        <ul>
+          <li><strong>Communication Preferences:</strong> We respect your preferred communication method (ASL video, text, email) and will never force voice-only communication</li>
+          <li><strong>Session Content Privacy:</strong> The content of your interpreted conversations is protected under the same confidentiality standards as in-person interpreting</li>
+          <li><strong>Disability Status:</strong> We never share your hearing status or disability information with third parties without your explicit consent</li>
+          <li><strong>Accessible Notifications:</strong> All privacy-related notifications are delivered in your preferred format (visual alerts, text, email — never audio-only)</li>
+          <li><strong>Video Thumbnail Privacy:</strong> We do not capture, store, or display video thumbnails or screenshots from VRI sessions</li>
+        </ul>
+      </section>
+
+      <section id="your-rights">
+        <h2>9. Your Rights</h2>
+        <p>You have the right to:</p>
+        <ul>
+          <li><strong>Access:</strong> Request a copy of all personal data we hold about you</li>
+          <li><strong>Correction:</strong> Update or correct inaccurate information</li>
+          <li><strong>Deletion:</strong> Request deletion of your account and associated data (note: blockchain transaction records cannot be deleted)</li>
+          <li><strong>Portability:</strong> Receive your data in a standard, machine-readable format</li>
+          <li><strong>Opt-Out:</strong> Unsubscribe from marketing communications at any time</li>
+          <li><strong>Restrict Processing:</strong> Request that we limit how we use your data</li>
+          <li><strong>Withdraw Consent:</strong> Withdraw any consent you've previously given</li>
+        </ul>
+        <p>To exercise any of these rights, contact us at <a href="mailto:privacy@americansignlanguage.xyz">privacy@americansignlanguage.xyz</a>. We will respond within 30 days.</p>
+
+        <h3>California Residents (CCPA)</h3>
+        <p>California residents have additional rights under the California Consumer Privacy Act, including the right to know what personal information is collected and the right to opt out of the sale of personal information. We do not sell personal information.</p>
+
+        <h3>EU/EEA Residents (GDPR)</h3>
+        <p>If you are located in the EU or EEA, you have additional rights under the General Data Protection Regulation. Our legal basis for processing is consent and legitimate interest in providing VRI services.</p>
+      </section>
+
+      <section id="cookies">
+        <h2>10. Cookies & Tracking</h2>
+        <p>We use minimal cookies necessary for platform functionality:</p>
+        <ul>
+          <li><strong>Session Cookies:</strong> Required for login and session management (essential, cannot be disabled)</li>
+          <li><strong>Preference Cookies:</strong> Store your communication preferences and accessibility settings</li>
+          <li><strong>Analytics:</strong> Privacy-respecting analytics to understand platform usage (no third-party ad trackers)</li>
+        </ul>
+        <p>We do not use third-party advertising cookies or tracking pixels. We do not participate in cross-site tracking or retargeting.</p>
+      </section>
+
+      <section id="children">
+        <h2>11. Children's Privacy</h2>
+        <p>Our platform is not intended for children under 13. We do not knowingly collect personal information from children under 13. If you believe a child under 13 has provided us with personal information, please contact us immediately and we will delete that information.</p>
+        <p>Users between 13-17 may use the platform with parental/guardian consent. Interpreting services for minors must be requested by a parent, guardian, or authorized adult.</p>
+      </section>
+
+      <section id="changes">
+        <h2>12. Policy Changes</h2>
+        <p>We may update this Privacy Policy from time to time. When we do:</p>
+        <ul>
+          <li>We will update the "Last Updated" date at the top of this page</li>
+          <li>For significant changes, we will notify you via email and/or a prominent notice on our platform</li>
+          <li>All notifications will be delivered in accessible formats</li>
+          <li>We will provide a summary of what changed in plain language</li>
+        </ul>
+        <p>Your continued use of the platform after changes take effect constitutes acceptance of the updated policy.</p>
+      </section>
+
+      <section id="contact">
+        <h2>13. Contact Us</h2>
+        <div class="contact-card">
+          <h3>Privacy Questions or Requests</h3>
+          <p>If you have questions about this Privacy Policy or want to exercise your privacy rights:</p>
+          <ul>
+            <li><strong>Email:</strong> <a href="mailto:privacy@americansignlanguage.xyz">privacy@americansignlanguage.xyz</a></li>
+            <li><strong>Videophone:</strong> Available upon request for ASL communication</li>
+            <li><strong>Mail:</strong> americansignlanguage.eth, Attn: Privacy Team</li>
+            <li><strong>Website:</strong> <a href="/contact">americansignlanguage.xyz/contact</a></li>
+          </ul>
+          <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-secondary);">We will respond to all privacy inquiries within 30 days in your preferred communication format.</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ─── FOOTER ─── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <h4>🤟 americansignlanguage.eth</h4>
+        <p>The first Deaf-owned Video Remote Interpreting service powered by blockchain technology. Deaf-founded. Deaf-led. Deaf-owned.</p>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <ul class="footer-links">
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/interpreter/apply">Become an Interpreter</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <ul class="footer-links">
+          <li><a href="/help">Help Center</a></li>
+          <li><a href="/faq">FAQ</a></li>
+          <li><a href="/terms">Terms of Service</a></li>
+          <li><a href="/privacy" class="current">Privacy Policy</a></li>
+          <li><a href="/accessibility">Accessibility</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <div class="footer-social">
+          <a href="https://instagram.com/americansignlanguage.eth" target="_blank" aria-label="Instagram">📸</a>
+          <a href="https://x.com/aslnfts" target="_blank" aria-label="Twitter/X">🐦</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>americansignlanguage.eth &copy; 2026 All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMobileMenu() {
+      const links = document.querySelector('.nav-links');
+      links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+      if (links.style.display === 'flex') {
+        links.style.flexDirection = 'column';
+        links.style.position = 'absolute';
+        links.style.top = '64px';
+        links.style.left = '0';
+        links.style.right = '0';
+        links.style.background = 'white';
+        links.style.padding = '16px';
+        links.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+      }
+    }
+  </script>
+</body>
+</html>
