@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Help Center - americansignlanguage.eth VRI Platform">
+  <title>Help Center | americansignlanguage.eth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary:#1a73e8; --primary-dark:#0d47a1; --accent:#11998e; --accent-light:#38ef7d; --bg:#fafbfc; --surface:#fff; --text:#1a1a2e; --text-secondary:#5a5a7a; --border:#e2e8f0; --warning:#f59e0b; --danger:#ef4444; --success:#10b981; --radius:12px; --shadow:0 2px 12px rgba(0,0,0,0.06); --shadow-lg:0 8px 30px rgba(0,0,0,0.08); }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'DM Sans',-apple-system,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; -webkit-font-smoothing:antialiased; }
+
+    .nav { background:var(--surface); border-bottom:1px solid var(--border); padding:0 24px; position:sticky; top:0; z-index:100; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+    .nav-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; }
+    .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; }
+    .nav-links { display:flex; align-items:center; gap:8px; list-style:none; }
+    .nav-links a { text-decoration:none; color:var(--text-secondary); padding:8px 16px; border-radius:8px; font-size:0.9rem; font-weight:500; transition:all 0.2s; }
+    .nav-links a:hover { background:#f1f5f9; color:var(--text); }
+    .nav-links a.active { background:var(--primary); color:white; }
+    .mobile-menu-btn { display:none; background:none; border:none; font-size:1.5rem; cursor:pointer; }
+
+    .help-hero { background:linear-gradient(135deg,var(--accent) 0%,#0d7377 100%); padding:60px 24px; text-align:center; color:white; }
+    .help-hero h1 { font-family:'Space Grotesk',sans-serif; font-size:2.4rem; font-weight:700; margin-bottom:12px; }
+    .help-hero .subtitle { font-size:1.1rem; opacity:0.9; max-width:550px; margin:0 auto 30px; }
+
+    .search-box { max-width:500px; margin:0 auto; position:relative; }
+    .search-box input { width:100%; padding:16px 20px 16px 50px; border:none; border-radius:12px; font-size:1rem; font-family:'DM Sans',sans-serif; box-shadow:0 4px 20px rgba(0,0,0,0.15); outline:none; }
+    .search-box::before { content:'🔍'; position:absolute; left:18px; top:50%; transform:translateY(-50%); }
+
+    .quick-links { display:flex; justify-content:center; gap:12px; margin-top:24px; flex-wrap:wrap; }
+    .quick-link { background:rgba(255,255,255,0.2); color:white; padding:6px 16px; border-radius:20px; font-size:0.85rem; text-decoration:none; transition:background 0.2s; border:1px solid rgba(255,255,255,0.3); }
+    .quick-link:hover { background:rgba(255,255,255,0.35); }
+
+    .help-content { max-width:1100px; margin:0 auto; padding:50px 24px 80px; }
+    .section-title { font-family:'Space Grotesk',sans-serif; font-size:1.6rem; font-weight:700; margin-bottom:30px; text-align:center; }
+
+    .category-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-bottom:60px; }
+    .category-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:28px; transition:all 0.3s; text-decoration:none; color:var(--text); }
+    .category-card:hover { box-shadow:var(--shadow-lg); transform:translateY(-2px); border-color:var(--primary); }
+    .category-card .card-icon { font-size:2rem; margin-bottom:14px; display:block; }
+    .category-card h3 { font-family:'Space Grotesk',sans-serif; font-size:1.1rem; margin-bottom:8px; }
+    .category-card p { font-size:0.88rem; color:var(--text-secondary); }
+
+    .articles-section { margin-bottom:50px; }
+    .articles-section h2 { font-family:'Space Grotesk',sans-serif; font-size:1.3rem; margin-bottom:20px; padding-bottom:10px; border-bottom:2px solid var(--border); scroll-margin-top:80px; }
+
+    .article-item { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background:var(--surface); border:1px solid var(--border); border-radius:8px; cursor:pointer; transition:all 0.2s; margin-bottom:4px; }
+    .article-item:hover { background:#f8fafc; border-color:var(--primary); }
+    .article-item .title { font-weight:500; font-size:0.95rem; }
+    .article-tag { font-size:0.75rem; padding:3px 10px; border-radius:12px; font-weight:600; }
+    .tag-start { background:#dbeafe; color:#1e40af; }
+    .tag-wallet { background:#fef3c7; color:#92400e; }
+    .tag-vri { background:#d1fae5; color:#065f46; }
+    .tag-token { background:#ede9fe; color:#5b21b6; }
+    .tag-fix { background:#fee2e2; color:#991b1b; }
+    .tag-interp { background:#fce7f3; color:#9d174d; }
+
+    .article-body { display:none; padding:20px; background:#f8fafc; border:1px solid var(--border); border-top:none; border-radius:0 0 8px 8px; margin-top:-5px; margin-bottom:4px; font-size:0.92rem; color:var(--text-secondary); }
+    .article-body.open { display:block; }
+    .article-body p { margin-bottom:12px; }
+    .article-body ol, .article-body ul { margin:10px 0 16px 20px; }
+    .article-body li { margin-bottom:8px; }
+    .article-body .step { background:white; border:1px solid var(--border); border-radius:8px; padding:14px; margin:10px 0; }
+    .article-body .step h4 { font-size:0.9rem; color:var(--primary); margin-bottom:6px; }
+    .article-body .warn { background:#fef9e7; border-left:4px solid var(--warning); padding:12px 16px; border-radius:0 8px 8px 0; margin:12px 0; color:#7d6608; font-size:0.88rem; }
+    .article-body .tip { background:#e8f8f5; border-left:4px solid var(--accent); padding:12px 16px; border-radius:0 8px 8px 0; margin:12px 0; color:#0e6655; font-size:0.88rem; }
+    .article-body code { background:#1e293b; color:#e2e8f0; padding:2px 8px; border-radius:4px; font-size:0.85rem; }
+    .article-body .code-block { background:#1e293b; color:#e2e8f0; padding:16px; border-radius:8px; font-family:monospace; font-size:0.85rem; overflow-x:auto; margin:12px 0; white-space:pre-wrap; }
+
+    .support-section { background:linear-gradient(135deg,#f0f4ff 0%,#e8f5e9 100%); border-radius:var(--radius); padding:40px; text-align:center; margin-top:40px; }
+    .support-section h2 { font-family:'Space Grotesk',sans-serif; font-size:1.5rem; margin-bottom:12px; }
+    .support-section > p { color:var(--text-secondary); margin-bottom:24px; }
+    .support-channels { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; max-width:700px; margin:0 auto; }
+    .support-channel { background:var(--surface); padding:24px; border-radius:var(--radius); box-shadow:var(--shadow); }
+    .support-channel .ch-icon { font-size:1.8rem; margin-bottom:10px; }
+    .support-channel h4 { font-size:0.95rem; margin-bottom:6px; }
+    .support-channel p { font-size:0.82rem; color:var(--text-secondary); }
+    .support-channel a { color:var(--primary); text-decoration:none; font-weight:600; font-size:0.85rem; }
+
+    .footer { background:var(--text); color:#cbd5e1; padding:50px 24px 30px; }
+    .footer-inner { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; }
+    .footer h4 { color:white; font-family:'Space Grotesk',sans-serif; margin-bottom:16px; font-size:0.95rem; }
+    .footer p { font-size:0.85rem; line-height:1.6; }
+    .footer-links { list-style:none; }
+    .footer-links li { margin-bottom:8px; }
+    .footer-links a { color:#94a3b8; text-decoration:none; font-size:0.85rem; }
+    .footer-links a:hover { color:white; }
+    .footer-links a.current { color:var(--accent-light); font-weight:600; }
+    .footer-bottom { max-width:1200px; margin:30px auto 0; padding-top:20px; border-top:1px solid #334155; text-align:center; font-size:0.8rem; }
+    .footer-social { display:flex; gap:16px; }
+    .footer-social a { font-size:1.3rem; text-decoration:none; }
+
+    @media (max-width:768px) {
+      .nav-links { display:none; } .mobile-menu-btn { display:block; }
+      .category-grid { grid-template-columns:1fr; }
+      .support-channels { grid-template-columns:1fr; }
+      .help-hero h1 { font-size:1.8rem; }
+      .help-content { padding:30px 16px 60px; }
+      .footer-inner { grid-template-columns:1fr 1fr; }
+    }
+    @media (max-width:480px) { .footer-inner { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+
+  <nav class="nav"><div class="nav-inner">
+    <a href="/" class="nav-logo"><span>🤟</span> americansignlanguage.eth</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li><li><a href="/pricing">Pricing</a></li><li><a href="/about">About</a></li><li><a href="/help" class="active">Help</a></li><li><a href="/faq">FAQ</a></li><li><a href="/login">Login</a></li>
+    </ul>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+  </div></nav>
+
+  <div class="help-hero">
+    <h1>🆘 Help Center</h1>
+    <p class="subtitle">Find answers, troubleshoot issues, and learn how to get the most out of americansignlanguage.eth</p>
+    <div class="search-box"><input type="text" id="helpSearch" placeholder="Search for help topics..." oninput="filterArticles(this.value)"></div>
+    <div class="quick-links">
+      <a href="#getting-started" class="quick-link">Getting Started</a>
+      <a href="#wallet-setup" class="quick-link">MetaMask Setup</a>
+      <a href="#vri-sessions" class="quick-link">VRI Sessions</a>
+      <a href="#asl-tokens" class="quick-link">$ASL Tokens</a>
+      <a href="#troubleshooting" class="quick-link">Troubleshooting</a>
+    </div>
+  </div>
+
+  <div class="help-content">
+    <h2 class="section-title">Browse by Topic</h2>
+    <div class="category-grid">
+      <a href="#getting-started" class="category-card"><span class="card-icon">🚀</span><h3>Getting Started</h3><p>New here? Create your account, set up MetaMask, and make your first VRI call.</p></a>
+      <a href="#wallet-setup" class="category-card"><span class="card-icon">🦊</span><h3>MetaMask & Wallet</h3><p>Install MetaMask, configure Base network, connect your wallet to the platform.</p></a>
+      <a href="#vri-sessions" class="category-card"><span class="card-icon">🎥</span><h3>VRI Sessions</h3><p>How to request, join, manage, and end video interpreting sessions.</p></a>
+      <a href="#asl-tokens" class="category-card"><span class="card-icon">🪙</span><h3>$ASL Tokens</h3><p>Understand how to mint, earn, and use $ASL tokens on the platform.</p></a>
+      <a href="#troubleshooting" class="category-card"><span class="card-icon">🔧</span><h3>Troubleshooting</h3><p>Camera issues, wallet errors, connection problems, and common fixes.</p></a>
+      <a href="#interpreters" class="category-card"><span class="card-icon">🤟</span><h3>For Interpreters</h3><p>Apply, manage your dashboard, set availability, and track earnings.</p></a>
+    </div>
+
+    <!-- ═══ GETTING STARTED ═══ -->
+    <div class="articles-section" id="getting-started">
+      <h2>🚀 Getting Started</h2>
+
+      <div class="article-item" onclick="toggle('gs1')"><span class="title">How to create your account</span><span class="article-tag tag-start">Getting Started</span></div>
+      <div class="article-body" id="gs1">
+        <div class="step"><h4>Step 1: Visit the signup page</h4><p>Go to <strong>americansignlanguage.xyz/signup</strong> or click "Sign Up" on the homepage.</p></div>
+        <div class="step"><h4>Step 2: Choose your account type</h4><p>Select: <strong>Deaf/HoH User</strong>, <strong>Hearing User (Business)</strong>, or <strong>Interpreter</strong>.</p></div>
+        <div class="step"><h4>Step 3: Fill in your details</h4><p>Enter your name, email, preferred communication method, and create a password.</p></div>
+        <div class="step"><h4>Step 4: Connect MetaMask wallet</h4><p>Click "Connect Wallet" to link MetaMask. Required for $ASL tokens. See <a href="#wallet-setup">MetaMask Setup</a> if you need help.</p></div>
+        <div class="step"><h4>Step 5: Verify your email</h4><p>Check email for a verification link. Click it to activate.</p></div>
+        <div class="tip"><strong>💡 Tip:</strong> You can browse without MetaMask, but a wallet is required for VRI sessions and $ASL tokens.</div>
+      </div>
+
+      <div class="article-item" onclick="toggle('gs2')"><span class="title">What is Video Remote Interpreting (VRI)?</span><span class="article-tag tag-start">Getting Started</span></div>
+      <div class="article-body" id="gs2">
+        <p>VRI connects you with a certified ASL interpreter via live video. Instead of an in-person interpreter, you connect instantly through your browser or phone.</p>
+        <p><strong>How it works:</strong></p>
+        <ol>
+          <li>Request an interpreter through the platform</li>
+          <li>A certified interpreter accepts your request</li>
+          <li>Secure, encrypted video session begins instantly</li>
+          <li>Interpreter facilitates communication between Deaf/HoH and hearing participants</li>
+          <li>$ASL tokens distributed automatically after session ends</li>
+        </ol>
+        <p><strong>Great for:</strong> Doctor appointments, business meetings, customer service, education, job interviews, government services, everyday communication.</p>
+        <div class="warn"><strong>⚠️</strong> VRI is not a replacement for 911. For emergencies, call 911 or use Video Relay Service (VRS).</div>
+      </div>
+
+      <div class="article-item" onclick="toggle('gs3')"><span class="title">What makes this platform different?</span><span class="article-tag tag-start">Getting Started</span></div>
+      <div class="article-body" id="gs3">
+        <p>americansignlanguage.eth is the <strong>first Deaf-owned, Deaf-led, Deaf-founded</strong> VRI service. Here's what sets us apart:</p>
+        <ul>
+          <li><strong>Deaf-owned:</strong> Built BY the Deaf community, FOR the Deaf community</li>
+          <li><strong>Blockchain-powered:</strong> $ASL tokens ensure transparent, fair compensation</li>
+          <li><strong>Fair split:</strong> 45% to interpreters (industry-leading), 10% back to users as rewards</li>
+          <li><strong>No middleman extraction:</strong> Unlike corporate VRI providers, our model puts interpreters and users first</li>
+          <li><strong>Privacy-first:</strong> End-to-end encrypted video, no session recordings by default</li>
+          <li><strong>Accessible design:</strong> Every feature built with visual-first, Deaf-friendly UX</li>
+        </ul>
+      </div>
+
+      <div class="article-item" onclick="toggle('gs4')"><span class="title">System requirements</span><span class="article-tag tag-start">Getting Started</span></div>
+      <div class="article-body" id="gs4">
+        <p><strong>Browser:</strong> Chrome (recommended), Firefox, Safari, or Edge — latest version</p>
+        <p><strong>Device:</strong> Computer, tablet, or smartphone with camera and microphone</p>
+        <p><strong>Internet:</strong> Minimum 5 Mbps download/upload for HD video quality</p>
+        <p><strong>MetaMask:</strong> Browser extension (desktop) or MetaMask mobile app</p>
+        <p><strong>Mobile:</strong> iOS 14+ or Android 10+ with MetaMask mobile app installed</p>
+        <div class="tip"><strong>💡 Tip:</strong> For the best VRI experience, use a wired internet connection and a well-lit room so the interpreter can clearly see your signing.</div>
+      </div>
+    </div>
+
+    <!-- ═══ WALLET SETUP ═══ -->
+    <div class="articles-section" id="wallet-setup">
+      <h2>🦊 MetaMask & Wallet Setup</h2>
+
+      <div class="article-item" onclick="toggle('w1')"><span class="title">What is MetaMask and why do I need it?</span><span class="article-tag tag-wallet">Wallet</span></div>
+      <div class="article-body" id="w1">
+        <p>MetaMask is a free digital wallet that lets you interact with blockchain applications. Think of it like a digital wallet on your phone — but for crypto tokens.</p>
+        <p><strong>You need MetaMask to:</strong></p>
+        <ul>
+          <li>Mint (create) your $ASL tokens after VRI sessions</li>
+          <li>Receive $ASL rewards for using the platform</li>
+          <li>Pay for VRI sessions with $ASL tokens</li>
+          <li>Receive interpreter compensation (if you're an interpreter)</li>
+        </ul>
+        <p>MetaMask is free to install. You only pay small "gas fees" (usually less than $0.01 on Base network) when you mint tokens or make transactions.</p>
+        <div class="warn"><strong>⚠️ CRITICAL:</strong> Your MetaMask seed phrase (12 words) is the master key to your wallet. NEVER share it with anyone. americansignlanguage.eth will NEVER ask for your seed phrase.</div>
+      </div>
+
+      <div class="article-item" onclick="toggle('w2')"><span class="title">How to install MetaMask (Desktop)</span><span class="article-tag tag-wallet">Wallet</span></div>
+      <div class="article-body" id="w2">
+        <div class="step"><h4>Step 1: Go to metamask.io</h4><p>Visit <strong>https://metamask.io</strong> in your Chrome, Firefox, or Edge browser. Click "Download".</p></div>
+        <div class="step"><h4>Step 2: Add the browser extension</h4><p>Click "Install MetaMask for Chrome" (or your browser). Click "Add to Chrome" → "Add extension".</p></div>
+        <div class="step"><h4>Step 3: Create a new wallet</h4><p>Click "Create a new wallet". Agree to the terms. Create a strong password.</p></div>
+        <div class="step"><h4>Step 4: SAVE your Secret Recovery Phrase</h4><p>MetaMask will show you 12 words. This is your <strong>Secret Recovery Phrase</strong>. Write these down on paper. Store in a safe place. <strong>DO NOT save digitally. DO NOT screenshot. DO NOT share with anyone.</strong></p></div>
+        <div class="step"><h4>Step 5: Confirm your phrase</h4><p>MetaMask will ask you to confirm the words in order. Enter them correctly to verify you saved them.</p></div>
+        <div class="step"><h4>Step 6: Done!</h4><p>You now have a MetaMask wallet. You'll see a fox icon 🦊 in your browser toolbar. Next, add the Base network (see next article).</p></div>
+        <div class="warn"><strong>⚠️ If you lose your recovery phrase, you lose access to your wallet permanently.</strong> There is no recovery option. No one — not MetaMask, not americansignlanguage.eth — can recover it for you.</div>
+      </div>
+
+      <div class="article-item" onclick="toggle('w3')"><span class="title">How to install MetaMask (Mobile)</span><span class="article-tag tag-wallet">Wallet</span></div>
+      <div class="article-body" id="w3">
+        <div class="step"><h4>Step 1: Download the app</h4><p>Go to the App Store (iPhone) or Google Play Store (Android). Search "MetaMask" and install the official app (by ConsenSys).</p></div>
+        <div class="step"><h4>Step 2: Create a new wallet</h4><p>Open the app. Tap "Create a new wallet". Set up a password or biometric lock.</p></div>
+        <div class="step"><h4>Step 3: Save your Recovery Phrase</h4><p>Write down the 12-word phrase on paper. <strong>Never share or screenshot this.</strong></p></div>
+        <div class="step"><h4>Step 4: Access our platform</h4><p>Use the built-in MetaMask browser to visit <strong>americansignlanguage.xyz</strong> — this lets you connect your wallet directly.</p></div>
+        <div class="tip"><strong>💡 Mobile Tip:</strong> On mobile, always use the MetaMask in-app browser to access our platform for the smoothest wallet connection experience.</div>
+      </div>
+
+      <div class="article-item" onclick="toggle('w4')"><span class="title">How to add the Base network to MetaMask</span><span class="article-tag tag-wallet">Wallet</span></div>
+      <div class="article-body" id="w4">
+        <p>$ASL tokens run on the <strong>Base network</strong> (an Ethereum Layer 2 by Coinbase). Gas fees are very low — typically under $0.01 per transaction.</p>
+        <div class="step"><h4>Step 1: Open MetaMask</h4><p>Click the MetaMask fox icon. At the top, click the network dropdown (it says "Ethereum Mainnet" by default).</p></div>
+        <div class="step"><h4>Step 2: Add network</h4><p>Click "Add network" → "Add a network manually".</p></div>
+        <div class="step"><h4>Step 3: Enter Base network details</h4>
+          <div class="code-block">Network Name: Base
+RPC URL: https://mainnet.base.org
+Chain ID: 8453
+Currency Symbol: ETH
+Block Explorer: https://basescan.org</div>
+        </div>
+        <div class="step"><h4>Step 4: Save and switch</h4><p>Click "Save". MetaMask will switch to the Base network. You'll see "Base" at the top of MetaMask.</p></div>
+        <div class="tip"><strong>💡 Tip:</strong> You need a tiny amount of ETH on Base to pay gas fees (for minting tokens). You can bridge ETH from Ethereum mainnet to Base using <strong>bridge.base.org</strong>, or buy directly through Coinbase.</div>
+      </div>
+
+      <div class="article-item" onclick="toggle('w5')"><span class="title">How to connect your wallet to our platform</span><span class="article-tag tag-wallet">Wallet</span></div>
+      <div class="article-body" id="w5">
+        <div class="step"><h4>Step 1: Make sure MetaMask is installed and on Base network</h4><p>Follow the installation and Base network guides above if you haven't already.</p></div>
+        <div class="step"><h4>Step 2: Visit our platform</h4><p>Go to <strong>americansignlanguage.xyz</strong> in the same browser where MetaMask is installed.</p></div>
+        <div class="step"><h4>Step 3: Click "Connect MetaMask"</h4><p>On the homepage or your dashboard, click the "Connect MetaMask" button.</p></div>
+        <div class="step"><h4>Step 4: Approve the connection</h4><p>A MetaMask popup will appear asking permission to connect. Review the request and click "Connect".</p></div>
+        <div class="step"><h4>Step 5: You're connected!</h4><p>Your wallet address will appear on the platform. You're ready to use VRI and earn $ASL tokens.</p></div>
+        <div class="warn"><strong>⚠️</strong> Only connect your wallet on <strong>americansignlanguage.xyz</strong>. Never connect your wallet to unfamiliar websites that claim to be us.</div>
+      </div>
+
+      <div class="article-item" onclick="toggle('w6')"><span class="title">How to get ETH on Base for gas fees</span><span class="article-tag tag-wallet">Wallet</span></div>
+      <div class="article-body" id="w6">
+        <p>You need a small amount of ETH on Base network to pay transaction (gas) fees. Typical VRI session token minting costs less than $0.01.</p>
+        <p><strong>Option A — Coinbase (Easiest)</strong></p>
+        <ol>
+          <li>Buy ETH on Coinbase</li>
+          <li>Withdraw to your MetaMask address, selecting "Base" as the network</li>
+          <li>ETH arrives in your MetaMask on Base network in minutes</li>
+        </ol>
+        <p><strong>Option B — Bridge from Ethereum</strong></p>
+        <ol>
+          <li>If you already have ETH on Ethereum mainnet</li>
+          <li>Go to <strong>bridge.base.org</strong></li>
+          <li>Connect MetaMask, enter amount to bridge, confirm</li>
+          <li>ETH moves from Ethereum to Base in ~10 minutes</li>
+        </ol>
+        <div class="tip"><strong>💡 Tip:</strong> Even $2-5 of ETH on Base will cover hundreds of token minting transactions. You don't need much!</div>
+      </div>
+    </div>
+
+    <!-- ═══ VRI SESSIONS ═══ -->
+    <div class="articles-section" id="vri-sessions">
+      <h2>🎥 VRI Sessions</h2>
+
+      <div class="article-item" onclick="toggle('v1')"><span class="title">How to request a VRI interpreter</span><span class="article-tag tag-vri">VRI</span></div>
+      <div class="article-body" id="v1">
+        <div class="step"><h4>Step 1: Log in and connect wallet</h4><p>Sign into your account and make sure your MetaMask wallet is connected.</p></div>
+        <div class="step"><h4>Step 2: Click "Request VRI Interpreter"</h4><p>From your dashboard, click the "Request VRI Interpreter" button.</p></div>
+        <div class="step"><h4>Step 3: Allow camera and microphone</h4><p>Your browser will ask for camera/microphone permission. Click "Allow".</p></div>
+        <div class="step"><h4>Step 4: Wait for interpreter match</h4><p>The platform matches you with an available certified interpreter. Average wait time: under 2 minutes.</p></div>
+        <div class="step"><h4>Step 5: Session begins</h4><p>When an interpreter accepts, the video call starts automatically. A timer tracks session duration.</p></div>
+      </div>
+
+      <div class="article-item" onclick="toggle('v2')"><span class="title">How to end a VRI session</span><span class="article-tag tag-vri">VRI</span></div>
+      <div class="article-body" id="v2">
+        <p>Both users and interpreters can end a session at any time:</p>
+        <ol>
+          <li>Click the red <strong>"End Session"</strong> button at the bottom of the video screen</li>
+          <li>Confirm you want to end the session</li>
+          <li>The session timer stops and $ASL tokens are calculated</li>
+          <li>Both parties see a session summary with duration and token amounts</li>
+          <li>Click "Mint Tokens" to claim your $ASL rewards</li>
+        </ol>
+        <div class="tip"><strong>💡 Tip:</strong> If you get disconnected due to internet issues, the session will automatically pause. Reconnect within 2 minutes to resume, or the session ends automatically.</div>
+      </div>
+
+      <div class="article-item" onclick="toggle('v3')"><span class="title">In-session controls (mute, camera, chat, screen share)</span><span class="article-tag tag-vri">VRI</span></div>
+      <div class="article-body" id="v3">
+        <p>During a VRI session, you have the following controls:</p>
+        <ul>
+          <li><strong>🔇 Mute Audio:</strong> Toggle your microphone on/off</li>
+          <li><strong>📷 Camera Toggle:</strong> Turn your camera on/off</li>
+          <li><strong>💬 Chat:</strong> Open the text chat to send typed messages during the session</li>
+          <li><strong>📺 Screen Share:</strong> Share your screen (useful for showing documents or presentations)</li>
+          <li><strong>⛶ Fullscreen:</strong> Enter/exit fullscreen mode for better video visibility</li>
+          <li><strong>🔴 End Session:</strong> End the VRI session</li>
+        </ul>
+        <div class="warn"><strong>⚠️ Important for Deaf users:</strong> Keep your camera ON during the session so the interpreter can see your signing. Good lighting on your face and hands is essential for clear communication.</div>
+      </div>
+
+      <div class="article-item" onclick="toggle('v4')"><span class="title">Session billing and token distribution</span><span class="article-tag tag-vri">VRI</span></div>
+      <div class="article-body" id="v4">
+        <p>Sessions are billed at <strong>20 $ASL per minute</strong>. Tokens are distributed as follows:</p>
+        <ul>
+          <li><strong>45% (9 $ASL/min)</strong> → Interpreter compensation</li>
+          <li><strong>45% (9 $ASL/min)</strong> → Platform operations and development</li>
+          <li><strong>10% (2 $ASL/min)</strong> → User reward (you earn tokens back!)</li>
+        </ul>
+        <p>After a session ends, you'll see a summary showing the total duration and tokens. Click "Mint Tokens" to send the tokens to your wallet.</p>
+      </div>
+
+      <div class="article-item" onclick="toggle('v5')"><span class="title">VRI session tips for the best experience</span><span class="article-tag tag-vri">VRI</span></div>
+      <div class="article-body" id="v5">
+        <ul>
+          <li><strong>Lighting:</strong> Face a light source. Avoid backlighting (window behind you). The interpreter needs to see your hands and face clearly.</li>
+          <li><strong>Camera angle:</strong> Position your camera to show from your waist up, including your face and signing space.</li>
+          <li><strong>Background:</strong> Use a plain, non-distracting background. Solid colors work best.</li>
+          <li><strong>Internet:</strong> Use a wired connection if possible. Close other bandwidth-heavy applications.</li>
+          <li><strong>Browser:</strong> Use Chrome for the best WebRTC video quality.</li>
+          <li><strong>Patience:</strong> If connection is slow, the interpreter will work with you. Use the chat feature as backup if video quality drops.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ═══ $ASL TOKENS ═══ -->
+    <div class="articles-section" id="asl-tokens">
+      <h2>🪙 $ASL Tokens</h2>
+
+      <div class="article-item" onclick="toggle('t1')"><span class="title">What is the $ASL token?</span><span class="article-tag tag-token">Tokens</span></div>
+      <div class="article-body" id="t1">
+        <p>$ASL is a utility token on the Base blockchain used within the americansignlanguage.eth platform. It powers the VRI economy:</p>
+        <ul>
+          <li><strong>Session payments:</strong> VRI sessions generate $ASL tokens</li>
+          <li><strong>Interpreter compensation:</strong> Interpreters earn $ASL for their work</li>
+          <li><strong>User rewards:</strong> Users earn $ASL back for using the platform</li>
+          <li><strong>Governance:</strong> Future voting on platform decisions (coming soon)</li>
+        </ul>
+        <div class="warn"><strong>⚠️ Disclaimer:</strong> $ASL is a utility token, NOT a security or investment. Its value may fluctuate. Do not purchase $ASL tokens as an investment.</div>
+      </div>
+
+      <div class="article-item" onclick="toggle('t2')"><span class="title">How to mint $ASL tokens after a session</span><span class="article-tag tag-token">Tokens</span></div>
+      <div class="article-body" id="t2">
+        <div class="step"><h4>Step 1: Complete a VRI session</h4><p>After the session ends, you'll see a session summary screen.</p></div>
+        <div class="step"><h4>Step 2: Click "Mint Tokens"</h4><p>The session summary shows how many $ASL tokens you earned. Click the "Mint Tokens" button.</p></div>
+        <div class="step"><h4>Step 3: Confirm in MetaMask</h4><p>MetaMask will pop up asking you to confirm the minting transaction. Review the gas fee (usually under $0.01 on Base) and click "Confirm".</p></div>
+        <div class="step"><h4>Step 4: Tokens arrive in your wallet</h4><p>Within seconds, the $ASL tokens will appear in your MetaMask wallet. You may need to add the $ASL token contract address to see them (see next article).</p></div>
+      </div>
+
+      <div class="article-item" onclick="toggle('t3')"><span class="title">How to view $ASL tokens in MetaMask</span><span class="article-tag tag-token">Tokens</span></div>
+      <div class="article-body" id="t3">
+        <p>If you don't see $ASL tokens in MetaMask after minting:</p>
+        <ol>
+          <li>Open MetaMask and make sure you're on the <strong>Base network</strong></li>
+          <li>Scroll down and click <strong>"Import tokens"</strong></li>
+          <li>Paste the $ASL token contract address (available on our platform under Settings → Token Info)</li>
+          <li>Token symbol ($ASL) and decimals will auto-fill</li>
+          <li>Click "Add Custom Token" → "Import"</li>
+          <li>Your $ASL balance will now appear in MetaMask</li>
+        </ol>
+      </div>
+
+      <div class="article-item" onclick="toggle('t4')"><span class="title">Understanding gas fees</span><span class="article-tag tag-token">Tokens</span></div>
+      <div class="article-body" id="t4">
+        <p>"Gas fees" are small costs for processing transactions on the blockchain. Think of it as a tiny postage fee for sending something on the network.</p>
+        <ul>
+          <li><strong>On Base network:</strong> Gas fees are extremely low, typically $0.001-$0.01 per transaction</li>
+          <li><strong>You need ETH on Base:</strong> Gas fees are paid in ETH (not $ASL). Even $2 of ETH will last hundreds of transactions.</li>
+          <li><strong>Gas fees go to the network:</strong> Not to americansignlanguage.eth — they go to Base/Ethereum network validators</li>
+          <li><strong>Gas fees are non-refundable:</strong> Even if a transaction fails, gas fees are consumed</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ═══ TROUBLESHOOTING ═══ -->
+    <div class="articles-section" id="troubleshooting">
+      <h2>🔧 Troubleshooting</h2>
+
+      <div class="article-item" onclick="toggle('f1')"><span class="title">Camera or microphone not working</span><span class="article-tag tag-fix">Fix</span></div>
+      <div class="article-body" id="f1">
+        <p><strong>Try these steps in order:</strong></p>
+        <ol>
+          <li><strong>Check browser permissions:</strong> Click the lock icon 🔒 in the address bar → Make sure Camera and Microphone are set to "Allow"</li>
+          <li><strong>Check system permissions:</strong> On Mac: System Preferences → Privacy → Camera/Microphone → Make sure your browser is checked. On Windows: Settings → Privacy → Camera/Microphone → Allow apps to access</li>
+          <li><strong>Close other apps:</strong> Close Zoom, FaceTime, or other apps that might be using your camera</li>
+          <li><strong>Try a different browser:</strong> If Chrome isn't working, try Firefox or Edge</li>
+          <li><strong>Restart browser:</strong> Close all tabs and restart your browser completely</li>
+          <li><strong>Restart device:</strong> If nothing works, restart your computer or phone</li>
+        </ol>
+      </div>
+
+      <div class="article-item" onclick="toggle('f2')"><span class="title">MetaMask won't connect</span><span class="article-tag tag-fix">Fix</span></div>
+      <div class="article-body" id="f2">
+        <ol>
+          <li><strong>Check MetaMask is installed:</strong> Look for the fox 🦊 icon in your browser toolbar</li>
+          <li><strong>Check you're on Base network:</strong> Open MetaMask → Top dropdown should say "Base"</li>
+          <li><strong>Unlock MetaMask:</strong> Click the fox icon and enter your password if locked</li>
+          <li><strong>Try disconnecting and reconnecting:</strong> In MetaMask → Settings → Connected Sites → Remove our site → Reconnect</li>
+          <li><strong>Disable other wallet extensions:</strong> If you have Phantom, Coinbase Wallet, or other wallet extensions, disable them temporarily</li>
+          <li><strong>Clear cache:</strong> Try clearing your browser cache and cookies for our site</li>
+          <li><strong>Try incognito mode:</strong> Open an incognito/private window and try connecting</li>
+        </ol>
+      </div>
+
+      <div class="article-item" onclick="toggle('f3')"><span class="title">Video quality is poor or freezing</span><span class="article-tag tag-fix">Fix</span></div>
+      <div class="article-body" id="f3">
+        <ul>
+          <li><strong>Check internet speed:</strong> Go to speedtest.net. You need at least 5 Mbps up/down for HD video</li>
+          <li><strong>Use wired connection:</strong> Ethernet cable is more stable than Wi-Fi</li>
+          <li><strong>Close other tabs/apps:</strong> Streaming, downloads, and other video calls consume bandwidth</li>
+          <li><strong>Move closer to router:</strong> If using Wi-Fi, reduce distance to your router</li>
+          <li><strong>Lower video quality:</strong> Some browsers let you lower video resolution in settings</li>
+          <li><strong>Restart router:</strong> Unplug your router for 30 seconds, then plug back in</li>
+        </ul>
+        <div class="tip"><strong>💡 Tip:</strong> If video quality drops during a session, use the in-session chat as a backup communication method until the connection stabilizes.</div>
+      </div>
+
+      <div class="article-item" onclick="toggle('f4')"><span class="title">Token minting failed</span><span class="article-tag tag-fix">Fix</span></div>
+      <div class="article-body" id="f4">
+        <ol>
+          <li><strong>Check ETH balance:</strong> Make sure you have ETH on Base network for gas fees</li>
+          <li><strong>Check network:</strong> Confirm MetaMask is on the Base network (Chain ID: 8453)</li>
+          <li><strong>Try again:</strong> Go to your session history and click "Mint" again for that session</li>
+          <li><strong>Increase gas:</strong> In MetaMask confirmation, try clicking "Edit" to slightly increase gas fee</li>
+          <li><strong>Check Base network status:</strong> Visit status.base.org to see if the network is experiencing issues</li>
+        </ol>
+        <div class="warn"><strong>⚠️</strong> If a minting transaction fails, you'll be charged a small gas fee but won't receive tokens. You can try minting again.</div>
+      </div>
+
+      <div class="article-item" onclick="toggle('f5')"><span class="title">I got disconnected during a session</span><span class="article-tag tag-fix">Fix</span></div>
+      <div class="article-body" id="f5">
+        <p>If you lose connection during a VRI session:</p>
+        <ol>
+          <li>The session automatically pauses</li>
+          <li>You have <strong>2 minutes</strong> to reconnect before the session ends</li>
+          <li>Refresh the page or navigate back to the session</li>
+          <li>If reconnection succeeds, the session resumes with the same interpreter</li>
+          <li>If reconnection fails after 2 minutes, the session ends automatically</li>
+          <li>You'll only be charged for the time you were connected</li>
+        </ol>
+      </div>
+
+      <div class="article-item" onclick="toggle('f6')"><span class="title">Account locked or login issues</span><span class="article-tag tag-fix">Fix</span></div>
+      <div class="article-body" id="f6">
+        <ul>
+          <li><strong>Forgot password:</strong> Click "Forgot Password" on the login page to reset via email</li>
+          <li><strong>Account locked:</strong> After 5 failed login attempts, your account locks for 15 minutes. Wait and try again</li>
+          <li><strong>Email not verified:</strong> Check your inbox (and spam folder) for the verification email. Click "Resend Verification" on the login page</li>
+          <li><strong>Still stuck:</strong> Contact support at <a href="mailto:support@americansignlanguage.xyz">support@americansignlanguage.xyz</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ═══ INTERPRETERS ═══ -->
+    <div class="articles-section" id="interpreters">
+      <h2>🤟 For Interpreters</h2>
+
+      <div class="article-item" onclick="toggle('i1')"><span class="title">How to apply as an interpreter</span><span class="article-tag tag-interp">Interpreter</span></div>
+      <div class="article-body" id="i1">
+        <div class="step"><h4>Step 1: Visit the application page</h4><p>Go to <strong>americansignlanguage.xyz/interpreter/apply</strong></p></div>
+        <div class="step"><h4>Step 2: Submit your credentials</h4><p>Provide your RID/NIC certification number, state licensure, and professional references.</p></div>
+        <div class="step"><h4>Step 3: Complete background check</h4><p>Authorize a background check (required for all interpreters).</p></div>
+        <div class="step"><h4>Step 4: Set up MetaMask wallet</h4><p>Connect your MetaMask wallet on the Base network to receive $ASL token compensation.</p></div>
+        <div class="step"><h4>Step 5: Set up Stripe payout</h4><p>Configure your Stripe account for USD payouts from business client sessions.</p></div>
+        <div class="step"><h4>Step 6: Complete orientation</h4><p>Review the platform guide and Code of Professional Conduct expectations.</p></div>
+        <p>Applications are typically reviewed within 3-5 business days.</p>
+      </div>
+
+      <div class="article-item" onclick="toggle('i2')"><span class="title">How interpreter earnings work</span><span class="article-tag tag-interp">Interpreter</span></div>
+      <div class="article-body" id="i2">
+        <p>As an interpreter on our platform, you earn <strong>45% of all session tokens</strong> — that's <strong>9 $ASL per minute</strong> of interpreting. This is the highest interpreter share in the VRI industry.</p>
+        <ul>
+          <li><strong>$ASL tokens:</strong> Minted automatically after each session</li>
+          <li><strong>USD via Stripe:</strong> Business clients can pay in USD, with payouts via Stripe</li>
+          <li><strong>Earnings dashboard:</strong> Track all sessions, tokens earned, and payout history</li>
+          <li><strong>Tax responsibility:</strong> As an independent contractor, you're responsible for reporting income</li>
+        </ul>
+      </div>
+
+      <div class="article-item" onclick="toggle('i3')"><span class="title">Setting your availability</span><span class="article-tag tag-interp">Interpreter</span></div>
+      <div class="article-body" id="i3">
+        <ol>
+          <li>Log in to your interpreter dashboard</li>
+          <li>Go to <strong>Settings → Availability</strong></li>
+          <li>Set your available days and hours</li>
+          <li>Toggle <strong>"Go Online"</strong> when you're ready to accept sessions</li>
+          <li>Toggle <strong>"Go Offline"</strong> when you need a break or are done for the day</li>
+        </ol>
+        <div class="tip"><strong>💡 Tip:</strong> Going online during peak hours (business hours M-F, 9am-5pm EST) means more session requests and higher earning potential.</div>
+      </div>
+
+      <div class="article-item" onclick="toggle('i4')"><span class="title">Interpreter Code of Conduct</span><span class="article-tag tag-interp">Interpreter</span></div>
+      <div class="article-body" id="i4">
+        <p>All interpreters must adhere to:</p>
+        <ul>
+          <li><strong>RID Code of Professional Conduct (CPC)</strong></li>
+          <li><strong>Confidentiality:</strong> Never disclose session content to anyone</li>
+          <li><strong>Impartiality:</strong> Interpret accurately without personal bias</li>
+          <li><strong>Professional appearance:</strong> Solid-colored shirt, plain background, good lighting</li>
+          <li><strong>Competence:</strong> Only accept sessions within your skill level and specialization</li>
+          <li><strong>Respect:</strong> Treat all parties with dignity and cultural sensitivity</li>
+          <li><strong>Reliability:</strong> Be online during your scheduled hours, respond promptly to requests</li>
+        </ul>
+        <p>Violations may result in warnings, suspension, or removal from the platform.</p>
+      </div>
+    </div>
+
+    <!-- ═══ CONTACT SUPPORT ═══ -->
+    <div class="support-section">
+      <h2>Still need help?</h2>
+      <p>Our support team is here for you. All communication available in ASL, text, and email.</p>
+      <div class="support-channels">
+        <div class="support-channel">
+          <div class="ch-icon">📧</div>
+          <h4>Email Support</h4>
+          <p>Get a response within 24 hours</p>
+          <a href="mailto:support@americansignlanguage.xyz">support@americansignlanguage.xyz</a>
+        </div>
+        <div class="support-channel">
+          <div class="ch-icon">🎥</div>
+          <h4>Videophone</h4>
+          <p>ASL support available upon request</p>
+          <a href="/contact">Request VP Call</a>
+        </div>
+        <div class="support-channel">
+          <div class="ch-icon">💬</div>
+          <h4>Community</h4>
+          <p>Connect with other users</p>
+          <a href="https://instagram.com/americansignlanguage.eth" target="_blank">Join on Instagram</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div><h4>🤟 americansignlanguage.eth</h4><p>The first Deaf-owned Video Remote Interpreting service powered by blockchain technology.</p></div>
+      <div><h4>Platform</h4><ul class="footer-links"><li><a href="/pricing">Pricing</a></li><li><a href="/interpreter/apply">Become an Interpreter</a></li><li><a href="/about">About Us</a></li><li><a href="/contact">Contact</a></li></ul></div>
+      <div><h4>Resources</h4><ul class="footer-links"><li><a href="/help" class="current">Help Center</a></li><li><a href="/faq">FAQ</a></li><li><a href="/terms">Terms of Service</a></li><li><a href="/privacy">Privacy Policy</a></li><li><a href="/accessibility">Accessibility</a></li></ul></div>
+      <div><h4>Connect</h4><div class="footer-social"><a href="https://instagram.com/americansignlanguage.eth" target="_blank">📸</a><a href="https://x.com/aslnfts" target="_blank">🐦</a></div></div>
+    </div>
+    <div class="footer-bottom"><p>americansignlanguage.eth &copy; 2026 All Rights Reserved</p></div>
+  </footer>
+
+  <script>
+    function toggle(id) {
+      const el = document.getElementById(id);
+      const wasOpen = el.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.article-body').forEach(a => a.classList.remove('open'));
+      // Toggle clicked
+      if (!wasOpen) el.classList.add('open');
+    }
+
+    function filterArticles(query) {
+      const q = query.toLowerCase();
+      document.querySelectorAll('.article-item').forEach(item => {
+        const title = item.querySelector('.title').textContent.toLowerCase();
+        const body = item.nextElementSibling ? item.nextElementSibling.textContent.toLowerCase() : '';
+        const match = title.includes(q) || body.includes(q);
+        item.style.display = match ? 'flex' : 'none';
+        if (item.nextElementSibling && item.nextElementSibling.classList.contains('article-body')) {
+          item.nextElementSibling.style.display = match && item.nextElementSibling.classList.contains('open') ? 'block' : 'none';
+        }
+      });
+    }
+
+    function toggleMobileMenu() {
+      const links = document.querySelector('.nav-links');
+      links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+      if (links.style.display === 'flex') { links.style.flexDirection='column'; links.style.position='absolute'; links.style.top='64px'; links.style.left='0'; links.style.right='0'; links.style.background='white'; links.style.padding='16px'; links.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'; }
+    }
+  </script>
+</body>
+</html>
