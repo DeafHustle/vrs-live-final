@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FAQ - americansignlanguage.eth. MetaMask setup, $ASL tokens, VRI sessions.">
+  <title>FAQ | americansignlanguage.eth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--primary:#1a73e8;--primary-dark:#0d47a1;--accent:#11998e;--accent-light:#38ef7d;--bg:#fafbfc;--surface:#fff;--text:#1a1a2e;--text-secondary:#5a5a7a;--border:#e2e8f0;--warning:#f59e0b;--danger:#ef4444;--success:#10b981;--radius:12px;--shadow:0 2px 12px rgba(0,0,0,0.06)}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+    .nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+    .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem}
+    .nav-links{display:flex;align-items:center;gap:8px;list-style:none}
+    .nav-links a{text-decoration:none;color:var(--text-secondary);padding:8px 16px;border-radius:8px;font-size:0.9rem;font-weight:500;transition:all 0.2s}
+    .nav-links a:hover{background:#f1f5f9;color:var(--text)}
+    .nav-links a.active{background:var(--primary);color:white}
+    .mobile-menu-btn{display:none;background:none;border:none;font-size:1.5rem;cursor:pointer}
+    .faq-hero{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:60px 24px;text-align:center;color:white}
+    .faq-hero h1{font-family:'Space Grotesk',sans-serif;font-size:2.4rem;font-weight:700;margin-bottom:12px}
+    .faq-hero .subtitle{font-size:1.1rem;opacity:0.9;max-width:600px;margin:0 auto}
+    .filter-bar{max-width:900px;margin:-24px auto 0;padding:0 24px;position:relative;z-index:10}
+    .filter-tabs{background:var(--surface);border-radius:var(--radius);box-shadow:0 4px 20px rgba(0,0,0,0.1);padding:8px;display:flex;flex-wrap:wrap;gap:4px}
+    .filter-tab{padding:10px 18px;border:none;background:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:500;color:var(--text-secondary);transition:all 0.2s}
+    .filter-tab:hover{background:#f1f5f9;color:var(--text)}
+    .filter-tab.active{background:var(--primary);color:white}
+    .faq-content{max-width:900px;margin:0 auto;padding:50px 24px 80px}
+    .onboarding-banner{background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border:2px solid #f59e0b;border-radius:var(--radius);padding:28px 32px;margin-bottom:40px}
+    .onboarding-banner h2{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;color:#92400e;margin-bottom:12px}
+    .onboarding-banner p{color:#78350f;font-size:0.92rem;margin-bottom:16px}
+    .onboarding-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .onboarding-step{background:white;border-radius:8px;padding:16px;text-align:center}
+    .step-num{width:32px;height:32px;background:#f59e0b;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;margin:0 auto 8px}
+    .step-label{font-size:0.8rem;color:#78350f;font-weight:600}
+    .step-desc{font-size:0.75rem;color:#92400e;margin-top:4px}
+    .faq-category{margin-bottom:40px}
+    .faq-category h2{font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--border);scroll-margin-top:80px}
+    .faq-item{border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden;background:var(--surface);transition:box-shadow 0.2s}
+    .faq-item:hover{box-shadow:var(--shadow)}
+    .faq-question{padding:18px 24px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:0.95rem;user-select:none}
+    .faq-question:hover{background:#f8fafc}
+    .faq-question .chevron{font-size:1.2rem;transition:transform 0.3s;flex-shrink:0;margin-left:12px;color:var(--text-secondary)}
+    .faq-item.open .faq-question .chevron{transform:rotate(180deg)}
+    .faq-answer{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s ease;padding:0 24px;font-size:0.92rem;color:var(--text-secondary)}
+    .faq-item.open .faq-answer{max-height:3000px;padding:0 24px 24px}
+    .faq-answer p{margin-bottom:12px}
+    .faq-answer ol,.faq-answer ul{margin:10px 0 16px 20px}
+    .faq-answer li{margin-bottom:8px}
+    .callout{padding:14px 18px;border-radius:8px;margin:14px 0;font-size:0.88rem}
+    .callout-warn{background:#fef9e7;border-left:4px solid var(--warning);color:#7d6608}
+    .callout-tip{background:#e8f8f5;border-left:4px solid var(--accent);color:#0e6655}
+    .callout-info{background:#e8f4fd;border-left:4px solid var(--primary);color:#1a5276}
+    .callout-danger{background:#fdeaea;border-left:4px solid var(--danger);color:#922b21}
+    .code-block{background:#1e293b;color:#e2e8f0;padding:16px;border-radius:8px;font-family:monospace;font-size:0.85rem;overflow-x:auto;margin:12px 0;white-space:pre-wrap}
+    .faq-answer a{color:var(--primary);font-weight:500}
+    .help-cta{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);border-radius:var(--radius);padding:40px;text-align:center;color:white;margin-top:40px}
+    .help-cta h2{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;margin-bottom:12px}
+    .help-cta p{opacity:0.9;margin-bottom:24px;font-size:0.95rem}
+    .help-cta-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+    .help-cta-link{background:rgba(255,255,255,0.2);color:white;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:600;font-size:0.9rem;border:1px solid rgba(255,255,255,0.3)}
+    .help-cta-link:hover{background:rgba(255,255,255,0.35)}
+    .footer{background:var(--text);color:#cbd5e1;padding:50px 24px 30px}
+    .footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+    .footer h4{color:white;font-family:'Space Grotesk',sans-serif;margin-bottom:16px;font-size:0.95rem}
+    .footer p{font-size:0.85rem;line-height:1.6}
+    .footer-links{list-style:none}
+    .footer-links li{margin-bottom:8px}
+    .footer-links a{color:#94a3b8;text-decoration:none;font-size:0.85rem}
+    .footer-links a:hover{color:white}
+    .footer-links a.current{color:var(--accent-light);font-weight:600}
+    .footer-bottom{max-width:1200px;margin:30px auto 0;padding-top:20px;border-top:1px solid #334155;text-align:center;font-size:0.8rem}
+    .footer-social{display:flex;gap:16px}
+    .footer-social a{font-size:1.3rem;text-decoration:none}
+    @media(max-width:768px){.nav-links{display:none}.mobile-menu-btn{display:block}.faq-hero h1{font-size:1.8rem}.onboarding-steps{grid-template-columns:1fr 1fr}.faq-content{padding:30px 16px 60px}.filter-tabs{justify-content:center}.footer-inner{grid-template-columns:1fr 1fr}}
+    @media(max-width:480px){.onboarding-steps{grid-template-columns:1fr}.footer-inner{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav-inner">
+    <a href="/" class="nav-logo"><span>🤟</span> americansignlanguage.eth</a>
+    <ul class="nav-links"><li><a href="/">Home</a></li><li><a href="/pricing">Pricing</a></li><li><a href="/about">About</a></li><li><a href="/help">Help</a></li><li><a href="/faq" class="active">FAQ</a></li><li><a href="/login">Login</a></li></ul>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+  </div></nav>
+
+  <div class="faq-hero">
+    <h1>❓ Frequently Asked Questions</h1>
+    <p class="subtitle">Everything about MetaMask wallets, $ASL tokens, VRI sessions, and getting started on americansignlanguage.eth</p>
+  </div>
+
+  <div class="filter-bar"><div class="filter-tabs">
+    <button class="filter-tab active" onclick="filterFaq('all',this)">All Questions</button>
+    <button class="filter-tab" onclick="filterFaq('onboarding',this)">🚀 Onboarding</button>
+    <button class="filter-tab" onclick="filterFaq('metamask',this)">🦊 MetaMask</button>
+    <button class="filter-tab" onclick="filterFaq('tokens',this)">🪙 $ASL Tokens</button>
+    <button class="filter-tab" onclick="filterFaq('vri',this)">🎥 VRI Sessions</button>
+    <button class="filter-tab" onclick="filterFaq('billing',this)">💰 Billing</button>
+    <button class="filter-tab" onclick="filterFaq('safety',this)">🔒 Safety</button>
+  </div></div>
+
+  <div class="faq-content">
+
+    <div class="onboarding-banner">
+      <h2>🆕 New User? Complete these 4 steps to mint $ASL</h2>
+      <p>A MetaMask wallet is a prerequisite to mint $ASL tokens. Follow these steps:</p>
+      <div class="onboarding-steps">
+        <div class="onboarding-step"><div class="step-num">1</div><div class="step-label">Install MetaMask</div><div class="step-desc">Browser extension or mobile app</div></div>
+        <div class="onboarding-step"><div class="step-num">2</div><div class="step-label">Add Base Network</div><div class="step-desc">$ASL runs on Base (low fees)</div></div>
+        <div class="onboarding-step"><div class="step-num">3</div><div class="step-label">Create Account</div><div class="step-desc">Sign up & connect wallet</div></div>
+        <div class="onboarding-step"><div class="step-num">4</div><div class="step-label">Start Using VRI</div><div class="step-desc">Request interpreter & earn $ASL</div></div>
+      </div>
+    </div>
+
+    <!-- ONBOARDING -->
+    <div class="faq-category" data-category="onboarding">
+      <h2>🚀 Onboarding & General</h2>
+
+      <div class="faq-item" data-tags="onboarding"><div class="faq-question" onclick="toggleFaq(this)">What is americansignlanguage.eth?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>americansignlanguage.eth is the <strong>first Deaf-owned, Deaf-led, Deaf-founded</strong> Video Remote Interpreting (VRI) platform powered by blockchain technology. We connect Deaf/HoH individuals with certified ASL interpreters through live, encrypted video and use $ASL tokens for transparent, fair compensation — 45% to interpreters (industry-leading) and 10% back to users as rewards.</p>
+      </div></div>
+
+      <div class="faq-item" data-tags="onboarding"><div class="faq-question" onclick="toggleFaq(this)">Who is this platform for?<span class="chevron">▾</span></div><div class="faq-answer">
+        <ul><li><strong>Deaf/HoH individuals</strong> needing ASL interpreting for appointments, meetings, or daily communication</li><li><strong>Hearing individuals & businesses</strong> (doctors, employers, customer service) communicating with Deaf/HoH people</li><li><strong>Certified ASL interpreters</strong> seeking fair compensation and flexible VRI work</li></ul>
+      </div></div>
+
+      <div class="faq-item" data-tags="onboarding"><div class="faq-question" onclick="toggleFaq(this)">Do I need to be tech-savvy?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>No! If you can use Zoom or FaceTime, you can use our platform. MetaMask setup takes 5-10 minutes (one-time), and requesting an interpreter is one button click. Our <a href="/help">Help Center</a> has step-by-step guides for everything.</p>
+      </div></div>
+
+      <div class="faq-item" data-tags="onboarding billing"><div class="faq-question" onclick="toggleFaq(this)">Is there a cost to sign up?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p><strong>Account creation is free.</strong> You only pay for VRI sessions (20 $ASL/minute) and you earn 10% back as rewards. MetaMask is free. Gas fees for minting tokens are under $0.01 on Base network.</p>
+      </div></div>
+
+      <div class="faq-item" data-tags="onboarding"><div class="faq-question" onclick="toggleFaq(this)">When does the platform launch?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>We are launching <strong>April 15, 2026 — National ASL Day</strong>. Sign up on our homepage to be notified and be among the first users.</p>
+      </div></div>
+    </div>
+
+    <!-- METAMASK -->
+    <div class="faq-category" data-category="metamask">
+      <h2>🦊 MetaMask & Wallet Setup</h2>
+
+      <div class="faq-item" data-tags="metamask onboarding"><div class="faq-question" onclick="toggleFaq(this)">Why do I need a MetaMask wallet?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>$ASL tokens live on the blockchain. MetaMask is your digital wallet that stores, sends, and receives tokens. You need it to mint tokens after sessions, receive rewards, pay for sessions, and receive interpreter compensation.</p>
+        <div class="callout callout-info"><strong>ℹ️ New to crypto?</strong> Don't worry. MetaMask is just a free app that holds your tokens. We handle the technical blockchain stuff behind the scenes.</div>
+      </div></div>
+
+      <div class="faq-item" data-tags="metamask onboarding"><div class="faq-question" onclick="toggleFaq(this)">How do I install MetaMask? (Full step-by-step)<span class="chevron">▾</span></div><div class="faq-answer">
+        <p><strong>Desktop (Chrome, Firefox, Edge):</strong></p>
+        <ol><li>Go to <strong>metamask.io</strong></li><li>Click "Download" → "Install MetaMask for Chrome"</li><li>Click "Add to Chrome" → "Add extension"</li><li>Click "Create a new wallet" → agree to terms</li><li>Create a strong password</li><li><strong>WRITE DOWN your 12-word Secret Recovery Phrase on PAPER</strong></li><li>Confirm the words in order</li><li>Done! Fox icon 🦊 appears in your toolbar</li></ol>
+        <p><strong>Mobile (iPhone/Android):</strong></p>
+        <ol><li>App Store or Google Play → search "MetaMask" → install (by ConsenSys)</li><li>Tap "Create a new wallet" → set password/biometric</li><li><strong>WRITE DOWN your 12-word phrase on paper</strong></li><li>Use MetaMask's built-in browser to visit americansignlanguage.xyz</li></ol>
+        <div class="callout callout-danger"><strong>🚫 CRITICAL:</strong> Your 12-word Recovery Phrase is the ONLY way to recover your wallet. Write it on paper. Store safely. NEVER screenshot, email, or share it. If lost, your wallet and tokens are gone FOREVER. No one can recover it.</div>
+      </div></div>
+
+      <div class="faq-item" data-tags="metamask onboarding"><div class="faq-question" onclick="toggleFaq(this)">How do I add the Base network to MetaMask?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>$ASL runs on Base (fast, cheap Ethereum L2 by Coinbase):</p>
+        <ol><li>Open MetaMask → click network dropdown (says "Ethereum Mainnet")</li><li>Click "Add network" → "Add a network manually"</li><li>Enter these details exactly:</li></ol>
+        <div class="code-block">Network Name: Base
+RPC URL: https://mainnet.base.org
+Chain ID: 8453
+Currency Symbol: ETH
+Block Explorer URL: https://basescan.org</div>
+        <ol start="4"><li>Click "Save" → MetaMask switches to Base network</li></ol>
+        <div class="callout callout-tip"><strong>💡 Why Base?</strong> Gas fees under $0.01 vs $5-50+ on Ethereum mainnet. Minting $ASL costs almost nothing!</div>
+      </div></div>
+
+      <div class="faq-item" data-tags="metamask"><div class="faq-question" onclick="toggleFaq(this)">How do I connect my wallet to the platform?<span class="chevron">▾</span></div><div class="faq-answer">
+        <ol><li>Make sure MetaMask is installed and set to Base network</li><li>Visit <strong>americansignlanguage.xyz</strong></li><li>Click "Connect MetaMask"</li><li>MetaMask popup → click "Connect"</li><li>Your wallet address appears — you're connected!</li></ol>
+        <div class="callout callout-warn"><strong>⚠️ Safety:</strong> Only connect your wallet on americansignlanguage.xyz. Never connect to sites claiming to be us.</div>
+      </div></div>
+
+      <div class="faq-item" data-tags="metamask billing"><div class="faq-question" onclick="toggleFaq(this)">What are gas fees and how much do they cost?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>Gas fees are tiny transaction processing fees paid to the blockchain network (not to us). Like digital postage stamps.</p>
+        <ul><li><strong>On Base:</strong> $0.001 — $0.01 per transaction</li><li><strong>Paid in:</strong> ETH (not $ASL)</li><li><strong>How much ETH:</strong> $2-5 of ETH on Base covers hundreds of transactions</li><li><strong>Get ETH on Base:</strong> Buy on Coinbase → withdraw to Base, or bridge via bridge.base.org</li></ul>
+      </div></div>
+
+      <div class="faq-item" data-tags="metamask safety"><div class="faq-question" onclick="toggleFaq(this)">What if I lose my seed phrase?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p><strong>Your wallet and all tokens are permanently lost.</strong> No recovery possible — not from MetaMask, not from us, not from anyone.</p>
+        <p>Protect your phrase:</p><ul><li>Write on paper (not digitally)</li><li>Store in a safe, secure location</li><li>Consider a backup copy in a second safe location</li><li>Never share with anyone</li></ul>
+        <div class="callout callout-danger"><strong>🚫 americansignlanguage.eth will NEVER ask for your seed phrase.</strong> Anyone who asks is a scammer. Report to security@americansignlanguage.xyz.</div>
+      </div></div>
+
+      <div class="faq-item" data-tags="metamask"><div class="faq-question" onclick="toggleFaq(this)">Can I use a wallet other than MetaMask?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>MetaMask is currently our primary supported wallet. Future support planned for Coinbase Wallet, Rainbow Wallet, and WalletConnect-compatible wallets.</p>
+      </div></div>
+    </div>
+
+    <!-- $ASL TOKENS -->
+    <div class="faq-category" data-category="tokens">
+      <h2>🪙 $ASL Tokens</h2>
+
+      <div class="faq-item" data-tags="tokens onboarding"><div class="faq-question" onclick="toggleFaq(this)">What is the $ASL token?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>$ASL is a utility token powering the platform economy on the Base blockchain. Rate: 20 $ASL per minute. Split: 45% interpreter, 45% platform, 10% user reward.</p>
+        <div class="callout callout-warn"><strong>⚠️</strong> $ASL is a utility token, NOT a security or investment. No guarantees about value outside the platform.</div>
+      </div></div>
+
+      <div class="faq-item" data-tags="tokens onboarding"><div class="faq-question" onclick="toggleFaq(this)">How do I mint $ASL tokens after a session?<span class="chevron">▾</span></div><div class="faq-answer">
+        <ol><li>Complete a VRI session</li><li>Session summary shows your token amount</li><li>Click <strong>"Mint Tokens"</strong></li><li>MetaMask pops up → review gas fee (under $0.01) → click <strong>"Confirm"</strong></li><li>$ASL tokens appear in your wallet within seconds</li></ol>
+      </div></div>
+
+      <div class="faq-item" data-tags="tokens"><div class="faq-question" onclick="toggleFaq(this)">How do I see $ASL tokens in MetaMask?<span class="chevron">▾</span></div><div class="faq-answer">
+        <ol><li>Open MetaMask → make sure you're on <strong>Base network</strong></li><li>Scroll down → click <strong>"Import tokens"</strong></li><li>Paste the $ASL contract address (from Settings → Token Info on our platform)</li><li>Symbol and decimals auto-fill → click "Add Custom Token" → "Import"</li></ol>
+      </div></div>
+
+      <div class="faq-item" data-tags="tokens"><div class="faq-question" onclick="toggleFaq(this)">Can I trade or sell $ASL tokens?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>$ASL is primarily a utility token for platform use. Tokens can be transferred between wallets like any ERC-20 token, but we don't endorse trading or make value guarantees outside the platform.</p>
+      </div></div>
+    </div>
+
+    <!-- VRI SESSIONS -->
+    <div class="faq-category" data-category="vri">
+      <h2>🎥 VRI Sessions</h2>
+
+      <div class="faq-item" data-tags="vri"><div class="faq-question" onclick="toggleFaq(this)">How quickly can I connect with an interpreter?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>Target: under <strong>2 minutes</strong>. Depends on interpreter availability and time of day. Peak hours (M-F 9am-5pm EST) have the most interpreters online.</p>
+      </div></div>
+
+      <div class="faq-item" data-tags="vri"><div class="faq-question" onclick="toggleFaq(this)">Are the interpreters certified?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>Yes. Every interpreter must hold valid RID/NIC/BEI or state certification, maintain licensure, pass a background check, complete orientation, and adhere to the RID Code of Professional Conduct.</p>
+      </div></div>
+
+      <div class="faq-item" data-tags="vri safety"><div class="faq-question" onclick="toggleFaq(this)">Are VRI sessions private and secure?<span class="chevron">▾</span></div><div class="faq-answer">
+        <ul><li><strong>End-to-end encryption</strong> on all video/audio (WebRTC SRTP)</li><li><strong>No recording by default</strong> — only with both parties' written consent</li><li><strong>No third-party access</strong> — nobody outside the session can view the feed</li><li><strong>Chat messages deleted</strong> after session unless both parties consent to save</li><li><strong>Interpreter confidentiality</strong> — bound by RID Code of Professional Conduct</li></ul>
+      </div></div>
+
+      <div class="faq-item" data-tags="vri"><div class="faq-question" onclick="toggleFaq(this)">Can both the user and interpreter end a session?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p><strong>Yes!</strong> Both users and interpreters can end a session at any time by clicking the "End Session" button. The session timer stops, tokens are calculated, and both parties see a summary.</p>
+      </div></div>
+
+      <div class="faq-item" data-tags="vri"><div class="faq-question" onclick="toggleFaq(this)">What if I get disconnected during a session?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>The session pauses automatically. You have <strong>2 minutes</strong> to reconnect. If you reconnect, the session resumes with the same interpreter. If not, the session ends and you're only charged for connected time.</p>
+      </div></div>
+
+      <div class="faq-item" data-tags="vri"><div class="faq-question" onclick="toggleFaq(this)">Tips for the best VRI experience?<span class="chevron">▾</span></div><div class="faq-answer">
+        <ul><li><strong>Lighting:</strong> Face a light source, avoid backlighting</li><li><strong>Camera angle:</strong> Show waist-up, including face and signing space</li><li><strong>Background:</strong> Plain, solid color</li><li><strong>Internet:</strong> Wired connection preferred, 5+ Mbps</li><li><strong>Browser:</strong> Chrome recommended</li><li><strong>Keep camera ON</strong> so the interpreter can see your signing</li></ul>
+      </div></div>
+    </div>
+
+    <!-- BILLING -->
+    <div class="faq-category" data-category="billing">
+      <h2>💰 Billing & Payments</h2>
+
+      <div class="faq-item" data-tags="billing"><div class="faq-question" onclick="toggleFaq(this)">How does billing work?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>Sessions are billed at <strong>20 $ASL per minute</strong>. Tokens are minted after each session. Split: 45% interpreter, 45% platform, 10% user reward. Minimum billing: 1 minute.</p>
+      </div></div>
+
+      <div class="faq-item" data-tags="billing"><div class="faq-question" onclick="toggleFaq(this)">What payment methods do you accept?<span class="chevron">▾</span></div><div class="faq-answer">
+        <ul><li><strong>$ASL Tokens:</strong> Primary method</li><li><strong>Credit/Debit (Stripe):</strong> For business accounts (coming soon)</li><li><strong>Invoicing:</strong> Available for enterprise/institutional clients</li></ul>
+      </div></div>
+
+      <div class="faq-item" data-tags="billing"><div class="faq-question" onclick="toggleFaq(this)">What is your refund policy?<span class="chevron">▾</span></div><div class="faq-answer">
+        <ul><li><strong>Sessions under 1 min (technical issues):</strong> Full refund</li><li><strong>Interpreter no-show:</strong> Full refund + bonus tokens</li><li><strong>Quality complaints:</strong> Reviewed case-by-case within 7 days</li><li><strong>Gas fees:</strong> Non-refundable (paid to blockchain network)</li></ul>
+      </div></div>
+
+      <div class="faq-item" data-tags="billing"><div class="faq-question" onclick="toggleFaq(this)">How do interpreters get paid?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>Interpreters earn <strong>45% of session tokens (9 $ASL/min)</strong> — the highest interpreter share in the VRI industry. Additional USD payouts available via Stripe for business client sessions. Earnings dashboard tracks all sessions, tokens, and payout history.</p>
+      </div></div>
+    </div>
+
+    <!-- SAFETY -->
+    <div class="faq-category" data-category="safety">
+      <h2>🔒 Safety & Security</h2>
+
+      <div class="faq-item" data-tags="safety"><div class="faq-question" onclick="toggleFaq(this)">How do I spot a scam pretending to be americansignlanguage.eth?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p><strong>Red flags:</strong></p>
+        <ul><li>Anyone asking for your seed phrase or private keys</li><li>DMs on social media asking you to connect your wallet to an unknown link</li><li>Emails from domains other than @americansignlanguage.xyz</li><li>"Giveaway" offers asking you to send crypto first</li><li>Fake customer support asking for your password</li></ul>
+        <p><strong>Our rules:</strong> We will NEVER ask for your seed phrase, private keys, or wallet password. We will NEVER DM you asking to connect your wallet. We will NEVER ask you to send crypto to receive tokens.</p>
+        <p>Report scams to <a href="mailto:security@americansignlanguage.xyz">security@americansignlanguage.xyz</a></p>
+      </div></div>
+
+      <div class="faq-item" data-tags="safety"><div class="faq-question" onclick="toggleFaq(this)">How do you protect my personal data?<span class="chevron">▾</span></div><div class="faq-answer">
+        <ul><li><strong>TLS 1.3 encryption</strong> for all data in transit</li><li><strong>AES-256 encryption</strong> for all data at rest</li><li><strong>No session recordings</strong> by default</li><li><strong>No third-party ad trackers</strong></li><li><strong>We never sell your data</strong></li><li><strong>Role-based access</strong> with MFA for admin systems</li></ul>
+        <p>Read our full <a href="/privacy">Privacy Policy</a> for complete details.</p>
+      </div></div>
+
+      <div class="faq-item" data-tags="safety"><div class="faq-question" onclick="toggleFaq(this)">Is my disability/hearing status shared?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p><strong>Never.</strong> We never share your hearing status or disability information with third parties without your explicit consent. All notifications are visual (never audio-only). See our <a href="/privacy#accessibility-privacy">Accessibility & Privacy</a> section.</p>
+      </div></div>
+
+      <div class="faq-item" data-tags="safety"><div class="faq-question" onclick="toggleFaq(this)">What happens to my data if I delete my account?<span class="chevron">▾</span></div><div class="faq-answer">
+        <p>Upon account deletion: your profile data is removed, session history is deleted within 90 days, and $ASL tokens in your wallet remain yours (they exist on the blockchain independently). Blockchain transaction records cannot be deleted as they are permanently recorded on-chain.</p>
+      </div></div>
+    </div>
+
+    <!-- STILL NEED HELP -->
+    <div class="help-cta">
+      <h2>Still have questions?</h2>
+      <p>Our support team communicates in ASL, text, and email. We're here to help.</p>
+      <div class="help-cta-links">
+        <a href="/help" class="help-cta-link">📚 Help Center</a>
+        <a href="mailto:support@americansignlanguage.xyz" class="help-cta-link">📧 Email Support</a>
+        <a href="/contact" class="help-cta-link">📞 Contact Us</a>
+        <a href="https://instagram.com/americansignlanguage.eth" target="_blank" class="help-cta-link">📸 Instagram</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div><h4>🤟 americansignlanguage.eth</h4><p>The first Deaf-owned Video Remote Interpreting service powered by blockchain technology.</p></div>
+      <div><h4>Platform</h4><ul class="footer-links"><li><a href="/pricing">Pricing</a></li><li><a href="/interpreter/apply">Become an Interpreter</a></li><li><a href="/about">About Us</a></li><li><a href="/contact">Contact</a></li></ul></div>
+      <div><h4>Resources</h4><ul class="footer-links"><li><a href="/help">Help Center</a></li><li><a href="/faq" class="current">FAQ</a></li><li><a href="/terms">Terms of Service</a></li><li><a href="/privacy">Privacy Policy</a></li><li><a href="/accessibility">Accessibility</a></li></ul></div>
+      <div><h4>Connect</h4><div class="footer-social"><a href="https://instagram.com/americansignlanguage.eth" target="_blank">📸</a><a href="https://x.com/aslnfts" target="_blank">🐦</a></div></div>
+    </div>
+    <div class="footer-bottom"><p>americansignlanguage.eth © 2026 All Rights Reserved</p></div>
+  </footer>
+
+  <script>
+    function toggleFaq(el){const item=el.parentElement;const wasOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));if(!wasOpen)item.classList.add('open')}
+    function filterFaq(cat,btn){document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.faq-category').forEach(c=>{if(cat==='all'){c.style.display='block'}else{c.style.display=c.dataset.category===cat?'block':'none'}});document.querySelectorAll('.faq-item').forEach(i=>{if(cat==='all'){i.style.display='block'}else{i.style.display=i.dataset.tags.includes(cat)?'block':'none'}})}
+    function toggleMobileMenu(){const l=document.querySelector('.nav-links');l.style.display=l.style.display==='flex'?'none':'flex';if(l.style.display==='flex'){l.style.flexDirection='column';l.style.position='absolute';l.style.top='64px';l.style.left='0';l.style.right='0';l.style.background='white';l.style.padding='16px';l.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'}}
+  </script>
+</body>
+</html>
