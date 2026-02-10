@@ -144,7 +144,10 @@
         </div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">Email <span class="req">*</span></label><input type="email" class="form-input" id="em" required placeholder="you@email.com"></div>
-          <div class="form-group"><label class="form-label">Phone (optional)</label><input type="tel" class="form-input" id="ph" placeholder="VP or text number"></div>
+          <div class="form-group"><label class="form-label">Videophone Number <span class="req">*</span></label><input type="tel" class="form-input" id="vp" required placeholder="Your VP number"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Text Number (optional)</label><input type="tel" class="form-input" id="txt" placeholder="Text/SMS number"></div>
         </div>
         <div class="form-group"><label class="form-label">Organization (optional)</label><input type="text" class="form-input" id="org" placeholder="Hospital, school, company name..."></div>
         <div class="form-group"><label class="form-label">Setting <span class="req">*</span></label>
@@ -172,7 +175,7 @@
             <div class="form-group"><label class="form-label">Est. Duration</label><select class="form-select" id="ed"><option value="">Select...</option><option value="15">15 minutes</option><option value="30">30 minutes</option><option value="60">1 hour</option><option value="90">1.5 hours</option><option value="120">2 hours</option><option value="180">3+ hours</option></select></div>
           </div>
         </div>
-        <div class="form-group"><label class="form-label">Service Type</label><select class="form-select" id="stype"><option value="vri">Video Remote Interpreting (VRI)</option><option value="vrs">Video Relay Service (VRS)</option><option value="onsite">On-Site Interpreter</option><option value="other">Other / Not Sure</option></select></div>
+        <div class="form-group"><label class="form-label">Service Type</label><div class="form-input" style="background:rgba(17,153,142,0.06);border-color:var(--accent);font-weight:600;color:var(--accent);">📹 Video Remote Interpreting (VRI)</div><input type="hidden" id="stype" value="vri"></div>
         <div class="form-group"><label class="form-label">Additional Details</label><textarea class="form-textarea" id="det" placeholder="Describe the situation, any specialized vocabulary needed, special accommodations, etc."></textarea></div>
         <div class="form-error" id="fe"></div>
         <button type="submit" class="form-submit" id="sb">Submit Request</button>
