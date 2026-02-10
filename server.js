@@ -884,6 +884,95 @@ app.get('/api/admin/contacts', async (req, res) => {
 });
 
 // ============================================
+// API ENDPOINTS - ADMIN USER MANAGEMENT
+// ============================================
+
+// ADMIN: Get all registered users/customers
+app.get('/api/admin/users', async (req, res) => {
+  try {
+    const adminWallet = req.headers['x-admin-wallet']?.toLowerCase();
+    const admin = await Admin.findOne({ wallet: adminWallet });
+    if (!admin) return res.status(403).json({ error: 'Not authorized' });
+
+    const { page = 1, limit = 20, search } = req.query;
+    let query = {};
+    
+    if (search) {
+      const searchRegex = new RegExp(search, 'i');
+      query = { $or: [
+        { firstName: searchRegex },
+        { lastName: searchRegex },
+        { email: searchRegex },
+        { vpPhone: searchRegex }
+      ]};
+    }
+
+    const users = await User.find(query)
+      .select('-password')
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const total = await User.countDocuments(query);
+
+    res.json({
+      users,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ADMIN: Get single user details
+app.get('/api/admin/user/:userId', async (req, res) => {
+  try {
+    const adminWallet = req.headers['x-admin-wallet']?.toLowerCase();
+    const admin = await Admin.findOne({ wallet: adminWallet });
+    if (!admin) return res.status(403).json({ error: 'Not authorized' });
+
+    const user = await User.findById(req.params.userId).select('-password');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ADMIN: Update contact status (for business inquiries)
+app.post('/api/admin/contact/:contactId/status', async (req, res) => {
+  try {
+    const adminWallet = req.headers['x-admin-wallet']?.toLowerCase();
+    const admin = await Admin.findOne({ wallet: adminWallet });
+    if (!admin) return res.status(403).json({ error: 'Not authorized' });
+
+    const { status } = req.body;
+    if (!['new', 'contacted', 'converted'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status' });
+    }
+
+    const contact = await Contact.findByIdAndUpdate(
+      req.params.contactId,
+      { status },
+      { new: true }
+    );
+
+    if (!contact) return res.status(404).json({ error: 'Contact not found' });
+
+    console.log(`📋 ADMIN: Contact ${contact.email} status → ${status}`);
+    res.json({ success: true, contact });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================
 // API ENDPOINTS - INTERPRETER STRIPE CONNECT
 // ============================================
 
