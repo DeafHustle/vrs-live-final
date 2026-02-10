@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Your VRI Dashboard - americansignlanguage.eth">
+  <title>Dashboard | americansignlanguage.eth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary:#1a73e8; --primary-dark:#0d47a1; --accent:#11998e; --accent-light:#38ef7d; --bg:#fafbfc; --surface:#fff; --text:#1a1a2e; --text-secondary:#5a5a7a; --border:#e2e8f0; --warning:#f59e0b; --danger:#ef4444; --success:#10b981; --radius:12px; --shadow:0 2px 12px rgba(0,0,0,0.06); --shadow-lg:0 8px 30px rgba(0,0,0,0.08); }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'DM Sans',-apple-system,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; -webkit-font-smoothing:antialiased; }
+
+    /* Nav — matches help/faq/privacy/terms */
+    .nav { background:var(--surface); border-bottom:1px solid var(--border); padding:0 24px; position:sticky; top:0; z-index:100; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+    .nav-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; }
+    .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; }
+    .nav-links { display:flex; align-items:center; gap:8px; list-style:none; }
+    .nav-links a { text-decoration:none; color:var(--text-secondary); padding:8px 16px; border-radius:8px; font-size:0.9rem; font-weight:500; transition:all 0.2s; }
+    .nav-links a:hover { background:#f1f5f9; color:var(--text); }
+    .nav-links a.active { background:var(--primary); color:white; }
+    .mobile-menu-btn { display:none; background:none; border:none; font-size:1.5rem; cursor:pointer; }
+
+    /* Footer — matches other pages */
+    .footer { background:var(--text); color:#cbd5e1; padding:50px 24px 30px; }
+    .footer-inner { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; }
+    .footer h4 { color:white; font-family:'Space Grotesk',sans-serif; margin-bottom:16px; font-size:0.95rem; }
+    .footer p { font-size:0.85rem; line-height:1.6; }
+    .footer-links { list-style:none; }
+    .footer-links li { margin-bottom:8px; }
+    .footer-links a { color:#94a3b8; text-decoration:none; font-size:0.85rem; }
+    .footer-links a:hover { color:white; }
+    .footer-social a { color:#94a3b8; text-decoration:none; font-size:1.2rem; margin-right:12px; }
+    .footer-social a:hover { color:white; }
+    .footer-bottom { max-width:1200px; margin:30px auto 0; padding-top:20px; border-top:1px solid #334155; text-align:center; font-size:0.8rem; }
+
+    /* ============================================
+       DASHBOARD HERO
+       ============================================ */
+    .dash-hero { background:linear-gradient(135deg, var(--accent) 0%, #0d7377 100%); color:white; padding:48px 24px; }
+    .dash-hero-inner { max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; }
+    .dash-welcome h1 { font-family:'Space Grotesk',sans-serif; font-size:1.8rem; font-weight:700; color:white; margin-bottom:4px; }
+    .dash-welcome p { opacity:0.85; font-size:0.95rem; }
+    .dash-actions { display:flex; align-items:center; gap:12px; }
+    .dash-call-btn { display:inline-flex; align-items:center; gap:10px; background:white; color:var(--accent); padding:14px 32px; border-radius:50px; font-family:'Space Grotesk',sans-serif; font-size:1.05rem; font-weight:700; text-decoration:none; transition:all 0.3s; box-shadow:0 4px 20px rgba(0,0,0,0.15); }
+    .dash-call-btn:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,0,0,0.2); }
+    .dash-call-btn .pulse-dot { width:10px; height:10px; background:var(--success); border-radius:50%; animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,0.4)} 50%{opacity:0.7;box-shadow:0 0 0 8px rgba(16,185,129,0)} }
+    .logout-btn { background:none; border:2px solid rgba(255,255,255,0.35); color:white; padding:10px 20px; border-radius:50px; font-size:0.85rem; font-weight:600; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
+    .logout-btn:hover { background:rgba(255,255,255,0.1); border-color:white; }
+
+    /* ============================================
+       STATS CARDS
+       ============================================ */
+    .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; max-width:1200px; margin:-30px auto 30px; padding:0 24px; position:relative; z-index:10; }
+    .stat-card { background:var(--surface); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); text-align:center; transition:all 0.3s; }
+    .stat-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-lg); }
+    .stat-icon { font-size:1.8rem; margin-bottom:8px; }
+    .stat-value { font-family:'Space Grotesk',sans-serif; font-size:1.6rem; font-weight:700; color:var(--text); }
+    .stat-label { font-size:0.8rem; color:var(--text-secondary); margin-top:4px; }
+
+    /* ============================================
+       MAIN LAYOUT
+       ============================================ */
+    .dash-content { max-width:1200px; margin:0 auto; padding:0 24px 60px; display:grid; grid-template-columns:1fr 360px; gap:24px; }
+
+    /* Section Cards */
+    .section-card { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+    .section-header { display:flex; justify-content:space-between; align-items:center; padding:18px 24px; border-bottom:1px solid var(--border); }
+    .section-header h2 { font-family:'Space Grotesk',sans-serif; font-size:1.05rem; font-weight:600; }
+    .section-body { padding:24px; }
+
+    /* Sessions */
+    .session-item { display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--border); }
+    .session-item:last-child { border-bottom:none; }
+    .session-left { display:flex; align-items:center; gap:14px; }
+    .session-icon { width:42px; height:42px; background:var(--bg); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+    .session-meta h4 { font-size:0.875rem; font-weight:600; margin-bottom:2px; }
+    .session-meta p { font-size:0.75rem; color:var(--text-secondary); }
+    .session-right { text-align:right; }
+    .session-cost { font-weight:600; font-size:0.875rem; }
+    .session-tokens { font-size:0.75rem; color:var(--accent); font-weight:600; }
+
+    .empty-state { text-align:center; padding:40px 20px; color:var(--text-secondary); }
+    .empty-state-icon { font-size:2.5rem; margin-bottom:12px; }
+    .empty-state a { display:inline-block; margin-top:16px; padding:10px 28px; background:var(--accent); color:white; border-radius:50px; text-decoration:none; font-weight:600; font-size:0.9rem; }
+
+    /* Quick Actions */
+    .quick-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .quick-action { display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 12px; background:var(--bg); border-radius:10px; text-decoration:none; color:var(--text-secondary); font-size:0.8rem; font-weight:600; transition:all 0.2s; }
+    .quick-action:hover { background:rgba(17,153,142,0.08); color:var(--accent); transform:translateY(-2px); }
+    .quick-action-icon { font-size:1.5rem; }
+
+    /* Sidebar */
+    .sidebar-stack { display:flex; flex-direction:column; gap:24px; }
+
+    /* Payment */
+    .payment-card { display:flex; align-items:center; gap:12px; padding:14px; background:var(--bg); border-radius:10px; margin-bottom:10px; }
+    .payment-brand { font-size:1.4rem; }
+    .payment-info h4 { font-size:0.85rem; font-weight:600; margin-bottom:2px; }
+    .payment-info p { font-size:0.75rem; color:var(--text-secondary); }
+    .add-payment-btn { display:block; width:100%; padding:14px; background:none; border:2px dashed var(--border); border-radius:10px; color:var(--text-secondary); font-size:0.85rem; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
+    .add-payment-btn:hover { border-color:var(--accent); color:var(--accent); background:rgba(17,153,142,0.04); }
+
+    /* Wallet */
+    .wallet-connected { display:flex; align-items:center; gap:12px; padding:14px; background:linear-gradient(135deg,rgba(17,153,142,0.06),rgba(56,239,125,0.06)); border-radius:10px; border:1px solid rgba(17,153,142,0.15); }
+    .wallet-icon { font-size:1.4rem; }
+    .wallet-info h4 { font-size:0.85rem; color:var(--accent); font-weight:600; margin-bottom:2px; }
+    .wallet-address { font-size:0.75rem; color:var(--text-secondary); font-family:monospace; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .token-balance { text-align:center; padding:20px; background:var(--text); border-radius:10px; color:white; margin-top:12px; }
+    .token-balance-value { font-family:'Space Grotesk',sans-serif; font-size:1.5rem; font-weight:700; color:var(--accent-light); }
+    .token-balance-label { font-size:0.75rem; color:#94a3b8; margin-top:4px; }
+    .connect-wallet-btn { display:block; width:100%; padding:14px; background:var(--text); color:white; border:none; border-radius:10px; font-size:0.85rem; font-weight:600; cursor:pointer; transition:all 0.2s; font-family:'DM Sans',sans-serif; }
+    .connect-wallet-btn:hover { background:#0f172a; }
+
+    /* Account Info */
+    .account-info p { font-size:0.875rem; margin-bottom:10px; }
+    .account-info strong { color:var(--text-secondary); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.3px; }
+
+    /* ============================================
+       AUTH OVERLAY
+       ============================================ */
+    .auth-overlay { display:none; }
+    .auth-overlay.show { display:flex; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:500; align-items:center; justify-content:center; padding:24px; backdrop-filter:blur(4px); }
+    .auth-card { background:var(--surface); border-radius:16px; max-width:440px; width:100%; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+    .auth-header { background:linear-gradient(135deg, var(--accent) 0%, #0d7377 100%); color:white; padding:32px 28px; text-align:center; }
+    .auth-header h2 { font-family:'Space Grotesk',sans-serif; font-size:1.3rem; color:white; margin-bottom:4px; }
+    .auth-header p { opacity:0.85; font-size:0.85rem; }
+    .auth-body { padding:28px; }
+    .auth-tabs { display:flex; margin-bottom:24px; border-bottom:2px solid var(--border); }
+    .auth-tab { flex:1; padding:12px; text-align:center; font-weight:600; color:var(--text-secondary); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all 0.2s; font-size:0.9rem; }
+    .auth-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+    .auth-form { display:none; }
+    .auth-form.active { display:block; }
+    .form-group { margin-bottom:16px; }
+    .form-label { display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px; }
+    .form-input { width:100%; padding:12px 16px; border:2px solid var(--border); border-radius:10px; font-size:0.9rem; transition:border-color 0.2s; font-family:'DM Sans',sans-serif; background:var(--bg); }
+    .form-input:focus { outline:none; border-color:var(--accent); background:white; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .form-submit { width:100%; padding:14px; background:linear-gradient(135deg, var(--accent), #0d7377); color:white; border:none; border-radius:10px; font-size:0.95rem; font-weight:700; cursor:pointer; transition:all 0.3s; margin-top:8px; font-family:'DM Sans',sans-serif; }
+    .form-submit:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(17,153,142,0.3); }
+    .form-submit:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+    .form-error { color:var(--danger); font-size:0.8rem; margin-top:8px; display:none; }
+    .form-error.show { display:block; }
+    .form-note { font-size:0.75rem; color:var(--text-secondary); margin-top:6px; }
+    .form-note a { color:var(--accent); }
+
+    /* Toast */
+    .toast { position:fixed; top:24px; right:24px; padding:14px 24px; border-radius:10px; color:white; font-weight:600; font-size:0.85rem; z-index:9999; transform:translateX(120%); transition:transform 0.3s; box-shadow:0 8px 30px rgba(0,0,0,0.2); }
+    .toast.show { transform:translateX(0); }
+    .toast.success { background:var(--success); }
+    .toast.error { background:var(--danger); }
+    .toast.info { background:var(--primary); }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width:960px) {
+      .dash-content { grid-template-columns:1fr; }
+      .stats-grid { grid-template-columns:1fr 1fr; }
+    }
+    @media (max-width:768px) {
+      .nav-links { display:none; }
+      .mobile-menu-btn { display:block; }
+      .dash-hero-inner { flex-direction:column; text-align:center; }
+      .dash-actions { flex-direction:column; width:100%; }
+      .dash-call-btn { width:100%; justify-content:center; }
+      .footer-inner { grid-template-columns:1fr 1fr; }
+      .form-row { grid-template-columns:1fr; }
+    }
+    @media (max-width:480px) {
+      .stats-grid { grid-template-columns:1fr 1fr; gap:12px; }
+      .stat-card { padding:16px; }
+      .stat-value { font-size:1.3rem; }
+      .footer-inner { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav — consistent with all pages -->
+  <nav class="nav"><div class="nav-inner">
+    <a href="/" class="nav-logo"><span>🤟</span> americansignlanguage.eth</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li><li><a href="/pricing">Pricing</a></li><li><a href="/about">About</a></li><li><a href="/help">Help</a></li><li><a href="/faq">FAQ</a></li><li><a href="/dashboard" class="active">Dashboard</a></li>
+    </ul>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+  </div></nav>
+
+  <!-- Auth Overlay -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h2>🤟 americansignlanguage.eth</h2>
+        <p>Video Remote Interpreting for the Deaf Community</p>
+      </div>
+      <div class="auth-body">
+        <div class="auth-tabs">
+          <div class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>
+          <div class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</div>
+        </div>
+        <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="loginEmail" required placeholder="you@email.com"></div>
+          <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="loginPassword" required placeholder="••••••••"></div>
+          <div class="form-error" id="loginError"></div>
+          <button type="submit" class="form-submit" id="loginBtn">Log In</button>
+        </form>
+        <form class="auth-form" id="signupForm" onsubmit="handleSignup(event)">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">First Name *</label><input type="text" class="form-input" id="signupFirst" required placeholder="First name"></div>
+            <div class="form-group"><label class="form-label">Last Name *</label><input type="text" class="form-input" id="signupLast" required placeholder="Last name"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Email *</label><input type="email" class="form-input" id="signupEmail" required placeholder="you@email.com"></div>
+          <div class="form-group"><label class="form-label">VP Phone Number *</label><input type="tel" class="form-input" id="signupVP" required placeholder="Your video phone number"><p class="form-note">Required for VRI callbacks and verification</p></div>
+          <div class="form-group"><label class="form-label">Text Phone (Optional)</label><input type="tel" class="form-input" id="signupText" placeholder="Text/SMS number"></div>
+          <div class="form-group"><label class="form-label">Password *</label><input type="password" class="form-input" id="signupPassword" required placeholder="Min 8 characters" minlength="8"></div>
+          <div class="form-error" id="signupError"></div>
+          <button type="submit" class="form-submit" id="signupBtn">Create Account</button>
+          <p class="form-note" style="margin-top:16px; text-align:center;">By signing up, you agree to our <a href="/terms">Terms</a> & <a href="/privacy">Privacy Policy</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD MAIN -->
+  <main id="dashboardMain" style="display:none;">
+
+    <!-- Hero -->
+    <section class="dash-hero">
+      <div class="dash-hero-inner">
+        <div class="dash-welcome">
+          <h1>Welcome back, <span id="userName">User</span> 🤟</h1>
+          <p>Your VRI dashboard — manage sessions, payments & $ASL tokens</p>
+        </div>
+        <div class="dash-actions">
+          <a href="/session" class="dash-call-btn"><span class="pulse-dot"></span> Call Interpreter</a>
+          <button class="logout-btn" onclick="logout()">Log Out</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon">🎥</div><div class="stat-value" id="statSessions">0</div><div class="stat-label">Total Sessions</div></div>
+      <div class="stat-card"><div class="stat-icon">⏱️</div><div class="stat-value" id="statMinutes">0</div><div class="stat-label">Minutes Used</div></div>
+      <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value" id="statSpent">$0</div><div class="stat-label">Total Spent</div></div>
+      <div class="stat-card"><div class="stat-icon">🪙</div><div class="stat-value" id="statTokens">0</div><div class="stat-label">$ASL Earned</div></div>
+    </div>
+
+    <!-- Content -->
+    <div class="dash-content">
+      <div>
+        <!-- Recent Sessions -->
+        <div class="section-card" style="margin-bottom:24px;">
+          <div class="section-header"><h2>📋 Recent Sessions</h2></div>
+          <div class="section-body" id="sessionsContainer">
+            <div class="empty-state"><div class="empty-state-icon">🎥</div><h3>No sessions yet</h3><p style="font-size:0.9rem;">Your VRI call history will appear here.</p><a href="/session">Start Your First Call</a></div>
+          </div>
+        </div>
+        <!-- Quick Actions -->
+        <div class="section-card">
+          <div class="section-header"><h2>⚡ Quick Actions</h2></div>
+          <div class="section-body">
+            <div class="quick-actions">
+              <a href="/session" class="quick-action"><span class="quick-action-icon">📹</span>Call Interpreter</a>
+              <a href="/help" class="quick-action"><span class="quick-action-icon">❓</span>Help Center</a>
+              <a href="/faq" class="quick-action"><span class="quick-action-icon">📖</span>FAQ</a>
+              <a href="/token" class="quick-action"><span class="quick-action-icon">🪙</span>$ASL Token Info</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar-stack">
+        <!-- Payment -->
+        <div class="section-card">
+          <div class="section-header"><h2>💳 Payment</h2></div>
+          <div class="section-body" id="paymentContainer">
+            <div class="empty-state" style="padding:16px;"><p style="color:var(--text-secondary);font-size:0.85rem;">No payment method added yet.</p></div>
+            <button class="add-payment-btn" onclick="addPaymentMethod()">+ Add Payment Method</button>
+          </div>
+        </div>
+        <!-- Wallet -->
+        <div class="section-card">
+          <div class="section-header"><h2>🪙 $ASL Wallet</h2></div>
+          <div class="section-body">
+            <div id="walletDisconnected">
+              <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:14px;">Connect a wallet to earn & manage $ASL tokens from your VRI sessions.</p>
+              <button class="connect-wallet-btn" onclick="connectWallet()">🦊 Connect MetaMask</button>
+              <p class="form-note" style="text-align:center;margin-top:8px;">Optional — you can add this later</p>
+            </div>
+            <div id="walletConnected" style="display:none;">
+              <div class="wallet-connected"><span class="wallet-icon">🦊</span><div class="wallet-info" style="flex:1;min-width:0;"><h4>Connected</h4><div class="wallet-address" id="walletAddr">0x0000...0000</div></div></div>
+              <div class="token-balance"><div class="token-balance-value" id="tokenBalance">0 $ASL</div><div class="token-balance-label">Token Balance</div></div>
+            </div>
+          </div>
+        </div>
+        <!-- Account -->
+        <div class="section-card">
+          <div class="section-header"><h2>👤 Account</h2></div>
+          <div class="section-body account-info">
+            <p><strong>Email</strong><br><span id="userEmail">-</span></p>
+            <p><strong>VP Phone</strong><br><span id="userVP">-</span></p>
+            <p><strong>Member Since</strong><br><span id="userSince">-</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Footer — consistent with all pages -->
+  <footer class="footer" id="siteFooter" style="display:none;">
+    <div class="footer-inner">
+      <div><h4>🤟 americansignlanguage.eth</h4><p>The first Deaf-owned Video Remote Interpreting service powered by blockchain technology.</p></div>
+      <div><h4>Platform</h4><ul class="footer-links"><li><a href="/pricing">Pricing</a></li><li><a href="/interpreter/apply">Become an Interpreter</a></li><li><a href="/about">About Us</a></li><li><a href="/contact">Contact</a></li></ul></div>
+      <div><h4>Resources</h4><ul class="footer-links"><li><a href="/help">Help Center</a></li><li><a href="/faq">FAQ</a></li><li><a href="/terms">Terms of Service</a></li><li><a href="/privacy">Privacy Policy</a></li></ul></div>
+      <div><h4>Connect</h4><div class="footer-social"><a href="https://instagram.com/americansignlanguage.eth" target="_blank">📸</a><a href="https://x.com/aslnfts" target="_blank">🐦</a></div></div>
+    </div>
+    <div class="footer-bottom"><p>americansignlanguage.eth &copy; 2026 All Rights Reserved</p></div>
+  </footer>
+
+  <script>
+    // ============================================
+    // APP LOGIC
+    // ============================================
+    let currentUser = null;
+
+    function checkAuth() {
+      const userData = localStorage.getItem('userData');
+      if (userData) { currentUser = JSON.parse(userData); showDashboard(); loadUserData(); }
+      else { showAuth(); }
+    }
+
+    function showAuth() {
+      document.getElementById('authOverlay').classList.add('show');
+      document.getElementById('dashboardMain').style.display = 'none';
+      document.getElementById('siteFooter').style.display = 'none';
+    }
+
+    function showDashboard() {
+      document.getElementById('authOverlay').classList.remove('show');
+      document.getElementById('dashboardMain').style.display = 'block';
+      document.getElementById('siteFooter').style.display = 'block';
+      if (currentUser) {
+        document.getElementById('userName').textContent = currentUser.firstName || 'User';
+        document.getElementById('userEmail').textContent = currentUser.email || '-';
+      }
+    }
+
+    function switchAuthTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+      if (tab === 'login') { document.querySelector('.auth-tab:nth-child(1)').classList.add('active'); document.getElementById('loginForm').classList.add('active'); }
+      else { document.querySelector('.auth-tab:nth-child(2)').classList.add('active'); document.getElementById('signupForm').classList.add('active'); }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn'), err = document.getElementById('loginError');
+      btn.disabled = true; btn.textContent = 'Logging in...'; err.classList.remove('show');
+      try {
+        const r = await fetch('/api/user/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ email:document.getElementById('loginEmail').value.trim(), password:document.getElementById('loginPassword').value }) });
+        const d = await r.json();
+        if (d.success) {
+          currentUser = d.user;
+          localStorage.setItem('userData', JSON.stringify(d.user));
+          localStorage.setItem('userId', d.user.id);
+          localStorage.setItem('userName', d.user.firstName);
+          localStorage.setItem('userType', 'user');
+          showToast('Welcome back, ' + d.user.firstName + '!', 'success');
+          showDashboard(); loadUserData();
+        } else { err.textContent = d.error || 'Invalid email or password'; err.classList.add('show'); }
+      } catch(error) { err.textContent = 'Connection error. Please try again.'; err.classList.add('show'); }
+      btn.disabled = false; btn.textContent = 'Log In';
+    }
+
+    async function handleSignup(e) {
+      e.preventDefault();
+      const btn = document.getElementById('signupBtn'), err = document.getElementById('signupError');
+      btn.disabled = true; btn.textContent = 'Creating Account...'; err.classList.remove('show');
+      try {
+        const r = await fetch('/api/user/register', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
+          firstName:document.getElementById('signupFirst').value.trim(),
+          lastName:document.getElementById('signupLast').value.trim(),
+          email:document.getElementById('signupEmail').value.trim(),
+          vpPhone:document.getElementById('signupVP').value.trim(),
+          textPhone:document.getElementById('signupText').value.trim(),
+          password:document.getElementById('signupPassword').value
+        })});
+        const d = await r.json();
+        if (d.success) {
+          currentUser = d.user;
+          localStorage.setItem('userData', JSON.stringify(d.user));
+          localStorage.setItem('userId', d.user.id);
+          localStorage.setItem('userName', d.user.firstName);
+          localStorage.setItem('userType', 'user');
+          showToast('Account created! Welcome, ' + d.user.firstName + '!', 'success');
+          showDashboard(); loadUserData();
+        } else { err.textContent = d.error || 'Failed to create account'; err.classList.add('show'); }
+      } catch(error) { err.textContent = 'Connection error. Please try again.'; err.classList.add('show'); }
+      btn.disabled = false; btn.textContent = 'Create Account';
+    }
+
+    async function loadUserData() {
+      if (!currentUser?.id) return;
+      try {
+        const r = await fetch('/api/user/' + currentUser.id);
+        const d = await r.json();
+        if (d.id) {
+          const s = d.stats || {};
+          document.getElementById('statSessions').textContent = s.totalSessions || 0;
+          document.getElementById('statMinutes').textContent = s.totalMinutes || 0;
+          document.getElementById('statSpent').textContent = '$' + ((s.totalSpent || 0) / 100).toFixed(2);
+          document.getElementById('statTokens').textContent = s.tokensEarned || 0;
+          document.getElementById('userEmail').textContent = d.email || '-';
+          document.getElementById('userVP').textContent = d.vpPhone || d.phone || '-';
+          document.getElementById('userSince').textContent = d.createdAt ? new Date(d.createdAt).toLocaleDateString('en-US',{month:'long',year:'numeric'}) : '-';
+          if (d.paymentMethods?.length) renderPayments(d.paymentMethods);
+          if (d.wallet) showWalletConnected(d.wallet);
+          if (d.sessions?.length) renderSessions(d.sessions);
+          currentUser = { ...currentUser, ...d };
+          localStorage.setItem('userData', JSON.stringify(currentUser));
+        }
+      } catch(e) { console.error('Load user error:', e); }
+    }
+
+    function renderPayments(methods) {
+      const c = document.getElementById('paymentContainer');
+      let h = methods.map(m => '<div class="payment-card"><span class="payment-brand">💳</span><div class="payment-info"><h4>'+(m.brand||'Card').charAt(0).toUpperCase()+(m.brand||'card').slice(1)+'</h4><p>•••• '+m.last4+'</p></div></div>').join('');
+      h += '<button class="add-payment-btn" onclick="addPaymentMethod()">+ Add Another Card</button>';
+      c.innerHTML = h;
+    }
+
+    function renderSessions(sessions) {
+      const c = document.getElementById('sessionsContainer');
+      if (!sessions?.length) return;
+      c.innerHTML = sessions.slice(0,10).map(s => {
+        const dt = new Date(s.date || s.createdAt);
+        const mins = s.minutes || Math.ceil((s.duration||0)/60);
+        const cost = s.cost ? '$'+(s.cost/100).toFixed(2) : '$'+(mins*2.50).toFixed(2);
+        const tokens = s.tokensEarned || mins;
+        return '<div class="session-item"><div class="session-left"><div class="session-icon">🎥</div><div class="session-meta"><h4>VRI Session — '+mins+' min</h4><p>'+dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' at '+dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})+'</p></div></div><div class="session-right"><div class="session-cost">'+cost+'</div><div class="session-tokens">+'+tokens+' $ASL</div></div></div>';
+      }).join('');
+    }
+
+    async function connectWallet() {
+      if (!window.ethereum) { showToast('MetaMask not installed. Please install it first.','error'); window.open('https://metamask.io','_blank'); return; }
+      try {
+        const accounts = await ethereum.request({method:'eth_requestAccounts'});
+        const wallet = accounts[0];
+        if (currentUser?.id) await fetch('/api/user/'+currentUser.id+'/wallet',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet})});
+        localStorage.setItem('userWallet', wallet);
+        showWalletConnected(wallet);
+        showToast('Wallet connected!','success');
+      } catch(e) { showToast('Failed to connect wallet','error'); }
+    }
+
+    function showWalletConnected(addr) {
+      document.getElementById('walletDisconnected').style.display = 'none';
+      document.getElementById('walletConnected').style.display = 'block';
+      document.getElementById('walletAddr').textContent = addr.slice(0,6)+'...'+addr.slice(-4);
+      document.getElementById('tokenBalance').textContent = (currentUser?.stats?.tokensEarned||0)+' $ASL';
+    }
+
+    async function addPaymentMethod() {
+      if (!currentUser?.stripeCustomerId) {
+        try {
+          const r = await fetch('/api/stripe/create-customer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:currentUser.id})});
+          const d = await r.json();
+          if (d.customerId) { currentUser.stripeCustomerId = d.customerId; localStorage.setItem('userData',JSON.stringify(currentUser)); }
+        } catch(e) { showToast('Failed to set up payment.','error'); return; }
+      }
+      try {
+        const r = await fetch('/api/stripe/setup-intent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customerId:currentUser.stripeCustomerId})});
+        const d = await r.json();
+        if (d.clientSecret) showToast('Payment setup initiated.','info');
+      } catch(e) { showToast('Payment setup failed.','error'); }
+    }
+
+    function logout() {
+      localStorage.removeItem('userData'); localStorage.removeItem('userId');
+      localStorage.removeItem('userName'); localStorage.removeItem('userType');
+      localStorage.removeItem('userWallet');
+      currentUser = null; showAuth();
+      showToast('Logged out','info');
+    }
+
+    function showToast(msg, type) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.className = 'toast '+type+' show';
+      setTimeout(() => t.classList.remove('show'), 4000);
+    }
+
+    function toggleMobileMenu() {
+      const links = document.querySelector('.nav-links');
+      links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+      links.style.position = 'absolute'; links.style.top = '64px'; links.style.left = '0'; links.style.right = '0';
+      links.style.background = 'white'; links.style.flexDirection = 'column'; links.style.padding = '16px'; links.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
+    }
+
+    document.addEventListener('DOMContentLoaded', checkAuth);
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('tab') === 'signup') setTimeout(() => switchAuthTab('signup'), 100);
+  </script>
+</body>
+</html>
