@@ -226,10 +226,14 @@ io.on('connection', (socket) => {
     socket.wallet = wallet ? wallet.toLowerCase() : null;
     socket.email = email ? email.toLowerCase() : null;
     socket.userName = userName || 'Anonymous';
+    socket.matched = false;
     
     if (!activeRooms[room]) {
       activeRooms[room] = { users: [], interpreters: [] };
     }
+    
+    // CLEAN UP: Remove any stale entries for this socket or same user
+    removeFromQueues(socket);
     
     // VERIFICATION CHECK FOR INTERPRETERS
     if (role === 'interpreter') {
@@ -256,8 +260,18 @@ io.on('connection', (socket) => {
         return;
       }
       
-      // Store interpreter ID for later
+      // Store interpreter ID and name for later
       socket.interpreterId = interpreter._id;
+      socket.userName = interpreter.firstName + ' ' + interpreter.lastName;
+      
+      // Prevent duplicate: check if this interpreter is already in queue
+      const alreadyInQueue = activeRooms[room].interpreters.some(s => 
+        s.interpreterId && s.interpreterId.toString() === interpreter._id.toString()
+      );
+      if (alreadyInQueue) {
+        console.log(`⚠️ INTERPRETER already in queue, skipping duplicate: ${interpreter.firstName}`);
+        return;
+      }
       
       // Update online status
       interpreter.isOnline = true;
@@ -271,8 +285,18 @@ io.on('connection', (socket) => {
         count: activeRooms[room].users.length
       });
     } else {
+      // Prevent duplicate: check if user with same email/wallet is already queued
+      const alreadyQueued = activeRooms[room].users.some(s => 
+        (socket.email && s.email === socket.email) || 
+        (socket.wallet && s.wallet === socket.wallet)
+      );
+      if (alreadyQueued) {
+        console.log(`⚠️ USER already in queue, skipping duplicate: ${socket.email || socket.wallet || 'anon'}`);
+        return;
+      }
+      
       activeRooms[room].users.push(socket);
-      console.log(`👤 USER → ${rooms[room].name} → ${wallet || 'anonymous'}`);
+      console.log(`👤 USER → ${rooms[room].name} → ${userName || email || wallet || 'anonymous'}`);
     }
     
     socket.join(room);
@@ -320,10 +344,25 @@ function matchInRoom(roomKey) {
   const r = activeRooms[roomKey];
   if (!r || roomKey === 'dating') return;
   
+  // Clean disconnected sockets from queues first
+  r.users = r.users.filter(s => s.connected && !s.matched);
+  r.interpreters = r.interpreters.filter(s => s.connected && !s.matched);
+  
   if (r.users.length > 0 && r.interpreters.length > 0) {
     const user = r.users.shift();
     const interpreter = r.interpreters.shift();
     
+    // Guard: double check both are still connected
+    if (!user.connected || !interpreter.connected) {
+      // Put the connected one back
+      if (user.connected && !user.matched) r.users.unshift(user);
+      if (interpreter.connected && !interpreter.matched) r.interpreters.unshift(interpreter);
+      return;
+    }
+    
+    // Mark as matched to prevent re-queuing
+    user.matched = true;
+    interpreter.matched = true;
     user.partner = interpreter.id;
     interpreter.partner = user.id;
     user.callStart = Date.now();
@@ -333,7 +372,9 @@ function matchInRoom(roomKey) {
     const session = new Session({
       roomType: roomKey,
       userWallet: user.wallet,
+      userEmail: user.email,
       interpreterWallet: interpreter.wallet,
+      interpreterEmail: interpreter.email,
       startTime: new Date(),
       status: 'active'
     });
@@ -357,11 +398,31 @@ function matchInRoom(roomKey) {
       rate: rooms[roomKey].rate
     });
     
-    console.log(`✅ MATCHED → ${rooms[roomKey].name} → ${user.wallet} ↔ ${interpreter.wallet}`);
+    console.log(`✅ MATCHED → ${rooms[roomKey].name} → ${user.userName} (${user.email || user.wallet || 'anon'}) ↔ ${interpreter.userName} (${interpreter.email || interpreter.wallet})`);
+    
+    // Update waiting count for remaining interpreters
+    r.interpreters.forEach(s => {
+      io.to(s.id).emit('waiting-users', { count: r.users.length });
+    });
   }
 }
 
+// Remove a socket from all queues (used on reconnect and disconnect)
+function removeFromQueues(socket) {
+  Object.keys(activeRooms).forEach(room => {
+    const r = activeRooms[room];
+    if (!r) return;
+    r.users = r.users.filter(s => s.id !== socket.id);
+    r.interpreters = r.interpreters.filter(s => s.id !== socket.id);
+  });
+}
+
 async function handleDisconnect(socket) {
+  console.log(`🔌 Disconnected: ${socket.id} (${socket.role || 'unknown'} - ${socket.userName || 'anon'})`);
+  
+  // Remove from all queues
+  removeFromQueues(socket);
+  
   // Update interpreter online status
   if (socket.role === 'interpreter') {
     if (socket.interpreterId) {
@@ -382,6 +443,14 @@ async function handleDisconnect(socket) {
     }
   }
   
+  // Notify partner if in active call
+  if (socket.partner) {
+    const partnerSocket = io.sockets.sockets.get(socket.partner);
+    if (partnerSocket) {
+      partnerSocket.emit('partner-disconnected');
+    }
+  }
+  
   // End any active session
   await endSession(socket);
 }
@@ -389,10 +458,9 @@ async function handleDisconnect(socket) {
 async function endSession(socket) {
   if (!socket.callStart) return;
   
-  const minutes = Math.floor((Date.now() - socket.callStart) / 60000);
-  if (minutes <= 0) return;
+  const minutes = Math.max(1, Math.floor((Date.now() - socket.callStart) / 60000));
   
-  const rate = rooms[socket.room].rate;
+  const rate = rooms[socket.room]?.rate || 20;
   const total = minutes * rate;
   const interpreterShare = Math.floor(total * 45 / 100);
   const devShare = Math.floor(total * 45 / 100);
@@ -412,17 +480,17 @@ async function endSession(socket) {
     });
     
     // Update interpreter stats
-    if (interpreterWallet) {
-      await Interpreter.findOneAndUpdate(
-        { wallet: interpreterWallet },
-        { 
+    if (socket.interpreterId || (partnerSocket && partnerSocket.interpreterId)) {
+      const interpId = socket.role === 'interpreter' ? socket.interpreterId : partnerSocket?.interpreterId;
+      if (interpId) {
+        await Interpreter.findByIdAndUpdate(interpId, { 
           $inc: { 
             'stats.totalSessions': 1,
             'stats.totalMinutes': minutes,
             'stats.totalEarnings': interpreterShare
           }
-        }
-      );
+        });
+      }
     }
     
     delete sessions[socket.id];
@@ -438,18 +506,53 @@ async function endSession(socket) {
     user: userShare,
     interpreterWallet,
     userWallet,
-    roomName: rooms[socket.room].name
+    roomName: rooms[socket.room]?.name || 'VRI'
   };
 
   io.to(socket.id).emit('mint-request', mintData);
   if (socket.partner) {
+    io.to(socket.partner).emit('partner-ended-call');
     io.to(socket.partner).emit('mint-request', mintData);
   }
 
-  console.log(`💰 ${rooms[socket.room].name}: ${minutes} min → ${total} $ASL (I:${interpreterShare} D:${devShare} U:${userShare})`);
+  console.log(`💰 ${rooms[socket.room]?.name || 'VRI'}: ${minutes} min → ${total} $ASL (I:${interpreterShare} D:${devShare} U:${userShare})`);
   
+  // Clean up call state
+  const partnerId = socket.partner;
   socket.callStart = null;
   socket.partner = null;
+  socket.matched = false;
+  
+  if (partnerId) {
+    const ps = io.sockets.sockets.get(partnerId);
+    if (ps) {
+      ps.callStart = null;
+      ps.partner = null;
+      ps.matched = false;
+      
+      // Re-queue interpreter if still connected (so they can take next call)
+      if (ps.role === 'interpreter' && ps.connected && ps.room) {
+        if (!activeRooms[ps.room]) activeRooms[ps.room] = { users: [], interpreters: [] };
+        const alreadyQueued = activeRooms[ps.room].interpreters.some(s => s.id === ps.id);
+        if (!alreadyQueued) {
+          activeRooms[ps.room].interpreters.push(ps);
+          console.log(`🎤 INTERPRETER re-queued: ${ps.userName}`);
+          io.to(ps.id).emit('waiting-users', { count: activeRooms[ps.room].users.length });
+        }
+      }
+    }
+  }
+  
+  // Re-queue this socket if it's an interpreter still connected
+  if (socket.role === 'interpreter' && socket.connected && socket.room) {
+    if (!activeRooms[socket.room]) activeRooms[socket.room] = { users: [], interpreters: [] };
+    const alreadyQueued = activeRooms[socket.room].interpreters.some(s => s.id === socket.id);
+    if (!alreadyQueued) {
+      activeRooms[socket.room].interpreters.push(socket);
+      console.log(`🎤 INTERPRETER re-queued: ${socket.userName}`);
+      io.to(socket.id).emit('waiting-users', { count: activeRooms[socket.room].users.length });
+    }
+  }
 }
 
 // ============================================
