@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Request VRI interpreting services - americansignlanguage.eth">
-  <title>Request Service | americansignlanguage.eth</title>
+  <meta name="description" content="Request VRI Service - americansignlanguage.eth. On-demand ASL interpreting for hospitals, schools, businesses & more.">
+  <title>Request VRI Service | americansignlanguage.eth</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root { --primary:#1a73e8; --primary-dark:#0d47a1; --accent:#11998e; --accent-light:#38ef7d; --bg:#fafbfc; --surface:#fff; --text:#1a1a2e; --text-secondary:#5a5a7a; --border:#e2e8f0; --warning:#f59e0b; --danger:#ef4444; --success:#10b981; --radius:12px; --shadow:0 2px 12px rgba(0,0,0,0.06); --shadow-lg:0 8px 30px rgba(0,0,0,0.08); }
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'DM Sans',-apple-system,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; -webkit-font-smoothing:antialiased; }
-
     .nav { background:var(--surface); border-bottom:1px solid var(--border); padding:0 24px; position:sticky; top:0; z-index:100; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
     .nav-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; }
     .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; }
@@ -19,8 +18,11 @@
     .nav-links a { text-decoration:none; color:var(--text-secondary); padding:8px 16px; border-radius:8px; font-size:0.9rem; font-weight:500; transition:all 0.2s; }
     .nav-links a:hover { background:#f1f5f9; color:var(--text); }
     .nav-links a.active { background:var(--primary); color:white; }
+    
+    .nav-login-btn { color: var(--accent) !important; font-weight: 600 !important; border: 2px solid var(--accent) !important; border-radius: 8px !important; }
+    .nav-signup-btn { background: var(--accent) !important; color: white !important; border-radius: 8px !important; font-weight: 600 !important; }
+    .nav-vri-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; color: white !important; border-radius: 8px !important; font-weight: 600 !important; }
     .mobile-menu-btn { display:none; background:none; border:none; font-size:1.5rem; cursor:pointer; }
-
     .footer { background:var(--text); color:#cbd5e1; padding:50px 24px 30px; }
     .footer-inner { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; }
     .footer h4 { color:white; font-family:'Space Grotesk',sans-serif; margin-bottom:16px; font-size:0.95rem; }
@@ -32,307 +34,213 @@
     .footer-social a { color:#94a3b8; text-decoration:none; font-size:1.2rem; margin-right:12px; }
     .footer-social a:hover { color:white; }
     .footer-bottom { max-width:1200px; margin:30px auto 0; padding-top:20px; border-top:1px solid #334155; text-align:center; font-size:0.8rem; }
-
-    /* Hero */
-    .req-hero { background:linear-gradient(135deg, var(--accent) 0%, #0d7377 100%); padding:60px 24px; text-align:center; color:white; }
-    .req-hero h1 { font-family:'Space Grotesk',sans-serif; font-size:2.2rem; font-weight:700; margin-bottom:12px; }
-    .req-hero .subtitle { font-size:1.05rem; opacity:0.9; max-width:550px; margin:0 auto; }
-
-    /* Live badge */
-    .live-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.15); padding:8px 20px; border-radius:50px; font-size:0.85rem; font-weight:600; margin-top:20px; backdrop-filter:blur(8px); }
-    .live-dot { width:8px; height:8px; background:var(--accent-light); border-radius:50%; animation:pulse 2s infinite; }
+    .request-hero { background:linear-gradient(135deg, var(--accent) 0%, #0d7377 100%); color:white; padding:60px 24px; text-align:center; }
+    .request-hero h1 { font-family:'Space Grotesk',sans-serif; font-size:2.4rem; font-weight:700; margin-bottom:12px; color:white; }
+    .request-hero .subtitle { font-size:1.1rem; opacity:0.9; max-width:600px; margin:0 auto 20px; }
+    .live-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.15); padding:8px 20px; border-radius:50px; font-size:0.9rem; font-weight:600; }
+    .live-dot { width:10px; height:10px; background:var(--accent-light); border-radius:50%; animation:pulse 2s infinite; }
     @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(56,239,125,0.4)} 50%{box-shadow:0 0 0 8px rgba(56,239,125,0)} }
-
-    /* Form Section */
-    .form-section { max-width:720px; margin:-40px auto 60px; padding:0 24px; position:relative; z-index:10; }
+    .advantages { max-width:1200px; margin:-40px auto 0; padding:0 24px; position:relative; z-index:10; display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; }
+    .advantage { background:var(--surface); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); text-align:center; }
+    .advantage-icon { font-size:2rem; margin-bottom:8px; }
+    .advantage h3 { font-family:'Space Grotesk',sans-serif; font-size:0.95rem; font-weight:600; margin-bottom:6px; }
+    .advantage p { font-size:0.8rem; color:var(--text-secondary); }
+    .form-section { max-width:720px; margin:40px auto 60px; padding:0 24px; }
     .form-card { background:var(--surface); border-radius:16px; box-shadow:var(--shadow-lg); overflow:hidden; }
-    .form-card-header { padding:24px 32px; border-bottom:1px solid var(--border); }
-    .form-card-header h2 { font-family:'Space Grotesk',sans-serif; font-size:1.15rem; }
-    .form-card-header p { color:var(--text-secondary); font-size:0.85rem; margin-top:4px; }
-    .form-card-body { padding:32px; }
-
-    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .form-header { padding:28px 32px; border-bottom:1px solid var(--border); }
+    .form-header h2 { font-family:'Space Grotesk',sans-serif; font-size:1.3rem; }
+    .form-header p { font-size:0.85rem; color:var(--text-secondary); margin-top:4px; }
+    .form-body { padding:32px; }
     .form-group { margin-bottom:20px; }
     .form-label { display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px; }
     .form-label .req { color:var(--danger); }
-    .form-input, .form-select, .form-textarea { width:100%; padding:12px 16px; border:2px solid var(--border); border-radius:10px; font-size:0.9rem; font-family:'DM Sans',sans-serif; transition:border-color 0.2s; background:var(--bg); }
+    .form-input, .form-select, .form-textarea { width:100%; padding:12px 16px; border:2px solid var(--border); border-radius:10px; font-size:0.9rem; transition:border-color 0.2s; font-family:'DM Sans',sans-serif; background:var(--bg); }
     .form-input:focus, .form-select:focus, .form-textarea:focus { outline:none; border-color:var(--accent); background:white; }
-    .form-select { cursor:pointer; appearance:auto; }
     .form-textarea { resize:vertical; min-height:100px; }
-
-    /* Urgency selector */
-    .urgency-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; }
-    .urgency-option { position:relative; }
-    .urgency-option input { position:absolute; opacity:0; }
-    .urgency-option label { display:flex; flex-direction:column; align-items:center; gap:4px; padding:14px 8px; border:2px solid var(--border); border-radius:10px; text-align:center; cursor:pointer; transition:all 0.2s; font-size:0.8rem; font-weight:600; }
-    .urgency-option label .icon { font-size:1.3rem; }
-    .urgency-option input:checked + label { border-color:var(--accent); background:rgba(17,153,142,0.06); color:var(--accent); }
-
-    /* Setting selector */
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .form-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
     .setting-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
-    .setting-option { position:relative; }
-    .setting-option input { position:absolute; opacity:0; }
-    .setting-option label { display:flex; align-items:center; gap:8px; padding:12px 14px; border:2px solid var(--border); border-radius:10px; cursor:pointer; transition:all 0.2s; font-size:0.85rem; font-weight:500; }
-    .setting-option label .icon { font-size:1.1rem; }
-    .setting-option input:checked + label { border-color:var(--accent); background:rgba(17,153,142,0.06); color:var(--accent); font-weight:600; }
-
-    .form-submit { width:100%; padding:16px; background:linear-gradient(135deg, var(--accent), #0d7377); color:white; border:none; border-radius:12px; font-size:1rem; font-weight:700; cursor:pointer; transition:all 0.3s; font-family:'DM Sans',sans-serif; margin-top:8px; }
-    .form-submit:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(17,153,142,0.3); }
+    .setting-card { padding:16px; border:2px solid var(--border); border-radius:10px; text-align:center; cursor:pointer; transition:all 0.2s; background:var(--bg); }
+    .setting-card:hover { border-color:var(--accent); background:rgba(17,153,142,0.04); }
+    .setting-card.selected { border-color:var(--accent); background:rgba(17,153,142,0.06); box-shadow:0 0 0 3px rgba(17,153,142,0.1); }
+    .setting-card-icon { font-size:1.5rem; margin-bottom:4px; }
+    .setting-card-label { font-size:0.8rem; font-weight:600; }
+    .setting-card input { display:none; }
+    .urgency-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; }
+    .urgency-card { padding:14px 10px; border:2px solid var(--border); border-radius:10px; text-align:center; cursor:pointer; transition:all 0.2s; background:var(--bg); }
+    .urgency-card:hover { border-color:var(--accent); }
+    .urgency-card.selected { border-color:var(--accent); background:rgba(17,153,142,0.06); }
+    .urgency-card.selected.urgent { border-color:var(--warning); background:rgba(245,158,11,0.06); }
+    .urgency-icon { font-size:1.3rem; }
+    .urgency-label { font-size:0.75rem; font-weight:600; margin-top:4px; }
+    .urgency-card input { display:none; }
+    .schedule-fields { display:none; margin-top:16px; }
+    .schedule-fields.show { display:block; }
+    .form-submit { width:100%; padding:16px; background:linear-gradient(135deg, var(--accent), #0d7377); color:white; border:none; border-radius:12px; font-size:1.05rem; font-weight:700; cursor:pointer; transition:all 0.3s; font-family:'DM Sans',sans-serif; }
+    .form-submit:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(17,153,142,0.3); }
     .form-submit:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-
-    .form-note { font-size:0.8rem; color:var(--text-secondary); text-align:center; margin-top:16px; }
+    .form-note { text-align:center; font-size:0.8rem; color:var(--text-secondary); margin-top:16px; }
     .form-note a { color:var(--accent); }
-
-    /* Success state */
+    .form-error { color:var(--danger); font-size:0.85rem; margin-top:8px; display:none; }
+    .form-error.show { display:block; }
     .success-state { display:none; text-align:center; padding:60px 32px; }
     .success-state.show { display:block; }
-    .success-icon { font-size:3.5rem; margin-bottom:16px; }
-    .success-state h2 { font-family:'Space Grotesk',sans-serif; font-size:1.4rem; margin-bottom:8px; }
-    .success-state p { color:var(--text-secondary); font-size:0.95rem; max-width:400px; margin:0 auto 24px; }
-    .success-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
-    .success-actions a { display:inline-flex; align-items:center; gap:8px; padding:12px 24px; border-radius:50px; font-weight:600; font-size:0.9rem; text-decoration:none; transition:all 0.2s; }
-    .btn-primary { background:var(--accent); color:white; }
-    .btn-primary:hover { background:#0d7377; }
-    .btn-outline { border:2px solid var(--border); color:var(--text-secondary); }
-    .btn-outline:hover { border-color:var(--accent); color:var(--accent); }
-
-    .form-error { color:var(--danger); font-size:0.8rem; margin-top:8px; display:none; }
-    .form-error.show { display:block; }
-
-    /* Toast */
+    .success-icon { font-size:4rem; margin-bottom:16px; }
+    .success-state h2 { font-family:'Space Grotesk',sans-serif; font-size:1.5rem; margin-bottom:12px; color:var(--accent); }
+    .success-state p { color:var(--text-secondary); font-size:0.95rem; max-width:450px; margin:0 auto; }
+    .success-id { display:inline-block; margin-top:20px; padding:8px 20px; background:var(--bg); border-radius:8px; font-family:monospace; font-size:0.85rem; color:var(--text-secondary); }
+    .success-actions { margin-top:28px; display:flex; gap:12px; justify-content:center; }
+    .success-btn { padding:12px 28px; border-radius:50px; font-size:0.9rem; font-weight:600; text-decoration:none; transition:all 0.2s; }
+    .success-btn-primary { background:var(--accent); color:white; }
+    .success-btn-outline { background:none; border:2px solid var(--border); color:var(--text-secondary); }
+    .success-btn:hover { transform:translateY(-2px); }
+    .comparison { max-width:720px; margin:0 auto 60px; padding:0 24px; }
+    .comparison-card { background:var(--surface); border-radius:var(--radius); box-shadow:var(--shadow); padding:32px; }
+    .comparison-card h3 { font-family:'Space Grotesk',sans-serif; font-size:1.1rem; margin-bottom:20px; text-align:center; }
+    .comp-table { width:100%; border-collapse:collapse; }
+    .comp-table th { text-align:left; padding:12px 16px; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary); border-bottom:2px solid var(--border); }
+    .comp-table td { padding:14px 16px; font-size:0.875rem; border-bottom:1px solid var(--border); }
+    .comp-table tr:last-child td { border-bottom:none; }
+    .comp-table .hl { font-weight:700; color:var(--accent); }
+    .comp-table .dim { color:var(--text-secondary); }
+    .tag-free { display:inline-block; background:#d1fae5; color:#065f46; padding:2px 10px; border-radius:12px; font-size:0.75rem; font-weight:600; }
     .toast { position:fixed; top:24px; right:24px; padding:14px 24px; border-radius:10px; color:white; font-weight:600; font-size:0.85rem; z-index:9999; transform:translateX(120%); transition:transform 0.3s; box-shadow:0 8px 30px rgba(0,0,0,0.2); }
     .toast.show { transform:translateX(0); }
     .toast.success { background:var(--success); }
     .toast.error { background:var(--danger); }
-
-    @media (max-width:768px) {
-      .nav-links { display:none; }
-      .mobile-menu-btn { display:block; }
-      .form-row { grid-template-columns:1fr; }
-      .urgency-grid { grid-template-columns:1fr 1fr; }
-      .setting-grid { grid-template-columns:1fr 1fr; }
-      .req-hero h1 { font-size:1.6rem; }
-      .footer-inner { grid-template-columns:1fr 1fr; }
-    }
-    @media (max-width:480px) {
-      .footer-inner { grid-template-columns:1fr; }
-      .setting-grid { grid-template-columns:1fr; }
-    }
+    @media(max-width:768px){.nav-links{display:none}.mobile-menu-btn{display:block}.request-hero h1{font-size:1.8rem}.advantages{grid-template-columns:1fr 1fr;margin-top:-24px}.setting-grid{grid-template-columns:1fr 1fr}.urgency-grid{grid-template-columns:1fr 1fr}.form-row,.form-row-3{grid-template-columns:1fr}.footer-inner{grid-template-columns:1fr 1fr}}
+    @media(max-width:480px){.advantages{grid-template-columns:1fr}.footer-inner{grid-template-columns:1fr}.success-actions{flex-direction:column}}
   </style>
 </head>
 <body>
-
   <nav class="nav"><div class="nav-inner">
     <a href="/" class="nav-logo"><span>🤟</span> americansignlanguage.eth</a>
     <ul class="nav-links">
-      <li><a href="/">Home</a></li><li><a href="/pricing">Pricing</a></li><li><a href="/about">About</a></li><li><a href="/help">Help</a></li><li><a href="/faq">FAQ</a></li><li><a href="/request" class="active">Request Service</a></li>
+      <li><a href="/" >Home</a></li><li><a href="/token" >$ASL Token</a></li><li><a href="/interpreter/apply" >Become Interpreter</a></li><li><a href="/request" class="nav-vri-btn active">Request VRI</a></li><li id="navLogin"><a href="/login" class="nav-login-btn">Log In</a></li><li id="navSignup"><a href="/signup" class="nav-signup-btn">Sign Up</a></li>
     </ul>
     <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
   </div></nav>
 
-  <section class="req-hero">
+  <section class="request-hero">
     <h1>Request VRI Service 🤟</h1>
-    <p class="subtitle">Connect with a certified ASL interpreter — browser-based, no app download, instant or scheduled.</p>
-    <div class="live-badge"><span class="live-dot"></span> <span id="liveCount">0</span> interpreters available now</div>
+    <p class="subtitle">On-demand ASL interpreting for hospitals, schools, businesses, legal proceedings & more. No app download required.</p>
+    <div class="live-badge"><span class="live-dot"></span> <span id="onlineCount">0</span> Interpreters Available Now</div>
   </section>
 
-  <div class="form-section">
-    <div class="form-card">
-      <div class="form-card-header">
-        <h2>📋 Service Request Form</h2>
-        <p>Tell us about your interpreting need and we'll match you with the right interpreter.</p>
-      </div>
-
-      <!-- Form -->
-      <div class="form-card-body" id="formContainer">
-        <form id="requestForm" onsubmit="submitRequest(event)">
-          
-          <!-- Contact Info -->
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">First Name <span class="req">*</span></label><input type="text" class="form-input" id="firstName" required placeholder="First name"></div>
-            <div class="form-group"><label class="form-label">Last Name <span class="req">*</span></label><input type="text" class="form-input" id="lastName" required placeholder="Last name"></div>
-          </div>
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">Email <span class="req">*</span></label><input type="email" class="form-input" id="email" required placeholder="you@email.com"></div>
-            <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="phone" placeholder="VP or text number"></div>
-          </div>
-          <div class="form-group"><label class="form-label">Organization / Company</label><input type="text" class="form-input" id="organization" placeholder="Hospital, school, business name (optional)"></div>
-
-          <!-- Setting -->
-          <div class="form-group">
-            <label class="form-label">Setting <span class="req">*</span></label>
-            <div class="setting-grid">
-              <div class="setting-option"><input type="radio" name="setting" value="medical" id="s-medical" required><label for="s-medical"><span class="icon">🏥</span> Medical</label></div>
-              <div class="setting-option"><input type="radio" name="setting" value="legal" id="s-legal"><label for="s-legal"><span class="icon">⚖️</span> Legal</label></div>
-              <div class="setting-option"><input type="radio" name="setting" value="education" id="s-edu"><label for="s-edu"><span class="icon">🎓</span> Education</label></div>
-              <div class="setting-option"><input type="radio" name="setting" value="business" id="s-biz"><label for="s-biz"><span class="icon">🏢</span> Business</label></div>
-              <div class="setting-option"><input type="radio" name="setting" value="government" id="s-gov"><label for="s-gov"><span class="icon">🏛️</span> Government</label></div>
-              <div class="setting-option"><input type="radio" name="setting" value="personal" id="s-personal"><label for="s-personal"><span class="icon">👤</span> Personal</label></div>
-            </div>
-          </div>
-
-          <!-- Urgency -->
-          <div class="form-group">
-            <label class="form-label">When do you need an interpreter? <span class="req">*</span></label>
-            <div class="urgency-grid">
-              <div class="urgency-option"><input type="radio" name="urgency" value="immediate" id="u-now" required><label for="u-now"><span class="icon">⚡</span>Right Now</label></div>
-              <div class="urgency-option"><input type="radio" name="urgency" value="today" id="u-today"><label for="u-today"><span class="icon">📅</span>Today</label></div>
-              <div class="urgency-option"><input type="radio" name="urgency" value="this-week" id="u-week"><label for="u-week"><span class="icon">🗓️</span>This Week</label></div>
-              <div class="urgency-option"><input type="radio" name="urgency" value="scheduled" id="u-sched" checked><label for="u-sched"><span class="icon">🕐</span>Schedule</label></div>
-            </div>
-          </div>
-
-          <!-- Schedule fields (show when scheduled) -->
-          <div id="scheduleFields">
-            <div class="form-row">
-              <div class="form-group"><label class="form-label">Preferred Date</label><input type="date" class="form-input" id="scheduledDate"></div>
-              <div class="form-group"><label class="form-label">Preferred Time</label><input type="time" class="form-input" id="scheduledTime"></div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Estimated Duration</label>
-            <select class="form-select" id="estimatedDuration">
-              <option value="">Select duration</option>
-              <option value="15min">15 minutes</option>
-              <option value="30min">30 minutes</option>
-              <option value="1hr">1 hour</option>
-              <option value="2hr">2 hours</option>
-              <option value="half-day">Half day (4 hours)</option>
-              <option value="full-day">Full day (8 hours)</option>
-              <option value="ongoing">Ongoing / Recurring</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Additional Details</label>
-            <textarea class="form-textarea" id="details" placeholder="Describe your interpreting need, any special requirements, preferred interpreter qualifications, etc."></textarea>
-          </div>
-
-          <div class="form-error" id="formError"></div>
-          <button type="submit" class="form-submit" id="submitBtn">🤟 Submit Request</button>
-          <p class="form-note">We'll confirm your request within minutes for urgent needs, or within 24 hours for scheduled services. <br>Questions? <a href="/help">Visit our Help Center</a> or <a href="/faq">FAQ</a>.</p>
-        </form>
-      </div>
-
-      <!-- Success State -->
-      <div class="success-state" id="successState">
-        <div class="success-icon">✅</div>
-        <h2>Request Received!</h2>
-        <p id="successMessage">We're reviewing your request and will get back to you shortly.</p>
-        <div class="success-actions">
-          <a href="/session" class="btn-primary">📹 Start Instant Call</a>
-          <a href="/" class="btn-outline">← Back to Home</a>
-        </div>
-      </div>
-    </div>
+  <div class="advantages">
+    <div class="advantage"><div class="advantage-icon">⚡</div><h3>Instant Connection</h3><p>Connect with a certified interpreter in under 60 seconds</p></div>
+    <div class="advantage"><div class="advantage-icon">🌐</div><h3>Browser-Based</h3><p>No app download. Works on any device with a camera</p></div>
+    <div class="advantage"><div class="advantage-icon">🏥</div><h3>HIPAA Ready</h3><p>Secure, encrypted video for medical & legal settings</p></div>
+    <div class="advantage"><div class="advantage-icon">💰</div><h3>30 Free Min/Month</h3><p>Every user gets 30 free minutes. No credit card needed</p></div>
   </div>
+
+  <div class="form-section"><div class="form-card">
+    <div class="form-header" id="fh"><h2>📋 Request an Interpreter</h2><p>Fill out the form below and we'll connect you with a certified ASL interpreter.</p></div>
+    <div class="form-body" id="fc">
+      <form id="rf" onsubmit="submitReq(event)">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">First Name <span class="req">*</span></label><input type="text" class="form-input" id="fn" required placeholder="First name"></div>
+          <div class="form-group"><label class="form-label">Last Name <span class="req">*</span></label><input type="text" class="form-input" id="ln" required placeholder="Last name"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Email <span class="req">*</span></label><input type="email" class="form-input" id="em" required placeholder="you@email.com"></div>
+          <div class="form-group"><label class="form-label">Phone (optional)</label><input type="tel" class="form-input" id="ph" placeholder="VP or text number"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Organization (optional)</label><input type="text" class="form-input" id="org" placeholder="Hospital, school, company name..."></div>
+        <div class="form-group"><label class="form-label">Setting <span class="req">*</span></label>
+          <div class="setting-grid">
+            <label class="setting-card" onclick="selSet(this,'medical')"><input type="radio" name="s" value="medical"><div class="setting-card-icon">🏥</div><div class="setting-card-label">Medical</div></label>
+            <label class="setting-card" onclick="selSet(this,'legal')"><input type="radio" name="s" value="legal"><div class="setting-card-icon">⚖️</div><div class="setting-card-label">Legal</div></label>
+            <label class="setting-card" onclick="selSet(this,'education')"><input type="radio" name="s" value="education"><div class="setting-card-icon">🎓</div><div class="setting-card-label">Education</div></label>
+            <label class="setting-card" onclick="selSet(this,'business')"><input type="radio" name="s" value="business"><div class="setting-card-icon">💼</div><div class="setting-card-label">Business</div></label>
+            <label class="setting-card" onclick="selSet(this,'government')"><input type="radio" name="s" value="government"><div class="setting-card-icon">🏛️</div><div class="setting-card-label">Government</div></label>
+            <label class="setting-card" onclick="selSet(this,'personal')"><input type="radio" name="s" value="personal"><div class="setting-card-icon">👤</div><div class="setting-card-label">Personal</div></label>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">When do you need an interpreter? <span class="req">*</span></label>
+          <div class="urgency-grid">
+            <label class="urgency-card" onclick="selUrg(this,'immediate')"><input type="radio" name="u" value="immediate"><div class="urgency-icon">🔴</div><div class="urgency-label">Right Now</div></label>
+            <label class="urgency-card" onclick="selUrg(this,'today')"><input type="radio" name="u" value="today"><div class="urgency-icon">🟡</div><div class="urgency-label">Today</div></label>
+            <label class="urgency-card" onclick="selUrg(this,'this-week')"><input type="radio" name="u" value="this-week"><div class="urgency-icon">🔵</div><div class="urgency-label">This Week</div></label>
+            <label class="urgency-card" onclick="selUrg(this,'scheduled')"><input type="radio" name="u" value="scheduled"><div class="urgency-icon">📅</div><div class="urgency-label">Schedule</div></label>
+          </div>
+        </div>
+        <div class="schedule-fields" id="sf">
+          <div class="form-row-3">
+            <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-input" id="sd"></div>
+            <div class="form-group"><label class="form-label">Time</label><input type="time" class="form-input" id="st"></div>
+            <div class="form-group"><label class="form-label">Est. Duration</label><select class="form-select" id="ed"><option value="">Select...</option><option value="15">15 minutes</option><option value="30">30 minutes</option><option value="60">1 hour</option><option value="90">1.5 hours</option><option value="120">2 hours</option><option value="180">3+ hours</option></select></div>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Service Type</label><select class="form-select" id="stype"><option value="vri">Video Remote Interpreting (VRI)</option><option value="vrs">Video Relay Service (VRS)</option><option value="onsite">On-Site Interpreter</option><option value="other">Other / Not Sure</option></select></div>
+        <div class="form-group"><label class="form-label">Additional Details</label><textarea class="form-textarea" id="det" placeholder="Describe the situation, any specialized vocabulary needed, special accommodations, etc."></textarea></div>
+        <div class="form-error" id="fe"></div>
+        <button type="submit" class="form-submit" id="sb">Submit Request</button>
+        <p class="form-note">By submitting, you agree to our <a href="/terms">Terms</a> & <a href="/privacy">Privacy Policy</a>.<br>Questions? Visit our <a href="/help">Help Center</a> or <a href="/faq">FAQ</a>.</p>
+      </form>
+    </div>
+    <div class="success-state" id="ss">
+      <div class="success-icon">✅</div>
+      <h2>Request Submitted!</h2>
+      <p id="sm">We've received your request and will connect you with a certified interpreter shortly.</p>
+      <div class="success-id" id="si"></div>
+      <div class="success-actions"><a href="/session" class="success-btn success-btn-primary">Connect Now →</a><a href="/" class="success-btn success-btn-outline">Back to Home</a></div>
+    </div>
+  </div></div>
+
+  <div class="comparison"><div class="comparison-card">
+    <h3>💡 Why Choose americansignlanguage.eth?</h3>
+    <table class="comp-table"><thead><tr><th>Feature</th><th>Others (Tive, Sorenson)</th><th>americansignlanguage.eth</th></tr></thead><tbody>
+      <tr><td>Pricing</td><td class="dim">$50–$80/hr or hidden</td><td class="hl">Transparent per-minute</td></tr>
+      <tr><td>Free Minutes</td><td class="dim">None or limited trial</td><td class="hl">30 free min/month <span class="tag-free">FREE</span></td></tr>
+      <tr><td>App Required</td><td class="dim">Yes (download required)</td><td class="hl">No — browser-based</td></tr>
+      <tr><td>Deaf-Owned</td><td class="dim">No</td><td class="hl">Yes ✅</td></tr>
+      <tr><td>Min. Booking</td><td class="dim">15 min – 2 hour minimum</td><td class="hl">No minimum</td></tr>
+      <tr><td>$ASL Token Rewards</td><td class="dim">None</td><td class="hl">Earn tokens every session</td></tr>
+      <tr><td>Interpreter Pay</td><td class="dim">~$24/hr</td><td class="hl">45% of session revenue</td></tr>
+    </tbody></table>
+  </div></div>
 
   <div class="toast" id="toast"></div>
 
-  <footer class="footer">
+    <footer class="footer">
     <div class="footer-inner">
       <div><h4>🤟 americansignlanguage.eth</h4><p>The first Deaf-owned Video Remote Interpreting service powered by blockchain technology.</p></div>
-      <div><h4>Platform</h4><ul class="footer-links"><li><a href="/pricing">Pricing</a></li><li><a href="/interpreter/apply">Become an Interpreter</a></li><li><a href="/about">About Us</a></li><li><a href="/contact">Contact</a></li></ul></div>
+      <div><h4>Platform</h4><ul class="footer-links"><li><a href="/pricing">Pricing</a></li><li><a href="/about">About</a></li><li><a href="/interpreter/apply">Become an Interpreter</a></li><li><a href="/contact">Contact</a></li></ul></div>
       <div><h4>Resources</h4><ul class="footer-links"><li><a href="/help">Help Center</a></li><li><a href="/faq">FAQ</a></li><li><a href="/terms">Terms of Service</a></li><li><a href="/privacy">Privacy Policy</a></li></ul></div>
-      <div><h4>Connect</h4><div class="footer-social"><a href="https://instagram.com/americansignlanguage.eth" target="_blank">📸</a><a href="https://x.com/aslnfts" target="_blank">🐦</a></div></div>
+      <div><h4>Request VRI</h4><p style="margin-bottom:12px;">Need an ASL interpreter? Connect instantly.</p><a href="/request" style="display:inline-block;padding:10px 24px;background:var(--accent);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.85rem;">Request VRI →</a><div class="footer-social" style="margin-top:16px;"><a href="https://instagram.com/americansignlanguage.eth" target="_blank">📸</a><a href="https://x.com/aslnfts" target="_blank">🐦</a></div></div>
     </div>
     <div class="footer-bottom"><p>americansignlanguage.eth &copy; 2026 All Rights Reserved</p></div>
   </footer>
 
-  <script>
-    // Load live interpreter count
-    async function loadLiveCount() {
-      try {
-        const r = await fetch('/api/interpreters/online');
-        const d = await r.json();
-        document.getElementById('liveCount').textContent = d.online || 0;
-      } catch(e) { /* silent */ }
-    }
-    loadLiveCount();
-    setInterval(loadLiveCount, 30000);
-
-    // Toggle schedule fields based on urgency
-    document.querySelectorAll('input[name="urgency"]').forEach(r => {
-      r.addEventListener('change', () => {
-        document.getElementById('scheduleFields').style.display = 
-          r.value === 'scheduled' || r.value === 'this-week' ? 'block' : 'none';
-      });
-    });
-
-    async function submitRequest(e) {
-      e.preventDefault();
-      const btn = document.getElementById('submitBtn');
-      const err = document.getElementById('formError');
-      btn.disabled = true;
-      btn.textContent = 'Submitting...';
-      err.classList.remove('show');
-
-      const setting = document.querySelector('input[name="setting"]:checked')?.value;
-      const urgency = document.querySelector('input[name="urgency"]:checked')?.value;
-
-      if (!setting) {
-        err.textContent = 'Please select a setting.';
-        err.classList.add('show');
-        btn.disabled = false;
-        btn.textContent = '🤟 Submit Request';
-        return;
-      }
-
-      try {
-        const r = await fetch('/api/service-request', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            firstName: document.getElementById('firstName').value.trim(),
-            lastName: document.getElementById('lastName').value.trim(),
-            email: document.getElementById('email').value.trim(),
-            phone: document.getElementById('phone').value.trim(),
-            organization: document.getElementById('organization').value.trim(),
-            serviceType: 'vri',
-            setting,
-            urgency,
-            scheduledDate: document.getElementById('scheduledDate').value,
-            scheduledTime: document.getElementById('scheduledTime').value,
-            estimatedDuration: document.getElementById('estimatedDuration').value,
-            details: document.getElementById('details').value.trim()
-          })
-        });
-
-        const d = await r.json();
-        if (d.success) {
-          document.getElementById('formContainer').style.display = 'none';
-          document.getElementById('successState').classList.add('show');
-          document.getElementById('successMessage').textContent = d.message;
-          if (urgency === 'immediate') {
-            document.getElementById('successMessage').textContent = 
-              'Your urgent request is being processed! You can also start an instant call right now.';
-          }
-        } else {
-          err.textContent = d.error || 'Something went wrong. Please try again.';
-          err.classList.add('show');
-        }
-      } catch(error) {
-        err.textContent = 'Connection error. Please try again.';
-        err.classList.add('show');
-      }
-
-      btn.disabled = false;
-      btn.textContent = '🤟 Submit Request';
-    }
-
-    function showToast(msg, type) {
-      const t = document.getElementById('toast');
-      t.textContent = msg; t.className = 'toast ' + type + ' show';
-      setTimeout(() => t.classList.remove('show'), 4000);
-    }
-
-    function toggleMobileMenu() {
-      const links = document.querySelector('.nav-links');
-      links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
-      links.style.position = 'absolute'; links.style.top = '64px'; links.style.left = '0'; links.style.right = '0';
-      links.style.background = 'white'; links.style.flexDirection = 'column'; links.style.padding = '16px'; links.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
-    }
-  </script>
+<script>
+let _s=null,_u=null;
+function selSet(el,v){document.querySelectorAll('.setting-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');el.querySelector('input').checked=true;_s=v}
+function selUrg(el,v){document.querySelectorAll('.urgency-card').forEach(c=>{c.classList.remove('selected','urgent')});el.classList.add('selected');if(v==='immediate')el.classList.add('urgent');el.querySelector('input').checked=true;_u=v;document.getElementById('sf').classList.toggle('show',v==='scheduled')}
+async function submitReq(e){
+  e.preventDefault();const err=document.getElementById('fe');err.classList.remove('show');
+  if(!_s){err.textContent='Please select a setting.';err.classList.add('show');return}
+  if(!_u){err.textContent='Please select when you need an interpreter.';err.classList.add('show');return}
+  const btn=document.getElementById('sb');btn.disabled=true;btn.textContent='Submitting...';
+  const d={firstName:document.getElementById('fn').value.trim(),lastName:document.getElementById('ln').value.trim(),email:document.getElementById('em').value.trim(),phone:document.getElementById('ph').value.trim(),organization:document.getElementById('org').value.trim(),serviceType:document.getElementById('stype').value,setting:_s,urgency:_u,details:document.getElementById('det').value.trim()};
+  if(_u==='scheduled'){d.scheduledDate=document.getElementById('sd').value;d.scheduledTime=document.getElementById('st').value;d.estimatedDuration=document.getElementById('ed').value}
+  try{
+    const r=await fetch('/api/service-request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+    const j=await r.json();
+    if(j.success){
+      document.getElementById('fc').style.display='none';document.getElementById('fh').style.display='none';
+      const ss=document.getElementById('ss');ss.classList.add('show');
+      document.getElementById('sm').textContent=_u==='immediate'?'Connecting you with an available interpreter now. Click below to start your session.':j.message||"We've received your request and will confirm your booking shortly via email.";
+      document.getElementById('si').textContent='Request ID: '+(j.requestId||'—');
+      showToast('Request submitted!','success');
+    }else{err.textContent=j.error||'Failed to submit.';err.classList.add('show')}
+  }catch(x){err.textContent='Connection error. Please try again.';err.classList.add('show')}
+  btn.disabled=false;btn.textContent='Submit Request';
+}
+async function loadOnline(){try{const r=await fetch('/api/interpreters/online');const d=await r.json();document.getElementById('onlineCount').textContent=d.online||0}catch(e){}}
+loadOnline();setInterval(loadOnline,30000);
+function showToast(m,t){const el=document.getElementById('toast');el.textContent=m;el.className='toast '+t+' show';setTimeout(()=>el.classList.remove('show'),4000)}
+function toggleMobileMenu(){const l=document.querySelector('.nav-links');l.style.display=l.style.display==='flex'?'none':'flex';l.style.position='absolute';l.style.top='64px';l.style.left='0';l.style.right='0';l.style.background='white';l.style.flexDirection='column';l.style.padding='16px';l.style.boxShadow='0 4px 20px rgba(0,0,0,0.1)'}
+</script>
 </body>
 </html>
