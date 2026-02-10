@@ -19,6 +19,10 @@
     .nav-links a { text-decoration:none; color:var(--text-secondary); padding:8px 16px; border-radius:8px; font-size:0.9rem; font-weight:500; transition:all 0.2s; }
     .nav-links a:hover { background:#f1f5f9; color:var(--text); }
     .nav-links a.active { background:var(--primary); color:white; }
+    
+    .nav-login-btn { color: var(--accent) !important; font-weight: 600 !important; border: 2px solid var(--accent) !important; border-radius: 8px !important; }
+    .nav-signup-btn { background: var(--accent) !important; color: white !important; border-radius: 8px !important; font-weight: 600 !important; }
+    .nav-vri-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; color: white !important; border-radius: 8px !important; font-weight: 600 !important; }
     .mobile-menu-btn { display:none; background:none; border:none; font-size:1.5rem; cursor:pointer; }
 
     .help-hero { background:linear-gradient(135deg,var(--accent) 0%,#0d7377 100%); padding:60px 24px; text-align:center; color:white; }
@@ -108,7 +112,7 @@
   <nav class="nav"><div class="nav-inner">
     <a href="/" class="nav-logo"><span>🤟</span> americansignlanguage.eth</a>
     <ul class="nav-links">
-      <li><a href="/">Home</a></li><li><a href="/pricing">Pricing</a></li><li><a href="/about">About</a></li><li><a href="/help" class="active">Help</a></li><li><a href="/faq">FAQ</a></li><li><a href="/login">Login</a></li>
+      <li><a href="/" >Home</a></li><li><a href="/token" >$ASL Token</a></li><li><a href="/interpreter/apply" >Become Interpreter</a></li><li><a href="/request" class="nav-vri-btn">Request VRI</a></li><li id="navLogin"><a href="/login" class="nav-login-btn">Log In</a></li><li id="navSignup"><a href="/signup" class="nav-signup-btn">Sign Up</a></li>
     </ul>
     <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
   </div></nav>
@@ -461,7 +465,7 @@ Block Explorer: https://basescan.org</div>
           <li><strong>Forgot password:</strong> Click "Forgot Password" on the login page to reset via email</li>
           <li><strong>Account locked:</strong> After 5 failed login attempts, your account locks for 15 minutes. Wait and try again</li>
           <li><strong>Email not verified:</strong> Check your inbox (and spam folder) for the verification email. Click "Resend Verification" on the login page</li>
-          <li><strong>Still stuck:</strong> Contact support at <a href="/cdn-cgi/l/email-protection#cfbcbabfbfa0bdbb8faea2aabda6acaea1bca6a8a1a3aea1a8baaea8aae1b7b6b5"><span class="__cf_email__" data-cfemail="661513161609141226070b03140f050708150f01080a07080113070103481e1f1c">[email&#160;protected]</span></a></li>
+          <li><strong>Still stuck:</strong> Contact support at <a href="/cdn-cgi/l/email-protection#99eaece9e9f6ebedd9f8f4fcebf0faf8f7eaf0fef7f5f8f7feecf8fefcb7e1e0e3"><span class="__cf_email__" data-cfemail="40333530302f323400212d25322923212e3329272e2c212e27352127256e38393a">[email&#160;protected]</span></a></li>
         </ul>
       </div>
     </div>
@@ -529,7 +533,7 @@ Block Explorer: https://basescan.org</div>
           <div class="ch-icon">📧</div>
           <h4>Email Support</h4>
           <p>Get a response within 24 hours</p>
-          <a href="/cdn-cgi/l/email-protection#b3c0c6c3c3dcc1c7f3d2ded6c1dad0d2ddc0dad4dddfd2ddd4c6d2d4d69dcbcac9"><span class="__cf_email__" data-cfemail="3a494f4a4a55484e7a5b575f4853595b5449535d54565b545d4f5b5d5f14424340">[email&#160;protected]</span></a>
+          <a href="/cdn-cgi/l/email-protection#81f2f4f1f1eef3f5c1e0ece4f3e8e2e0eff2e8e6efede0efe6f4e0e6e4aff9f8fb"><span class="__cf_email__" data-cfemail="9feceaefeff0edebdffef2faedf6fcfef1ecf6f8f1f3fef1f8eafef8fab1e7e6e5">[email&#160;protected]</span></a>
         </div>
         <div class="support-channel">
           <div class="ch-icon">🎥</div>
@@ -547,12 +551,12 @@ Block Explorer: https://basescan.org</div>
     </div>
   </div>
 
-  <footer class="footer">
+    <footer class="footer">
     <div class="footer-inner">
       <div><h4>🤟 americansignlanguage.eth</h4><p>The first Deaf-owned Video Remote Interpreting service powered by blockchain technology.</p></div>
-      <div><h4>Platform</h4><ul class="footer-links"><li><a href="/pricing">Pricing</a></li><li><a href="/interpreter/apply">Become an Interpreter</a></li><li><a href="/about">About Us</a></li><li><a href="/contact">Contact</a></li></ul></div>
-      <div><h4>Resources</h4><ul class="footer-links"><li><a href="/help" class="current">Help Center</a></li><li><a href="/faq">FAQ</a></li><li><a href="/terms">Terms of Service</a></li><li><a href="/privacy">Privacy Policy</a></li></ul></div>
-      <div><h4>Connect</h4><div class="footer-social"><a href="https://instagram.com/americansignlanguage.eth" target="_blank">📸</a><a href="https://x.com/aslnfts" target="_blank">🐦</a></div></div>
+      <div><h4>Platform</h4><ul class="footer-links"><li><a href="/pricing">Pricing</a></li><li><a href="/about">About</a></li><li><a href="/interpreter/apply">Become an Interpreter</a></li><li><a href="/contact">Contact</a></li></ul></div>
+      <div><h4>Resources</h4><ul class="footer-links"><li><a href="/help">Help Center</a></li><li><a href="/faq">FAQ</a></li><li><a href="/terms">Terms of Service</a></li><li><a href="/privacy">Privacy Policy</a></li></ul></div>
+      <div><h4>Request VRI</h4><p style="margin-bottom:12px;">Need an ASL interpreter? Connect instantly.</p><a href="/request" style="display:inline-block;padding:10px 24px;background:var(--accent);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.85rem;">Request VRI →</a><div class="footer-social" style="margin-top:16px;"><a href="https://instagram.com/americansignlanguage.eth" target="_blank">📸</a><a href="https://x.com/aslnfts" target="_blank">🐦</a></div></div>
     </div>
     <div class="footer-bottom"><p>americansignlanguage.eth &copy; 2026 All Rights Reserved</p></div>
   </footer>
@@ -581,4 +585,4 @@ Block Explorer: https://basescan.org</div>
     }
 
     function toggleMobileMenu() {
-      const links = document.querySe
+      const links
