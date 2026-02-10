@@ -88,6 +88,16 @@ const userSchema = new mongoose.Schema({
     totalSpent: { type: Number, default: 0 }, // cents
     tokensEarned: { type: Number, default: 0 }
   },
+  // Free minutes (30/month, resets monthly)
+  freeMinutes: {
+    remaining: { type: Number, default: 30 },
+    resetDate: { type: Date, default: () => {
+      const d = new Date();
+      d.setMonth(d.getMonth() + 1, 1);
+      d.setHours(0,0,0,0);
+      return d;
+    }}
+  },
   createdAt: { type: Date, default: Date.now }
 });
 const User = mongoose.model('User', userSchema);
@@ -197,6 +207,32 @@ const contactSchema = new mongoose.Schema({
   status: { type: String, enum: ['new', 'contacted', 'converted'], default: 'new' }
 });
 const Contact = mongoose.model('Contact', contactSchema);
+
+// Service Request Schema (VRI booking requests)
+const serviceRequestSchema = new mongoose.Schema({
+  // Requester info
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  email: { type: String, required: true, lowercase: true },
+  phone: String,
+  organization: String,
+  
+  // Service details
+  serviceType: { type: String, enum: ['vri', 'vrs', 'onsite', 'other'], default: 'vri' },
+  setting: { type: String, enum: ['medical', 'legal', 'education', 'business', 'government', 'personal', 'other'], required: true },
+  urgency: { type: String, enum: ['immediate', 'today', 'this-week', 'scheduled'], default: 'scheduled' },
+  scheduledDate: Date,
+  scheduledTime: String,
+  estimatedDuration: String,
+  details: String,
+  
+  // Status tracking
+  status: { type: String, enum: ['new', 'confirmed', 'assigned', 'completed', 'cancelled'], default: 'new' },
+  assignedInterpreter: { type: mongoose.Schema.Types.ObjectId, ref: 'Interpreter' },
+  
+  submittedAt: { type: Date, default: Date.now }
+});
+const ServiceRequest = mongoose.model('ServiceRequest', serviceRequestSchema);
 // ============================================
 // ROOM CONFIGURATION
 // ============================================
@@ -950,6 +986,112 @@ app.post('/api/contact/submit', async (req, res) => {
     
   } catch (error) {
     console.error('Contact submission error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================
+// API ENDPOINTS - SERVICE REQUESTS
+// ============================================
+
+// Submit a VRI service request
+app.post('/api/service-request', async (req, res) => {
+  try {
+    const { firstName, lastName, email, phone, organization, serviceType, setting, urgency, scheduledDate, scheduledTime, estimatedDuration, details } = req.body;
+    
+    if (!firstName || !lastName || !email || !setting) {
+      return res.status(400).json({ error: 'First name, last name, email, and setting are required' });
+    }
+
+    const request = new ServiceRequest({
+      firstName, lastName,
+      email: email.toLowerCase(),
+      phone, organization, serviceType, setting, urgency,
+      scheduledDate: scheduledDate ? new Date(scheduledDate) : null,
+      scheduledTime, estimatedDuration, details
+    });
+
+    await request.save();
+    
+    console.log(`🎯 NEW SERVICE REQUEST: ${firstName} ${lastName} (${email}) → ${setting} [${urgency}]`);
+    
+    res.json({ 
+      success: true, 
+      requestId: request._id,
+      message: urgency === 'immediate' 
+        ? 'Request received! Connecting you with an available interpreter now.'
+        : 'Request received! We\'ll confirm your booking shortly.'
+    });
+  } catch (error) {
+    console.error('Service request error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get live interpreter count (public)
+app.get('/api/interpreters/online', async (req, res) => {
+  try {
+    const onlineCount = await Interpreter.countDocuments({ isOnline: true, status: 'approved' });
+    
+    // Also count from active socket rooms
+    let socketOnline = 0;
+    Object.values(activeRooms).forEach(room => {
+      socketOnline += (room.interpreters || []).filter(s => s.connected).length;
+    });
+    
+    res.json({ 
+      online: Math.max(onlineCount, socketOnline),
+      available: socketOnline
+    });
+  } catch (error) {
+    res.json({ online: 0, available: 0 });
+  }
+});
+
+// ADMIN: Get all service requests
+app.get('/api/admin/service-requests', async (req, res) => {
+  try {
+    const adminWallet = req.headers['x-admin-wallet']?.toLowerCase();
+    const admin = await Admin.findOne({ wallet: adminWallet });
+    if (!admin) return res.status(403).json({ error: 'Not authorized' });
+
+    const { status, page = 1, limit = 20 } = req.query;
+    let query = {};
+    if (status) query.status = status;
+
+    const requests = await ServiceRequest.find(query)
+      .sort({ submittedAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const total = await ServiceRequest.countDocuments(query);
+
+    res.json({
+      requests,
+      pagination: { page: parseInt(page), limit: parseInt(limit), total, pages: Math.ceil(total / limit) }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ADMIN: Update service request status
+app.post('/api/admin/service-request/:id/status', async (req, res) => {
+  try {
+    const adminWallet = req.headers['x-admin-wallet']?.toLowerCase();
+    const admin = await Admin.findOne({ wallet: adminWallet });
+    if (!admin) return res.status(403).json({ error: 'Not authorized' });
+
+    const { status, assignedInterpreter } = req.body;
+    const update = { status };
+    if (assignedInterpreter) update.assignedInterpreter = assignedInterpreter;
+
+    const request = await ServiceRequest.findByIdAndUpdate(req.params.id, update, { new: true });
+    if (!request) return res.status(404).json({ error: 'Request not found' });
+
+    console.log(`📋 SERVICE REQUEST ${request._id} → ${status}`);
+    res.json({ success: true, request });
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
@@ -1825,6 +1967,8 @@ app.get('/terms', (req, res) => res.sendFile(__dirname + '/public/terms.html'));
 
 // VRI & Interpreter pages (existing files in root)
 app.get('/vri', (req, res) => res.sendFile(__dirname + '/vri-business.html'));
+app.get('/request', (req, res) => res.sendFile(__dirname + '/public/request-service.html'));
+app.get('/request-service', (req, res) => res.sendFile(__dirname + '/public/request-service.html'));
 app.get('/interpreter', (req, res) => res.sendFile(__dirname + '/interpreter-dashboard.html'));
 app.get('/interpreter/apply', (req, res) => res.sendFile(__dirname + '/interpreter-apply.html'));
 app.get('/interpreter/stripe-refresh', (req, res) => res.sendFile(__dirname + '/interpreter-stripe-refresh.html'));
