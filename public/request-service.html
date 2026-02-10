@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Request VRI interpreting services - americansignlanguage.eth">
+  <title>Request Service | americansignlanguage.eth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary:#1a73e8; --primary-dark:#0d47a1; --accent:#11998e; --accent-light:#38ef7d; --bg:#fafbfc; --surface:#fff; --text:#1a1a2e; --text-secondary:#5a5a7a; --border:#e2e8f0; --warning:#f59e0b; --danger:#ef4444; --success:#10b981; --radius:12px; --shadow:0 2px 12px rgba(0,0,0,0.06); --shadow-lg:0 8px 30px rgba(0,0,0,0.08); }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'DM Sans',-apple-system,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; -webkit-font-smoothing:antialiased; }
+
+    .nav { background:var(--surface); border-bottom:1px solid var(--border); padding:0 24px; position:sticky; top:0; z-index:100; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+    .nav-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:64px; }
+    .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.1rem; }
+    .nav-links { display:flex; align-items:center; gap:8px; list-style:none; }
+    .nav-links a { text-decoration:none; color:var(--text-secondary); padding:8px 16px; border-radius:8px; font-size:0.9rem; font-weight:500; transition:all 0.2s; }
+    .nav-links a:hover { background:#f1f5f9; color:var(--text); }
+    .nav-links a.active { background:var(--primary); color:white; }
+    .mobile-menu-btn { display:none; background:none; border:none; font-size:1.5rem; cursor:pointer; }
+
+    .footer { background:var(--text); color:#cbd5e1; padding:50px 24px 30px; }
+    .footer-inner { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; }
+    .footer h4 { color:white; font-family:'Space Grotesk',sans-serif; margin-bottom:16px; font-size:0.95rem; }
+    .footer p { font-size:0.85rem; line-height:1.6; }
+    .footer-links { list-style:none; }
+    .footer-links li { margin-bottom:8px; }
+    .footer-links a { color:#94a3b8; text-decoration:none; font-size:0.85rem; }
+    .footer-links a:hover { color:white; }
+    .footer-social a { color:#94a3b8; text-decoration:none; font-size:1.2rem; margin-right:12px; }
+    .footer-social a:hover { color:white; }
+    .footer-bottom { max-width:1200px; margin:30px auto 0; padding-top:20px; border-top:1px solid #334155; text-align:center; font-size:0.8rem; }
+
+    /* Hero */
+    .req-hero { background:linear-gradient(135deg, var(--accent) 0%, #0d7377 100%); padding:60px 24px; text-align:center; color:white; }
+    .req-hero h1 { font-family:'Space Grotesk',sans-serif; font-size:2.2rem; font-weight:700; margin-bottom:12px; }
+    .req-hero .subtitle { font-size:1.05rem; opacity:0.9; max-width:550px; margin:0 auto; }
+
+    /* Live badge */
+    .live-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.15); padding:8px 20px; border-radius:50px; font-size:0.85rem; font-weight:600; margin-top:20px; backdrop-filter:blur(8px); }
+    .live-dot { width:8px; height:8px; background:var(--accent-light); border-radius:50%; animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(56,239,125,0.4)} 50%{box-shadow:0 0 0 8px rgba(56,239,125,0)} }
+
+    /* Form Section */
+    .form-section { max-width:720px; margin:-40px auto 60px; padding:0 24px; position:relative; z-index:10; }
+    .form-card { background:var(--surface); border-radius:16px; box-shadow:var(--shadow-lg); overflow:hidden; }
+    .form-card-header { padding:24px 32px; border-bottom:1px solid var(--border); }
+    .form-card-header h2 { font-family:'Space Grotesk',sans-serif; font-size:1.15rem; }
+    .form-card-header p { color:var(--text-secondary); font-size:0.85rem; margin-top:4px; }
+    .form-card-body { padding:32px; }
+
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .form-group { margin-bottom:20px; }
+    .form-label { display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.3px; }
+    .form-label .req { color:var(--danger); }
+    .form-input, .form-select, .form-textarea { width:100%; padding:12px 16px; border:2px solid var(--border); border-radius:10px; font-size:0.9rem; font-family:'DM Sans',sans-serif; transition:border-color 0.2s; background:var(--bg); }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { outline:none; border-color:var(--accent); background:white; }
+    .form-select { cursor:pointer; appearance:auto; }
+    .form-textarea { resize:vertical; min-height:100px; }
+
+    /* Urgency selector */
+    .urgency-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; }
+    .urgency-option { position:relative; }
+    .urgency-option input { position:absolute; opacity:0; }
+    .urgency-option label { display:flex; flex-direction:column; align-items:center; gap:4px; padding:14px 8px; border:2px solid var(--border); border-radius:10px; text-align:center; cursor:pointer; transition:all 0.2s; font-size:0.8rem; font-weight:600; }
+    .urgency-option label .icon { font-size:1.3rem; }
+    .urgency-option input:checked + label { border-color:var(--accent); background:rgba(17,153,142,0.06); color:var(--accent); }
+
+    /* Setting selector */
+    .setting-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+    .setting-option { position:relative; }
+    .setting-option input { position:absolute; opacity:0; }
+    .setting-option label { display:flex; align-items:center; gap:8px; padding:12px 14px; border:2px solid var(--border); border-radius:10px; cursor:pointer; transition:all 0.2s; font-size:0.85rem; font-weight:500; }
+    .setting-option label .icon { font-size:1.1rem; }
+    .setting-option input:checked + label { border-color:var(--accent); background:rgba(17,153,142,0.06); color:var(--accent); font-weight:600; }
+
+    .form-submit { width:100%; padding:16px; background:linear-gradient(135deg, var(--accent), #0d7377); color:white; border:none; border-radius:12px; font-size:1rem; font-weight:700; cursor:pointer; transition:all 0.3s; font-family:'DM Sans',sans-serif; margin-top:8px; }
+    .form-submit:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(17,153,142,0.3); }
+    .form-submit:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+
+    .form-note { font-size:0.8rem; color:var(--text-secondary); text-align:center; margin-top:16px; }
+    .form-note a { color:var(--accent); }
+
+    /* Success state */
+    .success-state { display:none; text-align:center; padding:60px 32px; }
+    .success-state.show { display:block; }
+    .success-icon { font-size:3.5rem; margin-bottom:16px; }
+    .success-state h2 { font-family:'Space Grotesk',sans-serif; font-size:1.4rem; margin-bottom:8px; }
+    .success-state p { color:var(--text-secondary); font-size:0.95rem; max-width:400px; margin:0 auto 24px; }
+    .success-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+    .success-actions a { display:inline-flex; align-items:center; gap:8px; padding:12px 24px; border-radius:50px; font-weight:600; font-size:0.9rem; text-decoration:none; transition:all 0.2s; }
+    .btn-primary { background:var(--accent); color:white; }
+    .btn-primary:hover { background:#0d7377; }
+    .btn-outline { border:2px solid var(--border); color:var(--text-secondary); }
+    .btn-outline:hover { border-color:var(--accent); color:var(--accent); }
+
+    .form-error { color:var(--danger); font-size:0.8rem; margin-top:8px; display:none; }
+    .form-error.show { display:block; }
+
+    /* Toast */
+    .toast { position:fixed; top:24px; right:24px; padding:14px 24px; border-radius:10px; color:white; font-weight:600; font-size:0.85rem; z-index:9999; transform:translateX(120%); transition:transform 0.3s; box-shadow:0 8px 30px rgba(0,0,0,0.2); }
+    .toast.show { transform:translateX(0); }
+    .toast.success { background:var(--success); }
+    .toast.error { background:var(--danger); }
+
+    @media (max-width:768px) {
+      .nav-links { display:none; }
+      .mobile-menu-btn { display:block; }
+      .form-row { grid-template-columns:1fr; }
+      .urgency-grid { grid-template-columns:1fr 1fr; }
+      .setting-grid { grid-template-columns:1fr 1fr; }
+      .req-hero h1 { font-size:1.6rem; }
+      .footer-inner { grid-template-columns:1fr 1fr; }
+    }
+    @media (max-width:480px) {
+      .footer-inner { grid-template-columns:1fr; }
+      .setting-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav"><div class="nav-inner">
+    <a href="/" class="nav-logo"><span>🤟</span> americansignlanguage.eth</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li><li><a href="/pricing">Pricing</a></li><li><a href="/about">About</a></li><li><a href="/help">Help</a></li><li><a href="/faq">FAQ</a></li><li><a href="/request" class="active">Request Service</a></li>
+    </ul>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+  </div></nav>
+
+  <section class="req-hero">
+    <h1>Request VRI Service 🤟</h1>
+    <p class="subtitle">Connect with a certified ASL interpreter — browser-based, no app download, instant or scheduled.</p>
+    <div class="live-badge"><span class="live-dot"></span> <span id="liveCount">0</span> interpreters available now</div>
+  </section>
+
+  <div class="form-section">
+    <div class="form-card">
+      <div class="form-card-header">
+        <h2>📋 Service Request Form</h2>
+        <p>Tell us about your interpreting need and we'll match you with the right interpreter.</p>
+      </div>
+
+      <!-- Form -->
+      <div class="form-card-body" id="formContainer">
+        <form id="requestForm" onsubmit="submitRequest(event)">
+          
+          <!-- Contact Info -->
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">First Name <span class="req">*</span></label><input type="text" class="form-input" id="firstName" required placeholder="First name"></div>
+            <div class="form-group"><label class="form-label">Last Name <span class="req">*</span></label><input type="text" class="form-input" id="lastName" required placeholder="Last name"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Email <span class="req">*</span></label><input type="email" class="form-input" id="email" required placeholder="you@email.com"></div>
+            <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="phone" placeholder="VP or text number"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Organization / Company</label><input type="text" class="form-input" id="organization" placeholder="Hospital, school, business name (optional)"></div>
+
+          <!-- Setting -->
+          <div class="form-group">
+            <label class="form-label">Setting <span class="req">*</span></label>
+            <div class="setting-grid">
+              <div class="setting-option"><input type="radio" name="setting" value="medical" id="s-medical" required><label for="s-medical"><span class="icon">🏥</span> Medical</label></div>
+              <div class="setting-option"><input type="radio" name="setting" value="legal" id="s-legal"><label for="s-legal"><span class="icon">⚖️</span> Legal</label></div>
+              <div class="setting-option"><input type="radio" name="setting" value="education" id="s-edu"><label for="s-edu"><span class="icon">🎓</span> Education</label></div>
+              <div class="setting-option"><input type="radio" name="setting" value="business" id="s-biz"><label for="s-biz"><span class="icon">🏢</span> Business</label></div>
+              <div class="setting-option"><input type="radio" name="setting" value="government" id="s-gov"><label for="s-gov"><span class="icon">🏛️</span> Government</label></div>
+              <div class="setting-option"><input type="radio" name="setting" value="personal" id="s-personal"><label for="s-personal"><span class="icon">👤</span> Personal</label></div>
+            </div>
+          </div>
+
+          <!-- Urgency -->
+          <div class="form-group">
+            <label class="form-label">When do you need an interpreter? <span class="req">*</span></label>
+            <div class="urgency-grid">
+              <div class="urgency-option"><input type="radio" name="urgency" value="immediate" id="u-now" required><label for="u-now"><span class="icon">⚡</span>Right Now</label></div>
+              <div class="urgency-option"><input type="radio" name="urgency" value="today" id="u-today"><label for="u-today"><span class="icon">📅</span>Today</label></div>
+              <div class="urgency-option"><input type="radio" name="urgency" value="this-week" id="u-week"><label for="u-week"><span class="icon">🗓️</span>This Week</label></div>
+              <div class="urgency-option"><input type="radio" name="urgency" value="scheduled" id="u-sched" checked><label for="u-sched"><span class="icon">🕐</span>Schedule</label></div>
+            </div>
+          </div>
+
+          <!-- Schedule fields (show when scheduled) -->
+          <div id="scheduleFields">
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Preferred Date</label><input type="date" class="form-input" id="scheduledDate"></div>
+              <div class="form-group"><label class="form-label">Preferred Time</label><input type="time" class="form-input" id="scheduledTime"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Estimated Duration</label>
+            <select class="form-select" id="estimatedDuration">
+              <option value="">Select duration</option>
+              <option value="15min">15 minutes</option>
+              <option value="30min">30 minutes</option>
+              <option value="1hr">1 hour</option>
+              <option value="2hr">2 hours</option>
+              <option value="half-day">Half day (4 hours)</option>
+              <option value="full-day">Full day (8 hours)</option>
+              <option value="ongoing">Ongoing / Recurring</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Additional Details</label>
+            <textarea class="form-textarea" id="details" placeholder="Describe your interpreting need, any special requirements, preferred interpreter qualifications, etc."></textarea>
+          </div>
+
+          <div class="form-error" id="formError"></div>
+          <button type="submit" class="form-submit" id="submitBtn">🤟 Submit Request</button>
+          <p class="form-note">We'll confirm your request within minutes for urgent needs, or within 24 hours for scheduled services. <br>Questions? <a href="/help">Visit our Help Center</a> or <a href="/faq">FAQ</a>.</p>
+        </form>
+      </div>
+
+      <!-- Success State -->
+      <div class="success-state" id="successState">
+        <div class="success-icon">✅</div>
+        <h2>Request Received!</h2>
+        <p id="successMessage">We're reviewing your request and will get back to you shortly.</p>
+        <div class="success-actions">
+          <a href="/session" class="btn-primary">📹 Start Instant Call</a>
+          <a href="/" class="btn-outline">← Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div><h4>🤟 americansignlanguage.eth</h4><p>The first Deaf-owned Video Remote Interpreting service powered by blockchain technology.</p></div>
+      <div><h4>Platform</h4><ul class="footer-links"><li><a href="/pricing">Pricing</a></li><li><a href="/interpreter/apply">Become an Interpreter</a></li><li><a href="/about">About Us</a></li><li><a href="/contact">Contact</a></li></ul></div>
+      <div><h4>Resources</h4><ul class="footer-links"><li><a href="/help">Help Center</a></li><li><a href="/faq">FAQ</a></li><li><a href="/terms">Terms of Service</a></li><li><a href="/privacy">Privacy Policy</a></li></ul></div>
+      <div><h4>Connect</h4><div class="footer-social"><a href="https://instagram.com/americansignlanguage.eth" target="_blank">📸</a><a href="https://x.com/aslnfts" target="_blank">🐦</a></div></div>
+    </div>
+    <div class="footer-bottom"><p>americansignlanguage.eth &copy; 2026 All Rights Reserved</p></div>
+  </footer>
+
+  <script>
+    // Load live interpreter count
+    async function loadLiveCount() {
+      try {
+        const r = await fetch('/api/interpreters/online');
+        const d = await r.json();
+        document.getElementById('liveCount').textContent = d.online || 0;
+      } catch(e) { /* silent */ }
+    }
+    loadLiveCount();
+    setInterval(loadLiveCount, 30000);
+
+    // Toggle schedule fields based on urgency
+    document.querySelectorAll('input[name="urgency"]').forEach(r => {
+      r.addEventListener('change', () => {
+        document.getElementById('scheduleFields').style.display = 
+          r.value === 'scheduled' || r.value === 'this-week' ? 'block' : 'none';
+      });
+    });
+
+    async function submitRequest(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      const err = document.getElementById('formError');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+      err.classList.remove('show');
+
+      const setting = document.querySelector('input[name="setting"]:checked')?.value;
+      const urgency = document.querySelector('input[name="urgency"]:checked')?.value;
+
+      if (!setting) {
+        err.textContent = 'Please select a setting.';
+        err.classList.add('show');
+        btn.disabled = false;
+        btn.textContent = '🤟 Submit Request';
+        return;
+      }
+
+      try {
+        const r = await fetch('/api/service-request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstName: document.getElementById('firstName').value.trim(),
+            lastName: document.getElementById('lastName').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            organization: document.getElementById('organization').value.trim(),
+            serviceType: 'vri',
+            setting,
+            urgency,
+            scheduledDate: document.getElementById('scheduledDate').value,
+            scheduledTime: document.getElementById('scheduledTime').value,
+            estimatedDuration: document.getElementById('estimatedDuration').value,
+            details: document.getElementById('details').value.trim()
+          })
+        });
+
+        const d = await r.json();
+        if (d.success) {
+          document.getElementById('formContainer').style.display = 'none';
+          document.getElementById('successState').classList.add('show');
+          document.getElementById('successMessage').textContent = d.message;
+          if (urgency === 'immediate') {
+            document.getElementById('successMessage').textContent = 
+              'Your urgent request is being processed! You can also start an instant call right now.';
+          }
+        } else {
+          err.textContent = d.error || 'Something went wrong. Please try again.';
+          err.classList.add('show');
+        }
+      } catch(error) {
+        err.textContent = 'Connection error. Please try again.';
+        err.classList.add('show');
+      }
+
+      btn.disabled = false;
+      btn.textContent = '🤟 Submit Request';
+    }
+
+    function showToast(msg, type) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.className = 'toast ' + type + ' show';
+      setTimeout(() => t.classList.remove('show'), 4000);
+    }
+
+    function toggleMobileMenu() {
+      const links = document.querySelector('.nav-links');
+      links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+      links.style.position = 'absolute'; links.style.top = '64px'; links.style.left = '0'; links.style.right = '0';
+      links.style.background = 'white'; links.style.flexDirection = 'column'; links.style.padding = '16px'; links.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
+    }
+  </script>
+</body>
+</html>
