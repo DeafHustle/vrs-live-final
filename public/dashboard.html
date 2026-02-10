@@ -20,6 +20,10 @@
     .nav-links a { text-decoration:none; color:var(--text-secondary); padding:8px 16px; border-radius:8px; font-size:0.9rem; font-weight:500; transition:all 0.2s; }
     .nav-links a:hover { background:#f1f5f9; color:var(--text); }
     .nav-links a.active { background:var(--primary); color:white; }
+    
+    .nav-login-btn { color: var(--accent) !important; font-weight: 600 !important; border: 2px solid var(--accent) !important; border-radius: 8px !important; }
+    .nav-signup-btn { background: var(--accent) !important; color: white !important; border-radius: 8px !important; font-weight: 600 !important; }
+    .nav-vri-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; color: white !important; border-radius: 8px !important; font-weight: 600 !important; }
     .mobile-menu-btn { display:none; background:none; border:none; font-size:1.5rem; cursor:pointer; }
 
     /* Footer — matches other pages */
@@ -183,7 +187,7 @@
   <nav class="nav"><div class="nav-inner">
     <a href="/" class="nav-logo"><span>🤟</span> americansignlanguage.eth</a>
     <ul class="nav-links">
-      <li><a href="/">Home</a></li><li><a href="/pricing">Pricing</a></li><li><a href="/about">About</a></li><li><a href="/help">Help</a></li><li><a href="/faq">FAQ</a></li><li><a href="/dashboard" class="active">Dashboard</a></li>
+      <li><a href="/" >Home</a></li><li><a href="/token" >$ASL Token</a></li><li><a href="/interpreter/apply" >Become Interpreter</a></li><li><a href="/request" class="nav-vri-btn">Request VRI</a></li><li id="navLogin"><a href="/login" class="nav-login-btn">Log In</a></li><li id="navSignup"><a href="/signup" class="nav-signup-btn">Sign Up</a></li>
     </ul>
     <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
   </div></nav>
@@ -314,12 +318,12 @@
   <div class="toast" id="toast"></div>
 
   <!-- Footer — consistent with all pages -->
-  <footer class="footer" id="siteFooter" style="display:none;">
+    <footer class="footer">
     <div class="footer-inner">
       <div><h4>🤟 americansignlanguage.eth</h4><p>The first Deaf-owned Video Remote Interpreting service powered by blockchain technology.</p></div>
-      <div><h4>Platform</h4><ul class="footer-links"><li><a href="/pricing">Pricing</a></li><li><a href="/interpreter/apply">Become an Interpreter</a></li><li><a href="/about">About Us</a></li><li><a href="/contact">Contact</a></li></ul></div>
+      <div><h4>Platform</h4><ul class="footer-links"><li><a href="/pricing">Pricing</a></li><li><a href="/about">About</a></li><li><a href="/interpreter/apply">Become an Interpreter</a></li><li><a href="/contact">Contact</a></li></ul></div>
       <div><h4>Resources</h4><ul class="footer-links"><li><a href="/help">Help Center</a></li><li><a href="/faq">FAQ</a></li><li><a href="/terms">Terms of Service</a></li><li><a href="/privacy">Privacy Policy</a></li></ul></div>
-      <div><h4>Connect</h4><div class="footer-social"><a href="https://instagram.com/americansignlanguage.eth" target="_blank">📸</a><a href="https://x.com/aslnfts" target="_blank">🐦</a></div></div>
+      <div><h4>Request VRI</h4><p style="margin-bottom:12px;">Need an ASL interpreter? Connect instantly.</p><a href="/request" style="display:inline-block;padding:10px 24px;background:var(--accent);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.85rem;">Request VRI →</a><div class="footer-social" style="margin-top:16px;"><a href="https://instagram.com/americansignlanguage.eth" target="_blank">📸</a><a href="https://x.com/aslnfts" target="_blank">🐦</a></div></div>
     </div>
     <div class="footer-bottom"><p>americansignlanguage.eth &copy; 2026 All Rights Reserved</p></div>
   </footer>
