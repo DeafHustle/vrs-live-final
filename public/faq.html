@@ -18,6 +18,7 @@
     .nav-links a{text-decoration:none;color:var(--text-secondary);padding:8px 16px;border-radius:8px;font-size:0.9rem;font-weight:500;transition:all 0.2s}
     .nav-links a:hover{background:#f1f5f9;color:var(--text)}
     .nav-links a.active{background:var(--primary);color:white}
+    .nav-vri-btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%) !important;color:white !important;border-radius:8px !important;font-weight:600 !important}
     .mobile-menu-btn{display:none;background:none;border:none;font-size:1.5rem;cursor:pointer}
     .faq-hero{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:60px 24px;text-align:center;color:white}
     .faq-hero h1{font-family:'Space Grotesk',sans-serif;font-size:2.4rem;font-weight:700;margin-bottom:12px}
@@ -81,7 +82,9 @@
 <body>
   <nav class="nav"><div class="nav-inner">
     <a href="/" class="nav-logo"><span>🤟</span> americansignlanguage.eth</a>
-    <ul class="nav-links"><li><a href="/">Home</a></li><li><a href="/pricing">Pricing</a></li><li><a href="/about">About</a></li><li><a href="/help">Help</a></li><li><a href="/faq" class="active">FAQ</a></li><li><a href="/login">Login</a></li></ul>
+    <ul class="nav-links">
+      <li><a href="/" >Home</a></li><li><a href="/token" >$ASL Token</a></li><li><a href="/interpreter/apply" >Become Interpreter</a></li><li><a href="/request" class="nav-vri-btn">Request VRI</a></li><li id="navLogin"><a href="/login" class="nav-login-btn">Log In</a></li><li id="navSignup"><a href="/signup" class="nav-signup-btn">Sign Up</a></li>
+    </ul>
     <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
   </div></nav>
 
@@ -180,7 +183,7 @@ Block Explorer URL: https://basescan.org</div>
       <div class="faq-item" data-tags="metamask safety"><div class="faq-question" onclick="toggleFaq(this)">What if I lose my seed phrase?<span class="chevron">▾</span></div><div class="faq-answer">
         <p><strong>Your wallet and all tokens are permanently lost.</strong> No recovery possible — not from MetaMask, not from us, not from anyone.</p>
         <p>Protect your phrase:</p><ul><li>Write on paper (not digitally)</li><li>Store in a safe, secure location</li><li>Consider a backup copy in a second safe location</li><li>Never share with anyone</li></ul>
-        <div class="callout callout-danger"><strong>🚫 americansignlanguage.eth will NEVER ask for your seed phrase.</strong> Anyone who asks is a scammer. Report to security@americansignlanguage.xyz.</div>
+        <div class="callout callout-danger"><strong>🚫 americansignlanguage.eth will NEVER ask for your seed phrase.</strong> Anyone who asks is a scammer. Report to <a href="/cdn-cgi/l/email-protection#97e4e2e7e7f8e5e3d7f6faf2e5fef4f6f9e4fef0f9fbf6f9f0e2f6f0f2b9efeeed"><span class="__cf_email__" data-cfemail="73000603031c010733121e16011a10121d001a141d1f121d14061214165d0b0a09">[email&#160;protected]</span></a>.</div>
       </div></div>
 
       <div class="faq-item" data-tags="metamask"><div class="faq-question" onclick="toggleFaq(this)">Can I use a wallet other than MetaMask?<span class="chevron">▾</span></div><div class="faq-answer">
@@ -268,7 +271,7 @@ Block Explorer URL: https://basescan.org</div>
         <p><strong>Red flags:</strong></p>
         <ul><li>Anyone asking for your seed phrase or private keys</li><li>DMs on social media asking you to connect your wallet to an unknown link</li><li>Emails from domains other than @americansignlanguage.xyz</li><li>"Giveaway" offers asking you to send crypto first</li><li>Fake customer support asking for your password</li></ul>
         <p><strong>Our rules:</strong> We will NEVER ask for your seed phrase, private keys, or wallet password. We will NEVER DM you asking to connect your wallet. We will NEVER ask you to send crypto to receive tokens.</p>
-        <p>Report scams to <a href="mailto:security@americansignlanguage.xyz">security@americansignlanguage.xyz</a></p>
+        <p>Report scams to <a href="/cdn-cgi/l/email-protection#691a1c1919061b1d2908040c1b000a08071a000e070508070e1c080e0c47111013"><span class="__cf_email__" data-cfemail="394a4c4949564b4d7958545c4b505a58574a505e575558575e4c585e5c17414043">[email&#160;protected]</span></a></p>
       </div></div>
 
       <div class="faq-item" data-tags="safety"><div class="faq-question" onclick="toggleFaq(this)">How do you protect my personal data?<span class="chevron">▾</span></div><div class="faq-answer">
@@ -291,27 +294,23 @@ Block Explorer URL: https://basescan.org</div>
       <p>Our support team communicates in ASL, text, and email. We're here to help.</p>
       <div class="help-cta-links">
         <a href="/help" class="help-cta-link">📚 Help Center</a>
-        <a href="mailto:support@americansignlanguage.xyz" class="help-cta-link">📧 Email Support</a>
+        <a href="/cdn-cgi/l/email-protection#22515752524d505662434f47504b41434c514b454c4e434c45574345470c5a5b58" class="help-cta-link">📧 Email Support</a>
         <a href="/contact" class="help-cta-link">📞 Contact Us</a>
         <a href="https://instagram.com/americansignlanguage.eth" target="_blank" class="help-cta-link">📸 Instagram</a>
       </div>
     </div>
   </div>
 
-  <footer class="footer">
+    <footer class="footer">
     <div class="footer-inner">
       <div><h4>🤟 americansignlanguage.eth</h4><p>The first Deaf-owned Video Remote Interpreting service powered by blockchain technology.</p></div>
-      <div><h4>Platform</h4><ul class="footer-links"><li><a href="/pricing">Pricing</a></li><li><a href="/interpreter/apply">Become an Interpreter</a></li><li><a href="/about">About Us</a></li><li><a href="/contact">Contact</a></li></ul></div>
-      <div><h4>Resources</h4><ul class="footer-links"><li><a href="/help">Help Center</a></li><li><a href="/faq" class="current">FAQ</a></li><li><a href="/terms">Terms of Service</a></li><li><a href="/privacy">Privacy Policy</a></li><li><a href="/accessibility">Accessibility</a></li></ul></div>
-      <div><h4>Connect</h4><div class="footer-social"><a href="https://instagram.com/americansignlanguage.eth" target="_blank">📸</a><a href="https://x.com/aslnfts" target="_blank">🐦</a></div></div>
+      <div><h4>Platform</h4><ul class="footer-links"><li><a href="/pricing">Pricing</a></li><li><a href="/about">About</a></li><li><a href="/interpreter/apply">Become an Interpreter</a></li><li><a href="/contact">Contact</a></li></ul></div>
+      <div><h4>Resources</h4><ul class="footer-links"><li><a href="/help">Help Center</a></li><li><a href="/faq">FAQ</a></li><li><a href="/terms">Terms of Service</a></li><li><a href="/privacy">Privacy Policy</a></li></ul></div>
+      <div><h4>Request VRI</h4><p style="margin-bottom:12px;">Need an ASL interpreter? Connect instantly.</p><a href="/request" style="display:inline-block;padding:10px 24px;background:var(--accent);color:white;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.85rem;">Request VRI →</a><div class="footer-social" style="margin-top:16px;"><a href="https://instagram.com/americansignlanguage.eth" target="_blank">📸</a><a href="https://x.com/aslnfts" target="_blank">🐦</a></div></div>
     </div>
-    <div class="footer-bottom"><p>americansignlanguage.eth © 2026 All Rights Reserved</p></div>
+    <div class="footer-bottom"><p>americansignlanguage.eth &copy; 2026 All Rights Reserved</p></div>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     function toggleFaq(el){const item=el.parentElement;const wasOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));if(!wasOpen)item.classList.add('open')}
-    function filterFaq(cat,btn){document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.faq-category').forEach(c=>{if(cat==='all'){c.style.display='block'}else{c.style.display=c.dataset.category===cat?'block':'none'}});document.querySelectorAll('.faq-item').forEach(i=>{if(cat==='all'){i.style.display='block'}else{i.style.display=i.dataset.tags.includes(cat)?'block':'none'}})}
-    function toggleMobileMenu(){const l=document.querySelector('.nav-links');l.style.display=l.style.display==='flex'?'none':'flex';if(l.style.display==='flex'){l.style.flexDirection='column';l.style.position='absolute';l.style.top='64px';l.style.left='0';l.style.right='0';l.style.background='white';l.style.padding='16px';l.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'}}
-  </script>
-</body>
-</html>
+    function filterFaq(cat,btn){document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.faq-category').forEach(c=>{if(cat==='all'){c.style.display='block'}else{c.style.display=c.dataset.category===cat?'block':'none'}});document.querySelectorAll('.faq-item').forEach(i=>{if(cat==='all'){i.style.display='block'}else{i.style.display=
